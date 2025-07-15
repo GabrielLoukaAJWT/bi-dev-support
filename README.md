@@ -29,6 +29,6 @@ This project is a Python-based tool that connects to an Oracle database using th
 
 ## Setup Instructions
 
-<!-- ### 1. Clone the repository
-git clone https://github.com/yourusername/sql-performance-analyzer.git
-cd sql-performance-analyzer -->
+### 1. Clone the repository
+git clone https://github.com/GabrielLoukaAJWT/bi-dev-support.git
+cd bi-dev-support
