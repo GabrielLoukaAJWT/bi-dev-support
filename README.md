@@ -30,5 +30,5 @@ This project is a Python-based tool that connects to an Oracle database using th
 ## Setup Instructions
 
 ### 1. Clone the repository
-git clone https://github.com/GabrielLoukaAJWT/bi-dev-support.git
+git clone https://github.com/GabrielLoukaAJWT/bi-dev-support.git<br>
 cd bi-dev-support
