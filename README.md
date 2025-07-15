@@ -18,7 +18,7 @@ This project is a Python-based tool that connects to an Oracle database using th
 
 ## Tech Stack
 
-- Python 3.13 64-bit
+- Python 3.13
 - [`oracledb`](https://python-oracledb.readthedocs.io/en/latest/index.html)
 - Oracle Instant Client (for thick mode)
 - `getpass` for secure credential input
@@ -37,6 +37,6 @@ cd bi-dev-support
 
 The current oracledb library runs on thin mode, which supports passwords verifiers 11G and later,
 but the current Oracle account was created with 10G.
-    - Option 1 : change password for the database user
-    - Option 2 : Install Oracle Instant Client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+- Option 1 : change password for the database user
+- Option 2 : Install Oracle Instant Client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
                          and put the directory to be used for the connection (See LIB_DIR at constants.py)
