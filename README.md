@@ -32,3 +32,11 @@ This project is a Python-based tool that connects to an Oracle database using th
 ### 1. Clone the repository
 git clone https://github.com/GabrielLoukaAJWT/bi-dev-support.git<br>
 cd bi-dev-support
+
+### 2. Install Oracle Instant Client
+
+The current oracledb library runs on thin mode, which supports passwords verifiers 11G and later,
+but the current Oracle account was created with 10G.
+    - Option 1 : change password for the database user
+    - Option 2 : Install Oracle Instant Client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+                         and put the directory to be used for the connection (See LIB_DIR at constants.py)
