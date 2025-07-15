@@ -39,4 +39,4 @@ The current oracledb library runs on thin mode, which supports passwords verifie
 but the current Oracle account was created with 10G.
 - Option 1 : change password for the database user
 - Option 2 : Install Oracle Instant Client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
-                         and put the directory to be used for the connection (See LIB_DIR at constants.py)
+                         and put the directory to be used for the connection (See LIB_DIR in constants.py)
