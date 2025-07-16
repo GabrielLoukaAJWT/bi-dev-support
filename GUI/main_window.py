@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import time
 
 import Services.db_connection as cnx
 import constants as cta
@@ -9,7 +10,7 @@ class OracleApp:
     def __init__(self):
         self.oracleConnector = cnx.OracleConnector()
         self.root = tk.Tk()
-        self.root.title("Oracle DB Connector")
+        self.root.title("SQL analytics")
         self.root.geometry("500x300")
         
         self.setupMainUI()
@@ -21,7 +22,7 @@ class OracleApp:
         self.password_entry = tk.Entry(self.root, show="*", width=30)
         self.password_entry.pack(pady=5)
 
-        tk.Button(self.root, text="Connect & Fetch", command=self.handleConnexion).pack(pady=20)
+        tk.Button(self.root, text="Connect", command=self.handleConnexion).pack(pady=20)
 
         self.status_label = tk.Label(self.root, text="", font=("Arial", 10))
         self.status_label.pack(pady=10)
@@ -32,10 +33,19 @@ class OracleApp:
         isSuccessful, message = self.oracleConnector.connectToOracle(password)
         self.showStatus(isSuccessful, message)
 
+        if isSuccessful:
+            self.root.update_idletasks()
+            self.root.after(1000, self.clearRoot())
+
+
+    def clearRoot(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
 
     def showStatus(self, success: bool, message: str):
         color = "green" if success else "red"
-        self.status_label.config(text=message, fg=color)
+        self.status_label.config(text=message, fg=color)        
 
 
     def initializeWindow(self):
