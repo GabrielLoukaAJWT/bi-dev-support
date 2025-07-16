@@ -21,7 +21,7 @@ This project is a Python-based tool that connects to an Oracle database using th
 - Python 3.13
 - [`oracledb`](https://python-oracledb.readthedocs.io/en/latest/index.html)
 - Oracle Instant Client (for thick mode)
-- `getpass` for secure credential input
+<!-- - `getpass` for secure credential input -->
 - `pandas` and `matplotlib` (optional for analysis/plotting)
 - `sqlite3` (optional for logging history)
 
