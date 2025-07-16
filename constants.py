@@ -8,5 +8,5 @@ LIB_DIR = r"C:\Users\Gabriel.Louka\oracle instant client\instantclient_23_8"
 
 
 # Messages
-DB_CONNECTION_ERR = "Error connecting: oracledb.init_oracle_client(lib_dir=cta.LIB_DIR)"
-DB_CONNECTION_SUCCESS = "Connection successful :)\n"
+DB_CONNEXION_ERROR = "Invalid credentials - connexion denied.\n"
+DB_CONNEXION_SUCCESS = "Connection successful :)\n"

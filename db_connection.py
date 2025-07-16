@@ -20,16 +20,15 @@ def connect_to_oracle(psw : str) -> bool :
     except Exception as error:
         print("Error connecting: cx_Oracle.init_oracle_client()")
         print(error)
-        return False
 
     try:    
         with oracledb.connect(user=cta.USERNAME, password=psw, dsn=cta.CONNECTION_STRING) as connection:
             with connection.cursor() as cursor:
                 print("Valid credentials - connection successful.\n")
-                return True
+                return True, cta.DB_CONNEXION_SUCCESS
     except Exception as error:
-        print("Invalid credentials - connexcion denied.\n")
-        return False
+        print("Invalid credentials - connexion denied.\n")
+        return False, cta.DB_CONNEXION_ERROR
         
 
 

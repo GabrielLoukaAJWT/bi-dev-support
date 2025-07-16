@@ -4,7 +4,8 @@ import GUI.main_window as win
 
 
 def main():
-    win.start_ui()
+    app = win.OracleApp()
+    app.initialize_window()
 
 
 if __name__ == "__main__":
