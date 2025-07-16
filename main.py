@@ -4,7 +4,6 @@ import GUI.main_window as win
 
 
 def main():
-    # con.connect_to_oracle()
     win.start_ui()
 
 

@@ -13,17 +13,26 @@ def test_oracle_instant_client():
         print(name)
 
 
-def connect_to_oracle(psw : str) -> None :
+def connect_to_oracle(psw : str) -> bool :
     try:
         oracledb.init_oracle_client(lib_dir=cta.LIB_DIR)
-        print("Connection successful :)\n")
+        print("Initialized Oracle Instant Client.\n")
     except Exception as error:
         print("Error connecting: cx_Oracle.init_oracle_client()")
         print(error)
-        sys.exit(1)
+        return False
 
-    with oracledb.connect(user=cta.USERNAME, password=psw, dsn=cta.CONNECTION_STRING) as connection:
-        with connection.cursor() as cursor:
-            sql = "select woo.si_number, woo.entry_date from wo_operation woo where (woo.entry_date > SYSDATE - INTERVAL '1' MONTH)"
-            for r in cursor.execute(sql):
-                print(r)
+    try:    
+        with oracledb.connect(user=cta.USERNAME, password=psw, dsn=cta.CONNECTION_STRING) as connection:
+            with connection.cursor() as cursor:
+                print("Valid credentials - connection successful.\n")
+                return True
+    except Exception as error:
+        print("Invalid credentials - connexcion denied.\n")
+        return False
+        
+
+
+            # sql = "select woo.si_number, woo.entry_date from wo_operation woo where (woo.entry_date > SYSDATE - INTERVAL '1' MONTH)"
+            # for r in cursor.execute(sql):
+            #     print(r)
