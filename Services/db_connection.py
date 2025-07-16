@@ -13,7 +13,6 @@ class OracleConnector:
     def __init__(self):
         self.connection = None
         self.cursor = None
-        self._DBPassword = ""
         
 
     def getOracleInstantClient(self):
@@ -38,7 +37,6 @@ class OracleConnector:
                 dsn=cta.CONNECTION_STRING
             )
             self.cursor = self.connection.cursor()
-            self._DBPassword = psw
             print("Valid credentials - connection successful.\n")
 
             return True, cta.DB_CONNECTION_SUCCESS

@@ -12,7 +12,7 @@ class MainWindow:
         self.oracleConnector = cnx.OracleConnector()
         self.root = tk.Tk()
         self.root.title("SQL analytics")
-        self.root.geometry("500x300")
+        self.root.geometry("800x550")
         
         self.setupMainUI()
 
