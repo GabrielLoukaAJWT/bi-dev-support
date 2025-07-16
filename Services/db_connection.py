@@ -51,7 +51,8 @@ class OracleConnector:
 
 
     def run_query(self, sqlQuery: str):
-        with oracledb.connect(user=cta.USERNAME, password=self._DBPassword, dsn=cta.CONNECTION_STRING) as connection:
-            with connection.cursor() as cursor:
-                for r in cursor.execute(sqlQuery):
-                    print(r)
+        if self.connection is None or self.cursor is None:
+            print("Connection lost.\n")
+        else:
+            for r in self.cursor.execute(sqlQuery):
+                print(r)
