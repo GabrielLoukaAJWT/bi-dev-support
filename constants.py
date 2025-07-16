@@ -8,5 +8,5 @@ LIB_DIR = r"C:\Users\Gabriel.Louka\oracle instant client\instantclient_23_8"
 
 
 # Messages
-DB_CONNEXION_ERROR = "Invalid credentials - connexion denied.\n"
-DB_CONNEXION_SUCCESS = "Connection successful :)\n"
+DB_CONNECTION_ERROR = "Invalid credentials - connexion denied.\n"
+DB_CONNECTION_SUCCESS = "Connection successful :)\n"

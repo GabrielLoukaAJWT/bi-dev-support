@@ -1,11 +1,14 @@
+import GUI.main_window
+import GUI.query_view
 import Services.db_connection as con
-import GUI.main_window as win
+import GUI
 
 
 
 def main():
-    app = win.OracleApp()
-    app.initializeWindow()
+    app = GUI.main_window.MainWindow()
+    app.initializeMainView()
+
 
 if __name__ == "__main__":
     main()
