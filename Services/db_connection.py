@@ -13,6 +13,9 @@ class OracleConnector:
     def __init__(self):
         self.connection = None
         self.cursor = None
+
+        self.columnsNames = []
+        self.queryOutput = []
         
 
     def getOracleInstantClient(self):
@@ -27,7 +30,7 @@ class OracleConnector:
             oracledb.init_oracle_client(lib_dir=cta.LIB_DIR)
             print("Initialized Oracle Instant Client.\n")
         except Exception as error:
-            print("Error connecting: cx_Oracle.init_oracle_client()")
+            print("Error connecting:  oracledb.init_oracle_client()")
             print(error)
 
         try:    
@@ -48,9 +51,16 @@ class OracleConnector:
             return False, cta.DB_CONNECTION_ERROR
 
 
-    def run_query(self, sqlQuery: str):
+    def runQuery(self, sqlQuery: str):
         if self.connection is None or self.cursor is None:
             print("Connection lost.\n")
         else:
-            for r in self.cursor.execute(sqlQuery):
-                print(r)
+            try:                
+                self.columnsNames = []
+                self.queryOutput = []
+                for r in self.cursor.execute(sqlQuery):
+                    self.queryOutput.append(r)
+                    print(r)
+                self.columnsNames = [row[0] for row in self.cursor.description]
+            except Exception as error:
+                return f"{error}\n"
