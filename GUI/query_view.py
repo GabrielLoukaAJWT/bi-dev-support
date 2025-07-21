@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import NONE, scrolledtext
+from tkinter import BOTH, BOTTOM, HORIZONTAL, NONE, X, Scrollbar, scrolledtext
 from tkinter import messagebox
 
 import oracledb
@@ -21,8 +21,13 @@ class QueryView:
         tk.Button(self.frame, text="Run Query", command=self.runQuery).pack(pady=10)
         
 
-        self.output_box = scrolledtext.ScrolledText(self.frame, height=15, wrap=NONE)
-        self.output_box.pack()
+        self.output_box = scrolledtext.ScrolledText(self.frame, height=15, wrap=NONE, xscrollcommand=None)
+        self.output_box.pack(fill=BOTH, expand=True)
+
+        x_scroll = Scrollbar(self.frame, orient=HORIZONTAL, command=self.output_box.xview)
+        x_scroll.pack(side=BOTTOM, fill=X)
+
+        self.output_box.config(xscrollcommand=x_scroll.set)
 
         self.status_label = tk.Label(self.frame, text="", font=("Arial", 10))          
         self.status_label.pack(pady=10)
