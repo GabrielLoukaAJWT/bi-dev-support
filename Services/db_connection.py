@@ -1,12 +1,12 @@
-import sys
-import constants as cta
-
 import oracledb 
 import os
 import platform
 from typing import Tuple
+import datetime
 
+import constants as cta
 import Services.db_connection as cnx
+import Models.Query as qry
 
 
 class OracleConnector:
@@ -16,7 +16,8 @@ class OracleConnector:
 
         self.columnsNames = []
         self.queryOutput = []
-        self.widths = []
+
+        self.currentQuery = qry.Query(None, None, 0.0, [], [])
         
 
     def getOracleInstantClient(self):
@@ -55,13 +56,28 @@ class OracleConnector:
     def runQuery(self, sqlQuery: str):
         if self.connection is None or self.cursor is None:
             print("Connection lost.\n")
+
         else:
-            try:                
+            try:
+                self.currentQuery.initTime = datetime.datetime(1, 1, 1, 0, 0)
+                self.currentQuery.endTime = datetime.datetime(1, 1, 1, 0, 0)
+                self.currentQuery.execTime = datetime.timedelta()
+                self.currentQuery.columns = []
+                self.currentQuery.rows = []
+                
                 self.columnsNames = []
                 self.queryOutput = []
+
+                self.currentQuery.initTime = datetime.datetime.today()
                 for r in self.cursor.execute(sqlQuery):
                     self.queryOutput.append(r)
+                    self.currentQuery.rows.append(r)
                     # print(r)
+                self.currentQuery.endTime = datetime.datetime.today()
+                self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
+
                 self.columnsNames = [row[0] for row in self.cursor.description]
+                self.currentQuery.columns = [row[0] for row in self.cursor.description]
+            
             except Exception as error:
                 return f"{error}\n"

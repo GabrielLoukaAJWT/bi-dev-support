@@ -32,28 +32,43 @@ class QueryView:
         self.status_label = tk.Label(self.frame, text="", font=("Arial", 10))          
         self.status_label.pack(pady=10)
 
+        self.execTimeLabel = tk.Label(self.frame, 
+                                      text="", 
+                                      font=("Arial", 10)
+                                    )
+        self.execTimeLabel.pack(pady=10)
+
 
     def runQuery(self):    
         sql = self.query_text.get("1.0", tk.END).strip()
         if not sql:
             messagebox.showwarning("Empty Query", "Please enter a query.")
             self.status_label.config(text="") 
+            self.execTimeLabel.config(text="")
             return
 
         err = self.oracleConnector.runQuery(sql)
         if err:              
             self.status_label.config(text=err, fg="red")  
+            self.execTimeLabel.config(text="")
         else:
             self.status_label.config(text="") 
+            text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
+            self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
+            print(f"QUWERYERYEYREYR : {self.oracleConnector.currentQuery}")
 
 
     def displayQueryOutput(self):
         self.output_box.delete("1.0", tk.END)
-        if not self.oracleConnector.queryOutput:
+        if not self.oracleConnector.currentQuery.rows:
+        # if not self.oracleConnector.queryOutput:
             self.output_box.insert(tk.END, "No results found.")
             return
-        formatted = self.formatRows(self.oracleConnector.columnsNames, self.oracleConnector.queryOutput)
+        formatted = self.formatRows(
+            self.oracleConnector.currentQuery.columns, 
+            self.oracleConnector.currentQuery.rows)
+        # formatted = self.formatRows(self.oracleConnector.columnsNames, self.oracleConnector.queryOutput)
         self.output_box.insert(tk.END, formatted)
 
 
