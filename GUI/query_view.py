@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import NONE, scrolledtext
 from tkinter import messagebox
 
+import oracledb
+
 import Services.db_connection as cnx
 
 
@@ -13,17 +15,18 @@ class QueryView:
 
         tk.Label(self.frame, text="Enter SQL Query:").pack()
 
-        self.query_text = tk.Text(self.frame, height=8, width=80)
+        self.query_text = tk.Text(self.frame, height=12, width=80)
         self.query_text.pack(pady=5)
 
         tk.Button(self.frame, text="Run Query", command=self.runQuery).pack(pady=10)
+        
 
-        self.output_box = scrolledtext.ScrolledText(self.frame, height=10, wrap=NONE)
+        self.output_box = scrolledtext.ScrolledText(self.frame, height=15, wrap=NONE)
         self.output_box.pack()
 
         self.status_label = tk.Label(self.frame, text="", font=("Arial", 10))          
         self.status_label.pack(pady=10)
-        
+
 
     def runQuery(self):    
         sql = self.query_text.get("1.0", tk.END).strip()
@@ -52,11 +55,37 @@ class QueryView:
     def calculateColumnWidths(self, columns, rows):
         widths = [len(col) for col in columns]
         for row in rows:
+            if len(row) != len(columns):
+                raise ValueError("Row length does not match number of columns")
             for i, val in enumerate(row):
-                widths[i] = max(widths[i], len(str(val)))
+                if isinstance(val, oracledb.LOB):
+                    val_str = "[LOB]"
+                elif isinstance(val, bytes):
+                    val_str = val.decode('utf-8', errors='replace')
+                elif val is None:
+                    val_str = ""
+                else:
+                    val_str = str(val)
+                widths[i] = max(widths[i], len(val_str))
         return widths
     
     
+    def formatRowSafely(self, row, col_widths):
+        formatted = []
+        for i, val in enumerate(row):
+            if isinstance(val, oracledb.LOB):
+                val_str = "[LOB]"
+            elif isinstance(val, bytes):
+                val_str = val.decode('utf-8', errors='replace')
+            elif val is None:
+                val_str = ""
+            else:
+                val_str = str(val)
+            formatted.append(val_str.ljust(col_widths[i]))
+        return " | ".join(formatted)
+
+
+        
     def formatRows(self, columns, rows):
         col_widths = self.calculateColumnWidths(columns, rows)
 
@@ -66,10 +95,10 @@ class QueryView:
         lines = [header, separator]
 
         for row in rows:
-            line = " | ".join(str(val).ljust(col_widths[i]) for i, val in enumerate(row))
-            lines.append(line)
+            lines.append(self.formatRowSafely(row, col_widths))
 
         return "\n".join(lines)
+
 
 
 

@@ -16,6 +16,7 @@ class OracleConnector:
 
         self.columnsNames = []
         self.queryOutput = []
+        self.widths = []
         
 
     def getOracleInstantClient(self):
@@ -60,7 +61,7 @@ class OracleConnector:
                 self.queryOutput = []
                 for r in self.cursor.execute(sqlQuery):
                     self.queryOutput.append(r)
-                    print(r)
+                    # print(r)
                 self.columnsNames = [row[0] for row in self.cursor.description]
             except Exception as error:
                 return f"{error}\n"
