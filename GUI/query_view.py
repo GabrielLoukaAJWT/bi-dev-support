@@ -5,11 +5,13 @@ from tkinter import messagebox
 import oracledb
 
 import Services.db_connection as cnx
+import Services.logging as log
 
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.oracleConnector = oracleConnector
+        self.queryLoggerManager = log.QueryLoggerManager()
 
         self.frame = tk.Frame(root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)

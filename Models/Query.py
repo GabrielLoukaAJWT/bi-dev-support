@@ -10,3 +10,9 @@ class Query:
     execTime: datetime.timedelta = datetime.timedelta()
     columns: list = field(default_factory=lambda: [])
     rows: list = field(default_factory=lambda: [])
+
+
+@dataclass
+class QueryLog:
+    id: int
+    query: Query

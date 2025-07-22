@@ -7,9 +7,11 @@ import constants as cta
 import GUI.query_view as qryview
 
 
+
 class MainWindow:
     def __init__(self):
         self.oracleConnector = cnx.OracleConnector()
+
         self.root = tk.Tk()
         self.root.title("SQL analytics")
         self.root.geometry("1000x750")
