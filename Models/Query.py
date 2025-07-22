@@ -14,5 +14,4 @@ class Query:
 
 @dataclass
 class QueryLog:
-    id: int
     query: Query

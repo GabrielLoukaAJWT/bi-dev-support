@@ -77,6 +77,7 @@ class QueryView:
             text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
+            self.queryLoggerManager.logSuccessfulQuery("info", self.oracleConnector.currentQuery)
             # print(f"QUWERYERYEYREYR : {self.oracleConnector.currentQuery}")
 
 
