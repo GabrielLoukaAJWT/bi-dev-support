@@ -12,6 +12,7 @@ class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()
+        self.queryLoggerManager.clearLogsFile()
 
         # main query view
         self.frame = tk.Frame(root, padx=20, pady=20, bg="#f7f7f7")
@@ -40,7 +41,7 @@ class QueryView:
                                                     relief="solid",
                                                     bd=1,
                                                     xscrollcommand=None)
-        self.output_box.pack(fill=tk.BOTH, expand=True)
+        self.output_box.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
 
         x_scroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.output_box.xview)
         x_scroll.pack(side=tk.BOTTOM, fill=tk.X)
@@ -55,7 +56,7 @@ class QueryView:
 
         self.execTimeLabel = tk.Label(self.frame,
                                     text="",
-                                    font=("Arial", 10),
+                                    font=("Arial", 14),
                                     fg="gray",
                                     bg="#f7f7f7")
         self.execTimeLabel.pack(pady=(0, 10))
@@ -98,6 +99,7 @@ class QueryView:
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
             self.queryLoggerManager.logSuccessfulQuery("info", self.oracleConnector.currentQuery)
+            self.displayLogsOnToggle()
 
 
     def displayQueryOutput(self):
@@ -164,12 +166,12 @@ class QueryView:
             self.logs_frame.pack_forget()
             self.toggle_logs_btn.config(text="Show Logs")
         else:
-            self.displayLogs()
+            self.displayLogsOnToggle()
             self.logs_frame.pack(fill="both", expand=True, pady=(5, 10))
             self.toggle_logs_btn.config(text="Hide Logs")
         self.show_logs = not self.show_logs
 
-    def displayLogs(self):
+    def displayLogsOnToggle(self):
         try:
             with open("./logs/queries.log", "r", encoding="utf-8") as f:
                 log_content = f.read()

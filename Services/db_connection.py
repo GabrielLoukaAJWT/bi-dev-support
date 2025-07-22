@@ -5,7 +5,6 @@ from typing import Tuple
 import datetime
 
 import constants as cta
-import Services.db_connection as cnx
 import Models.Query as qry
 
 

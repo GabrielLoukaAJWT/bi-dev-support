@@ -23,4 +23,9 @@ class QueryLoggerManager:
                 )
 
 
+    def clearLogsFile(self):
+        log_file = open('./logs/queries.log', "r+")
+        log_file.truncate(0)
+
+
         

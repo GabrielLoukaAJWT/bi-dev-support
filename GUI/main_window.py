@@ -1,9 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox
-import time
 
 import Services.db_connection as cnx
-import constants as cta
 import GUI.query_view as qryview
 
 
@@ -14,7 +11,7 @@ class MainWindow:
 
         self.root = tk.Tk()
         self.root.title("SQL analytics")
-        self.root.geometry("1000x750")
+        self.root.geometry("1600x900")
         
         self.setupMainUI()
 
