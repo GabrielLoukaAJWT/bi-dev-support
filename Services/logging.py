@@ -8,7 +8,6 @@ class QueryLoggerManager:
         logging.basicConfig(
             format="{asctime} - {levelname} - {message}",
             style="{",
-            # datefmt='%Y-%m-%d %H:%M:%S,%f',
             filename="./logs/queries.log",
             level=logging.INFO
         )

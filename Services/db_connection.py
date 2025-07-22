@@ -64,6 +64,7 @@ class OracleConnector:
                 self.currentQuery.execTime = datetime.timedelta()
                 self.currentQuery.columns = []
                 self.currentQuery.rows = []
+                self.currentQuery.code = ""
                 
                 self.columnsNames = []
                 self.queryOutput = []
@@ -72,9 +73,10 @@ class OracleConnector:
                 for r in self.cursor.execute(sqlQuery):
                     self.queryOutput.append(r)
                     self.currentQuery.rows.append(r)
-                    # print(r)
                 self.currentQuery.endTime = datetime.datetime.today()
                 self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
+
+                self.currentQuery.code = sqlQuery
 
                 self.columnsNames = [row[0] for row in self.cursor.description]
                 self.currentQuery.columns = [row[0] for row in self.cursor.description]

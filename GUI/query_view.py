@@ -13,6 +13,7 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()
 
+        # main query view
         self.frame = tk.Frame(root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)
 
@@ -60,6 +61,25 @@ class QueryView:
         self.execTimeLabel.pack(pady=(0, 10))
 
 
+        # log panel
+        self.show_logs = False
+        self.toggle_logs_btn = tk.Button(self.frame,
+                                        text="Show Logs",
+                                        font=("Arial", 10),
+                                        command=self.toggleLogs,
+                                        bg="#eeeeee")
+        self.toggle_logs_btn.pack(pady=(10, 0))
+
+        self.logs_frame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1)
+        self.logs_box = scrolledtext.ScrolledText(self.logs_frame,
+                                                height=10,
+                                                width=100,
+                                                state="disabled",
+                                                font=("Courier New", 10),
+                                                wrap="word")
+        self.logs_box.pack(padx=10, pady=10, fill="both", expand=True)
+
+
     def runQuery(self):    
         sql = self.query_text.get("1.0", tk.END).strip()
         if not sql:
@@ -78,19 +98,16 @@ class QueryView:
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
             self.queryLoggerManager.logSuccessfulQuery("info", self.oracleConnector.currentQuery)
-            # print(f"QUWERYERYEYREYR : {self.oracleConnector.currentQuery}")
 
 
     def displayQueryOutput(self):
         self.output_box.delete("1.0", tk.END)
         if not self.oracleConnector.currentQuery.rows:
-        # if not self.oracleConnector.queryOutput:
             self.output_box.insert(tk.END, "No results found.")
             return
         formatted = self.formatRows(
             self.oracleConnector.currentQuery.columns, 
             self.oracleConnector.currentQuery.rows)
-        # formatted = self.formatRows(self.oracleConnector.columnsNames, self.oracleConnector.queryOutput)
         self.output_box.insert(tk.END, formatted)
 
 
@@ -140,6 +157,31 @@ class QueryView:
             lines.append(self.formatRowSafely(row, col_widths))
 
         return "\n".join(lines)
+    
+
+    def toggleLogs(self):
+        if self.show_logs:
+            self.logs_frame.pack_forget()
+            self.toggle_logs_btn.config(text="Show Logs")
+        else:
+            self.displayLogs()
+            self.logs_frame.pack(fill="both", expand=True, pady=(5, 10))
+            self.toggle_logs_btn.config(text="Hide Logs")
+        self.show_logs = not self.show_logs
+
+    def displayLogs(self):
+        try:
+            with open("./logs/queries.log", "r", encoding="utf-8") as f:
+                log_content = f.read()
+        except FileNotFoundError:
+            log_content = "No log file found."
+
+        self.logs_box.config(state="normal")
+        self.logs_box.delete("1.0", "end")
+        self.logs_box.insert("1.0", log_content)
+        self.logs_box.config(state="disabled")
+
+
 
 
 
