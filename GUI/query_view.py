@@ -8,35 +8,54 @@ import Services.db_connection as cnx
 
 
 class QueryView:
-    def __init__(self, root, oracleConnector: cnx.OracleConnector):
+    def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.oracleConnector = oracleConnector
-        self.frame = tk.Frame(root)
-        self.frame.pack(pady=20)
 
-        tk.Label(self.frame, text="Enter SQL Query:").pack()
+        self.frame = tk.Frame(root, padx=20, pady=20, bg="#f7f7f7")
+        self.frame.pack(fill="both", expand=True)
 
-        self.query_text = tk.Text(self.frame, height=12, width=80)
-        self.query_text.pack(pady=5)
+        tk.Label(self.frame, text="Enter SQL Query", font=("Arial", 14, "bold"), bg="#f7f7f7").pack(pady=(0, 10))
 
-        tk.Button(self.frame, text="Run Query", command=self.runQuery).pack(pady=10)
-        
+        self.query_text = tk.Text(self.frame, height=12, width=80, font=("Courier New", 11), relief="solid", bd=1)
+        self.query_text.pack(pady=(0, 15))
 
-        self.output_box = scrolledtext.ScrolledText(self.frame, height=15, wrap=NONE, xscrollcommand=None)
-        self.output_box.pack(fill=BOTH, expand=True)
+        tk.Button(self.frame,
+                text="Run Query",
+                font=("Arial", 12, "bold"),
+                bg="#2196F3",
+                fg="white",
+                activebackground="#1976D2",
+                padx=10,
+                pady=5,
+                command=self.runQuery
+                ).pack(pady=(0, 15))
 
-        x_scroll = Scrollbar(self.frame, orient=HORIZONTAL, command=self.output_box.xview)
-        x_scroll.pack(side=BOTTOM, fill=X)
+        self.output_box = scrolledtext.ScrolledText(self.frame,
+                                                    height=15,
+                                                    wrap=tk.NONE,
+                                                    font=("Courier New", 10),
+                                                    relief="solid",
+                                                    bd=1,
+                                                    xscrollcommand=None)
+        self.output_box.pack(fill=tk.BOTH, expand=True)
 
+        x_scroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.output_box.xview)
+        x_scroll.pack(side=tk.BOTTOM, fill=tk.X)
         self.output_box.config(xscrollcommand=x_scroll.set)
 
-        self.status_label = tk.Label(self.frame, text="", font=("Arial", 10))          
-        self.status_label.pack(pady=10)
+        self.status_label = tk.Label(self.frame,
+                                    text="",
+                                    font=("Arial", 10),
+                                    fg="red",
+                                    bg="#f7f7f7")
+        self.status_label.pack(pady=(10, 2))
 
-        self.execTimeLabel = tk.Label(self.frame, 
-                                      text="", 
-                                      font=("Arial", 10)
-                                    )
-        self.execTimeLabel.pack(pady=10)
+        self.execTimeLabel = tk.Label(self.frame,
+                                    text="",
+                                    font=("Arial", 10),
+                                    fg="gray",
+                                    bg="#f7f7f7")
+        self.execTimeLabel.pack(pady=(0, 10))
 
 
     def runQuery(self):    
@@ -56,7 +75,7 @@ class QueryView:
             text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
-            print(f"QUWERYERYEYREYR : {self.oracleConnector.currentQuery}")
+            # print(f"QUWERYERYEYREYR : {self.oracleConnector.currentQuery}")
 
 
     def displayQueryOutput(self):

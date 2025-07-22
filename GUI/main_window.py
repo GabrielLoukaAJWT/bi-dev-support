@@ -18,14 +18,22 @@ class MainWindow:
 
 
     def setupMainUI(self):
-        tk.Label(self.root, text="Enter Oracle DB Password:").pack(pady=(20, 5))
+        main_frame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
+        main_frame.pack(expand=True)
 
-        self.password_entry = tk.Entry(self.root, show="*", width=30)
-        self.password_entry.pack(pady=5)
+        title_label = tk.Label(main_frame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#f7f7f7")
+        title_label.pack(pady=(0, 20))
 
-        tk.Button(self.root, text="Connect", command=self.handleConnection).pack(pady=20)
+        tk.Label(main_frame, text="Enter Oracle DB Password:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
 
-        self.status_label = tk.Label(self.root, text="", font=("Arial", 10))
+        self.password_entry = tk.Entry(main_frame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
+        self.password_entry.pack(pady=5, ipady=4)
+
+        connect_btn = tk.Button(main_frame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white",
+                                activebackground="#45A049", padx=10, pady=5, command=self.handleConnection)
+        connect_btn.pack(pady=20)
+
+        self.status_label = tk.Label(main_frame, text="", font=("Arial", 10), fg="red", bg="#f7f7f7")
         self.status_label.pack(pady=10)
 
 
