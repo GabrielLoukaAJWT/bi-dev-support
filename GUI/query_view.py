@@ -6,16 +6,24 @@ import oracledb
 
 import Services.db_connection as cnx
 import Services.logging as log
-
+import GUI.analytics_view as analytics
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
+        self.root = root        
         self.oracleConnector = oracleConnector
-        self.queryLoggerManager = log.QueryLoggerManager()
+        self.queryLoggerManager = log.QueryLoggerManager()        
+
         self.queryLoggerManager.clearLogsFile()
 
+        self.setupUI()
+
+
+        print(F"QUERY VIEW CREATED")
+
+    def setupUI(self):
         # main query view
-        self.frame = tk.Frame(root, padx=20, pady=20, bg="#f7f7f7")
+        self.frame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)
 
         tk.Label(self.frame, text="Enter SQL Query", font=("Arial", 14, "bold"), bg="#f7f7f7").pack(pady=(0, 10))
@@ -79,6 +87,18 @@ class QueryView:
                                                 font=("Courier New", 10),
                                                 wrap="word")
         self.logs_box.pack(padx=10, pady=10, fill="both", expand=True)
+
+        # analytics 
+        self.accessAnalyticsButton = tk.Button(self.frame,
+                text="Access analytics",
+                font=("Arial", 12, "bold"),
+                bg="#2196F3",
+                fg="white",
+                activebackground="#1976D2",
+                padx=10,
+                pady=5,
+                command=self.openAnalyticsWindow
+        ).pack(pady=(0, 15))
 
 
     def runQuery(self):    
@@ -182,6 +202,11 @@ class QueryView:
         self.logs_box.delete("1.0", "end")
         self.logs_box.insert("1.0", log_content)
         self.logs_box.config(state="disabled")
+
+    def openAnalyticsWindow(self):
+        analytics.AnalyticsView(self.root)
+        print("Accessing analytics window\n")
+
 
 
 

@@ -15,6 +15,8 @@ class MainWindow:
         
         self.setupMainUI()
 
+        print(f"MAIN WINDOW CREATED\n")
+
 
     def setupMainUI(self):
         main_frame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
