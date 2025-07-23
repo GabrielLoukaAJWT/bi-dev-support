@@ -15,11 +15,15 @@ class QueryLoggerManager:
         self.logger = logging.getLogger(__name__)
 
 
-    def logSuccessfulQuery(self, type: str, query: models.Query):
+    def addLog(self, type: str, query: models.Query, msg: str):
         match type:
             case "info":
                 self.logger.info(
-                    f"Exec time : {query.execTime}"
+                    f"Exec time : {query.execTime}\n"
+                )
+            case "error":
+                self.logger.error(
+                    f"Detected error : {msg}"
                 )
 
 

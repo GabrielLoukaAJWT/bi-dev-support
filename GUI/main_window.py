@@ -11,7 +11,7 @@ class MainWindow:
 
         self.root = tk.Tk()
         self.root.title("SQL analytics")
-        self.root.geometry("1600x900")
+        self.root.geometry("800x600")
         
         self.setupMainUI()
 
@@ -68,3 +68,4 @@ class MainWindow:
     
     def initializeQueryViewPortConnection(self):
         self.queryView = qryview.QueryView(self.root, self.oracleConnector)
+        self.root.state('zoomed') 

@@ -98,7 +98,7 @@ class QueryView:
                 padx=10,
                 pady=5,
                 command=self.openAnalyticsWindow
-        ).pack(pady=(0, 15))
+        ).pack(pady=(0, 15), side=tk.TOP, anchor=tk.NE)
 
 
     def runQuery(self):    
@@ -113,14 +113,15 @@ class QueryView:
         if err:              
             self.status_label.config(text=err, fg="red")  
             self.execTimeLabel.config(text="")
+            self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
         else:
             self.status_label.config(text="") 
             text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
-            self.queryLoggerManager.logSuccessfulQuery("info", self.oracleConnector.currentQuery)
-            self.displayLogsOnToggle()
+            self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
 
+        self.displayLogsOnToggle()
 
     def displayQueryOutput(self):
         self.output_box.delete("1.0", tk.END)
