@@ -17,8 +17,6 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()   
 
-        # self.queryLoggerManager.clearLogsFile()
-
         self.setupUI()
 
 
@@ -31,7 +29,7 @@ class QueryView:
 
         tk.Label(self.frame, text="Enter SQL Query", font=("Arial", 14, "bold"), bg="#f7f7f7").pack(pady=(0, 10))
 
-        self.query_text = tk.Text(self.frame, height=12, width=80, font=("Courier New", 11), relief="solid", bd=1)
+        self.query_text = tk.Text(self.frame, height=12, width=150, font=("Courier New", 11), relief="solid", bd=1)
         self.query_text.pack(pady=(0, 15))
 
         tk.Button(self.frame,
@@ -46,7 +44,7 @@ class QueryView:
                 ).pack(pady=(0, 15))
 
         self.output_box = scrolledtext.ScrolledText(self.frame,
-                                                    height=15,
+                                                    height=12,
                                                     wrap=tk.NONE,
                                                     font=("Courier New", 10),
                                                     relief="solid",

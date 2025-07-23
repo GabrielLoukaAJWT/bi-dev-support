@@ -13,4 +13,7 @@ class AnalyticsManager:
             print(log) 
         print(f"count of queries ran = {len(self.logs)}")
 
+    def computeTotalQueries(self):
+        return str(len(self.logs))
+
 

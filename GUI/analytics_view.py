@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import Services.analytics as analytics
+import Services.database as db
 
 class AnalyticsView:
     def __init__(self, root, loggingManager):
@@ -13,6 +14,7 @@ class AnalyticsView:
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
+        self.databaseManager = db.DatabaseManager()
 
         self.setupUI()
 
@@ -32,7 +34,7 @@ class AnalyticsView:
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="groove", bd=1)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text="Total Queries: 0", font=("Arial", 11), bg="#ffffff")
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"Number of queries: {self.analyticsManager.computeTotalQueries()}", font=("Arial", 11), bg="#ffffff")
         self.totalQueriesLabel.pack(side="left", padx=20, pady=10)
 
         self.avgTimeLabel = tk.Label(self.summaryFrame, text="Avg Exec Time: 0.00s", font=("Arial", 11), bg="#ffffff")

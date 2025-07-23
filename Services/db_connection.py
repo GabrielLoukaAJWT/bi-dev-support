@@ -6,6 +6,7 @@ import datetime
 
 import constants as cta
 import Models.Query as qry
+import Services.database as db
 
 
 class OracleConnector:
@@ -17,6 +18,8 @@ class OracleConnector:
         self.queryOutput = []
 
         self.currentQuery = qry.Query(None, None, 0.0, [], [])
+
+        self.databaseManager = db.DatabaseManager()
         
 
     def getOracleInstantClient(self):
@@ -31,7 +34,7 @@ class OracleConnector:
             oracledb.init_oracle_client(lib_dir=cta.LIB_DIR)
             print("Initialized Oracle Instant Client.\n")
         except Exception as error:
-            print("Error connecting:  oracledb.init_oracle_client()")
+            print("Error connecting:  oracledb.init_oracle_client() ==> missing instant client files\n")
             print(error)
 
         try:    
@@ -79,6 +82,8 @@ class OracleConnector:
 
                 self.columnsNames = [row[0] for row in self.cursor.description]
                 self.currentQuery.columns = [row[0] for row in self.cursor.description]
+
+                self.databaseManager.addQueryToDB(self.currentQuery)
             
             except Exception as error:
                 return f"{error}\n"
