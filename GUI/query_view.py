@@ -1,18 +1,19 @@
 import tkinter as tk
 from tkinter import BOTH, BOTTOM, HORIZONTAL, NONE, X, Scrollbar, scrolledtext
 from tkinter import messagebox
-
 import oracledb
 
 import Services.db_connection as cnx
 import Services.logging as log
-import GUI.analytics_view as analytics
+import Services.analytics as analytics
+
+import GUI.analytics_view as analytics_view
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.root = root        
         self.oracleConnector = oracleConnector
-        self.queryLoggerManager = log.QueryLoggerManager()        
+        self.queryLoggerManager = log.QueryLoggerManager()   
 
         self.queryLoggerManager.clearLogsFile()
 
@@ -204,8 +205,10 @@ class QueryView:
         self.logs_box.insert("1.0", log_content)
         self.logs_box.config(state="disabled")
 
+        f.close()
+
     def openAnalyticsWindow(self):
-        analytics.AnalyticsView(self.root)
+        analytics_view.AnalyticsView(self.root)
         print("Accessing analytics window\n")
 
 

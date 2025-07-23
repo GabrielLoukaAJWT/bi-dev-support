@@ -1,15 +1,19 @@
-import logging 
+import logging
+import logging.handlers 
 
 import Models.Query as models
 
 class QueryLoggerManager:
     def __init__(self):
 
+        self.logsHandlerList = logging.handlers.BufferingHandler(
+            capacity=float('in')
+        )
         logging.basicConfig(
             format="{asctime} - {levelname} - {message}",
             style="{",
-            filename="./logs/queries.log",
-            level=logging.INFO
+            filename="./logs/queries.log"
+            # level=logging.INFO
         )
 
         self.logger = logging.getLogger(__name__)

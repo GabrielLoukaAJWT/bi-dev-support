@@ -1,11 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 
+import Services.analytics as analytics
+
 class AnalyticsView:
     def __init__(self, root):
         self.root = tk.Toplevel(root)
         self.root.title("Queries analytics")
-        self.root.geometry("1000x700")
+        self.root.geometry("1500x800")
+
+        self.analyticsManager = analytics.AnalyticsManager()
 
         self.setupUI()
 
@@ -63,7 +67,7 @@ class AnalyticsView:
 
         # Refresh button
         self.refreshButton = tk.Button(self.mainFrame, text="Refresh Analytics", font=("Arial", 11, "bold"),
-                                       bg="#4CAF50", fg="white", padx=10, pady=5)
+                                       bg="#4CAF50", fg="white", padx=10, pady=5, command=self.analyticsManager.readLogs)
         self.refreshButton.pack(pady=(10, 0))
         
         self.root.mainloop()
