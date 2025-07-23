@@ -15,7 +15,7 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()   
 
-        self.queryLoggerManager.clearLogsFile()
+        # self.queryLoggerManager.clearLogsFile()
 
         self.setupUI()
 
@@ -203,6 +203,7 @@ class QueryView:
         self.logs_box.config(state="normal")
         self.logs_box.delete("1.0", "end")
         self.logs_box.insert("1.0", log_content)
+        self.logs_box.see(tk.END)
         self.logs_box.config(state="disabled")
 
         f.close()

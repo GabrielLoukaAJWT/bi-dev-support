@@ -3,19 +3,14 @@
 
 class AnalyticsManager:
     def __init__(self, loggingManager):
-        self.logs = loggingManager.logs
+        self.loggingManager = loggingManager
+        self.logs = self.loggingManager.logs
 
         print(F"CREATED ANALYTICS MANAGER\n")
 
     def readLogs(self):
-        with open("./logs/queries.log") as f:
-            for line in f:
-                print(line)
-                # print(type(line))
-
-        f.close()
-        self.displayCurrentLogsFromHandler()
-
-    def displayCurrentLogsFromHandler(self):
-        print(self.logs)
+        for log in self.logs:
+            print(log) 
         print(f"count of queries ran = {len(self.logs)}")
+
+

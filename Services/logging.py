@@ -1,4 +1,5 @@
 import logging
+import re
 
 import Models.Query as models
 
@@ -16,7 +17,7 @@ class QueryLoggerManager:
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-        self.logs = []
+        self.logs = self.readLogFile("./logs/queries.log")
         listHandler = ListHandler(self.logs)
         listHandler.setFormatter(formatter)
 
@@ -40,6 +41,33 @@ class QueryLoggerManager:
         log_file = open('./logs/queries.log', "r+")
         log_file.truncate(0)
         log_file.close()
+
+
+    def readLogFile(self, filepath: str) -> list[str]:
+        log_entries = []
+        current_entry = ""
+
+        new_entry_pattern = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}")
+
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                for line in f:
+                    if new_entry_pattern.match(line):
+                        if current_entry:
+                            log_entries.append(current_entry.strip())
+                        current_entry = line
+                    else:
+                        current_entry += line
+                if current_entry:
+                    log_entries.append(current_entry.strip())
+        except FileNotFoundError:
+            print(f"Log file not found: {filepath}")
+        except Exception as e:
+            print(f"Error reading log file: {e}")
+
+        return log_entries
+        
+
 
 
 
