@@ -6,8 +6,10 @@ import Services.analytics as analytics
 class AnalyticsView:
     def __init__(self, root, loggingManager):
         self.root = tk.Toplevel(root)
+        self.root.grab_set()
         self.root.title("Queries analytics")
         self.root.geometry("1500x800")
+        self.root.attributes('-topmost', True)
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
@@ -19,7 +21,7 @@ class AnalyticsView:
         
 
     def setupUI(self):
-        self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
+        self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
         self.mainFrame.pack(fill="both", expand=True)
 
         # Title

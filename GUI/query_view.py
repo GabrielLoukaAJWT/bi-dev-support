@@ -12,6 +12,8 @@ import GUI.analytics_view as analytics_view
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.root = root        
+        self.tl = None
+
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()   
 
@@ -209,8 +211,9 @@ class QueryView:
         f.close()
 
     def openAnalyticsWindow(self):
-        analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
-        print("Accessing analytics window\n")
+        if self.tl is None:
+            self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
+            print("Accessing analytics window\n")
 
 
 
