@@ -208,7 +208,7 @@ class QueryView:
         f.close()
 
     def openAnalyticsWindow(self):
-        analytics_view.AnalyticsView(self.root)
+        analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
         print("Accessing analytics window\n")
 
 

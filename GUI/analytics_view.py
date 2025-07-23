@@ -4,12 +4,13 @@ from tkinter import ttk
 import Services.analytics as analytics
 
 class AnalyticsView:
-    def __init__(self, root):
+    def __init__(self, root, loggingManager):
         self.root = tk.Toplevel(root)
         self.root.title("Queries analytics")
         self.root.geometry("1500x800")
 
-        self.analyticsManager = analytics.AnalyticsManager()
+        self.loggerManager = loggingManager
+        self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
 
         self.setupUI()
 
