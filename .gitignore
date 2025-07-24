@@ -9,3 +9,6 @@
 
 # logs
 /logs
+
+# db
+/local_DB
