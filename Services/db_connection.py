@@ -53,7 +53,7 @@ class OracleConnector:
             return False, cta.DB_CONNECTION_ERROR
 
 
-    def runQuery(self, sqlQuery: str):
+    def runQuery(self, sqlQuery: str, queryName: str):
         if self.connection is None or self.cursor is None:
             print("Connection lost.\n")
 
@@ -65,6 +65,7 @@ class OracleConnector:
                 self.currentQuery.columns = []
                 self.currentQuery.rows = []
                 self.currentQuery.code = ""
+                self.currentQuery.name = ""
                 
                 self.columnsNames = []
                 self.queryOutput = []
@@ -77,6 +78,7 @@ class OracleConnector:
                 self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
 
                 self.currentQuery.code = sqlQuery
+                self.currentQuery.name = queryName
 
                 self.columnsNames = [row[0] for row in self.cursor.description]
                 self.currentQuery.columns = [row[0] for row in self.cursor.description]                

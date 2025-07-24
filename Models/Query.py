@@ -11,6 +11,7 @@ class Query:
     columns: list = field(default_factory=lambda: [])
     rows: list = field(default_factory=lambda: [])
     code: str = ""
+    name: str = ""
 
 
 @dataclass

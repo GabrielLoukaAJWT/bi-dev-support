@@ -45,7 +45,10 @@ class QueryView:
                                     font=("Courier New", 11),
                                     width=30,
                                     relief="solid",
-                                    bd=1)
+                                    bd=1,
+                                    validate="key",
+                                    validatecommand=((self.root.register(self.validateQueryNameEntry)), '%P')
+                                )
         self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
 
         tk.Label(query_input_frame,
@@ -134,13 +137,21 @@ class QueryView:
 
     def runQuery(self):    
         sql = self.query_text.get("1.0", tk.END).strip()
+        queryName = self.queryNameEntry.get()
+
         if not sql:
-            messagebox.showwarning("Empty Query", "Please enter a query.")
+            messagebox.showwarning("Empty query", "Please enter a query.")
+            self.status_label.config(text="") 
+            self.execTimeLabel.config(text="")
+            return
+        
+        if not queryName:
+            messagebox.showwarning("Empty query name", "Please enter a valid query name.")
             self.status_label.config(text="") 
             self.execTimeLabel.config(text="")
             return
 
-        err = self.oracleConnector.runQuery(sql)
+        err = self.oracleConnector.runQuery(sql, queryName)
         if err:              
             self.status_label.config(text=err, fg="red")  
             self.execTimeLabel.config(text="")
@@ -243,6 +254,9 @@ class QueryView:
         if self.tl is None:
             self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
             print("Accessing analytics window\n")
+
+    def validateQueryNameEntry(self, queryName):
+        return len(queryName) > 0 and len(queryName) <= 40
 
 
 

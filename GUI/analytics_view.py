@@ -72,7 +72,7 @@ class AnalyticsView:
 
         # Refresh button
         self.refreshButton = tk.Button(self.mainFrame, text="Refresh Analytics", font=("Arial", 11, "bold"),
-                                       bg="#4CAF50", fg="white", padx=10, pady=5)
+                                       bg="#4CAF50", fg="white", padx=10, pady=5, command=self.databaseManager.clearDB)
         self.refreshButton.pack(pady=(10, 0))
         
         self.root.mainloop()

@@ -18,10 +18,11 @@ class DatabaseManager:
         queryJSON = {
             "initTime": query.initTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "endTime": query.endTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
-            "execTime": f"{query.execTime.total_seconds():.3f} sec",
+            "execTime": f"{query.execTime.total_seconds():.6f} sec",
             "columns": [str(col) for col in query.columns],
             "rows": [[str(cell) for cell in row] for row in query.rows],
-            "code": query.code
+            "code": query.code,
+            "name": query.name
         }
 
         self.queriesLocalDB.add(queryJSON)
@@ -31,11 +32,5 @@ class DatabaseManager:
         return self.queriesLocalDB.getAll()
     
     
-    def json_serial(self, item):
-        serialJSON =  json.dumps(
-            item, indent=4, sort_keys=True, default=str
-        )
-
-        print(f"SERIAL JSON : {serialJSON}")
-
-        return serialJSON
+    def clearDB(self):
+        self.queriesLocalDB.deleteAll()
