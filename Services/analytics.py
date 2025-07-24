@@ -28,7 +28,8 @@ class AnalyticsManager:
             rowToInsert = (
                 query["name"],
                 query["execTime"],
-                query["initTime"]
+                query["initTime"],
+                query["nb_rows"]
             )
 
             rows.append(rowToInsert)

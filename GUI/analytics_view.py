@@ -63,14 +63,16 @@ class AnalyticsView:
         self.tableFrame = tk.LabelFrame(self.mainFrame, text="Queries", bg="#ffffff", padx=10, pady=10)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
-        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("Query", "Exec Time", "Timestamp"), show="headings")
+        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("Query", "Exec Time", "Timestamp", "Number of rows"), show="headings")
         self.listOfQueriesViewTree.heading("Query", text="Query")
         self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
-        self.listOfQueriesViewTree.heading("Timestamp", text="Timestamp")
+        self.listOfQueriesViewTree.heading("Timestamp", text="Executed on")
+        self.listOfQueriesViewTree.heading("Number of rows", text="Number of rows")
 
-        self.listOfQueriesViewTree.column("Query", anchor="w", width=500)
+        self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
         self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=100)
         self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
+        self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=180)
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
