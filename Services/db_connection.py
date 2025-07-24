@@ -6,7 +6,6 @@ import datetime
 
 import constants as cta
 import Models.Query as qry
-import Services.database as db
 
 
 class OracleConnector:
@@ -44,13 +43,13 @@ class OracleConnector:
             self.cursor = self.connection.cursor()
             print("Valid credentials - connection successful.\n")
 
-            return True, cta.DB_CONNECTION_SUCCESS
+            return True
         
         except Exception as error:
             print("Invalid credentials - connexion denied.\n")
             self.connection = None
 
-            return False, cta.DB_CONNECTION_ERROR
+            return False
 
 
     def runQuery(self, sqlQuery: str, queryName: str):

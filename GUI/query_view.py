@@ -1,11 +1,10 @@
 import tkinter as tk
-from tkinter import BOTH, BOTTOM, HORIZONTAL, NONE, X, Scrollbar, scrolledtext
+from tkinter import scrolledtext
 from tkinter import messagebox
 import oracledb
 
 import Services.db_connection as cnx
 import Services.logging as log
-import Services.analytics as analytics
 import Services.database as db
 
 import GUI.analytics_view as analytics_view
