@@ -57,10 +57,9 @@ class MainWindow:
     def showStatus(self, success: bool):
         if success:
             self.status_label.config(text="Connection successful :)", fg="green")  
-            self.root.update_idletasks()                       
         else:
             self.status_label.config(text="Invalid credentials - Connexion denied.", fg="red")  
-            self.root.update_idletasks()                       
+        self.status_label.update()
 
 
     def clearRoot(self):
