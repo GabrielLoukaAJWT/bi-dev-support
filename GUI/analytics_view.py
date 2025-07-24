@@ -81,11 +81,13 @@ class AnalyticsView:
                                        bg="#4CAF50", fg="white", padx=10, pady=5)
         self.refreshButton.pack(pady=(10, 0))
         
-        
-
-    
+            
     def fillQueriesTabTree(self):
         rows = self.analyticsManager.getRowsForTree()
         for row in rows:                    
             self.listOfQueriesViewTree.insert("", "end", values=row)
+
+
+    def getSlowestQuery(self):
+        self.analyticsManager.getQueryWithLongestExecTime()
 

@@ -41,11 +41,14 @@ class AnalyticsManager:
         data = self.databaseManager.getQueriesFromDB()
         idAndExecTimeMap = {}
 
-        for query in data:
-            idAndExecTimeMap[query["id"]] = query["execTime"]
+        if data:
+            for query in data:
+                idAndExecTimeMap[query["id"]] = query["execTime"]
 
-        slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
+            slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
 
-        return self.databaseManager.find(slowestQueryID)
+            return self.databaseManager.find(slowestQueryID)
+        else:
+            return {}
 
 
