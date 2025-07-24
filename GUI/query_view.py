@@ -46,7 +46,7 @@ class QueryView:
                                     relief="solid",
                                     bd=1,
                                     validate="key",
-                                    validatecommand=((self.root.register(self.validateQueryNameEntry)), '%P')
+                                    validatecommand=((self.root.register(self.validateQueryNameForEntry)), '%P')
                                 )
         self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
 
@@ -144,7 +144,7 @@ class QueryView:
             self.execTimeLabel.config(text="")
             return
         
-        if not queryName:
+        if not queryName or not self.validateQueryNameForRun(queryName):
             messagebox.showwarning("Empty query name", "Please enter a valid query name.")
             self.status_label.config(text="") 
             self.execTimeLabel.config(text="")
@@ -164,6 +164,7 @@ class QueryView:
             self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
 
         self.displayLogsOnToggle()
+
 
     def displayQueryOutput(self):
         self.output_box.delete("1.0", tk.END)
@@ -208,7 +209,6 @@ class QueryView:
             formatted.append(val_str.ljust(col_widths[i]))
         return " | ".join(formatted)
 
-
         
     def formatRows(self, columns, rows):
         col_widths = self.calculateColumnWidths(columns, rows)
@@ -234,6 +234,7 @@ class QueryView:
             self.toggle_logs_btn.config(text="Hide Logs")
         self.show_logs = not self.show_logs
 
+
     def displayLogsOnToggle(self):
         try:
             with open("./logs/queries.log", "r", encoding="utf-8") as f:
@@ -249,15 +250,19 @@ class QueryView:
 
         f.close()
 
+
     def openAnalyticsWindow(self):
         if self.tl is None:
             self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
             print("Accessing analytics window\n")
 
-    def validateQueryNameEntry(self, queryName):
+
+    def validateQueryNameForRun(self, queryName):
         return len(queryName) > 0 and len(queryName) <= 40
 
 
+    def validateQueryNameForEntry(self, queryName):
+        return len(queryName) <= 40
 
 
 

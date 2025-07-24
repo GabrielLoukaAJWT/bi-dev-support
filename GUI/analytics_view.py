@@ -83,15 +83,7 @@ class AnalyticsView:
 
     
     def fillQueriesTabTree(self):
-        data = self.databaseManager.getQueriesFromDB()
+        rows = self.analyticsManager.getRowsForTree()
+        for row in rows:                    
+            self.listOfQueriesViewTree.insert("", "end", values=row)
 
-        for query in data:
-            rowToInsert = (
-                query["name"],
-                query["execTime"],
-                query["initTime"]
-            )
-            
-            self.listOfQueriesViewTree.insert("", "end", values=rowToInsert)
-
-        
