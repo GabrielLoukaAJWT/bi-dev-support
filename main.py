@@ -1,7 +1,7 @@
 import GUI.main_window
 import GUI
 
-
+import Services.database as db
 
 
 def main():

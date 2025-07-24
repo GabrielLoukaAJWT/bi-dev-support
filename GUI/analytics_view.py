@@ -6,11 +6,11 @@ import Services.database as db
 
 class AnalyticsView:
     def __init__(self, root, loggingManager):
-        self.root = tk.Toplevel(root)
-        self.root.grab_set()
+        self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
         self.root.geometry("1500x800")
         self.root.attributes('-topmost', True)
+        self.root.grab_set()
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
@@ -72,7 +72,9 @@ class AnalyticsView:
 
         # Refresh button
         self.refreshButton = tk.Button(self.mainFrame, text="Refresh Analytics", font=("Arial", 11, "bold"),
-                                       bg="#4CAF50", fg="white", padx=10, pady=5, command=self.analyticsManager.readLogs)
+                                       bg="#4CAF50", fg="white", padx=10, pady=5)
         self.refreshButton.pack(pady=(10, 0))
         
         self.root.mainloop()
+
+        

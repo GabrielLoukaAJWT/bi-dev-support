@@ -19,8 +19,6 @@ class OracleConnector:
 
         self.currentQuery = qry.Query(None, None, 0.0, [], [])
 
-        self.databaseManager = db.DatabaseManager()
-        
 
     def getOracleInstantClient(self):
         print("ARCH:", platform.architecture())
@@ -81,9 +79,7 @@ class OracleConnector:
                 self.currentQuery.code = sqlQuery
 
                 self.columnsNames = [row[0] for row in self.cursor.description]
-                self.currentQuery.columns = [row[0] for row in self.cursor.description]
-
-                self.databaseManager.addQueryToDB(self.currentQuery)
+                self.currentQuery.columns = [row[0] for row in self.cursor.description]                
             
             except Exception as error:
                 return f"{error}\n"

@@ -6,6 +6,7 @@ import oracledb
 import Services.db_connection as cnx
 import Services.logging as log
 import Services.analytics as analytics
+import Services.database as db
 
 import GUI.analytics_view as analytics_view
 
@@ -16,6 +17,7 @@ class QueryView:
 
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()   
+        self.databaseManager = db.DatabaseManager()
 
         self.setupUI()
 
@@ -23,14 +25,42 @@ class QueryView:
         print(F"QUERY VIEW CREATED")
 
     def setupUI(self):
-        # main query view
         self.frame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)
 
+        # query section
+
         tk.Label(self.frame, text="Enter SQL Query", font=("Arial", 14, "bold"), bg="#f7f7f7").pack(pady=(0, 10))
 
-        self.query_text = tk.Text(self.frame, height=12, width=150, font=("Courier New", 11), relief="solid", bd=1)
-        self.query_text.pack(pady=(0, 15))
+        query_input_frame = tk.Frame(self.frame, bg="#f7f7f7")
+        query_input_frame.pack(fill="x", pady=(10, 20))
+
+        tk.Label(query_input_frame,
+                text="Query Name",
+                font=("Arial", 12),
+                anchor="w",
+                bg="#f7f7f7").pack(fill="x", padx=5, pady=(0, 5))
+
+        self.queryNameEntry = tk.Entry(query_input_frame,
+                                    font=("Courier New", 11),
+                                    width=30,
+                                    relief="solid",
+                                    bd=1)
+        self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
+
+        tk.Label(query_input_frame,
+                text="SQL Query",
+                font=("Arial", 12),
+                anchor="w",
+                bg="#f7f7f7").pack(fill="x", padx=5, pady=(15, 5))
+
+        self.query_text = tk.Text(query_input_frame,
+                                height=12,
+                                font=("Courier New", 11),
+                                relief="solid",
+                                bd=1)
+        self.query_text.pack(fill="x", padx=5, pady=(0, 10))
+
 
         tk.Button(self.frame,
                 text="Run Query",
@@ -121,6 +151,7 @@ class QueryView:
             self.execTimeLabel.config(text=text)
             self.displayQueryOutput()
             self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
+            self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
 
         self.displayLogsOnToggle()
 
