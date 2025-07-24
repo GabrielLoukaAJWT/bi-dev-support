@@ -14,8 +14,8 @@ class DatabaseManager:
             "initTime": query.initTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "endTime": query.endTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "execTime": f"{query.execTime.total_seconds():.6f} sec",
-            "columns": [str(col) for col in query.columns],
-            "rows": [[str(cell) for cell in row] for row in query.rows],
+            # "columns": [str(col) for col in query.columns],
+            # "rows": [[str(cell) for cell in row] for row in query.rows],
             "code": query.code,
             "name": query.name
         }

@@ -18,7 +18,11 @@ class AnalyticsView:
 
         self.setupUI()
 
+        self.fillQueriesTabTree()
+
         print(F"ANALYTICS WINDOW CREATED")
+
+        self.root.mainloop()
 
         
 
@@ -56,25 +60,38 @@ class AnalyticsView:
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
         # Table/log section
-        self.tableFrame = tk.LabelFrame(self.mainFrame, text="Top Slow Queries", bg="#ffffff", padx=10, pady=10)
+        self.tableFrame = tk.LabelFrame(self.mainFrame, text="Queries", bg="#ffffff", padx=10, pady=10)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
-        self.tree = ttk.Treeview(self.tableFrame, columns=("Query", "Exec Time", "Timestamp"), show="headings")
-        self.tree.heading("Query", text="Query")
-        self.tree.heading("Exec Time", text="Exec Time (s)")
-        self.tree.heading("Timestamp", text="Timestamp")
+        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("Query", "Exec Time", "Timestamp"), show="headings")
+        self.listOfQueriesViewTree.heading("Query", text="Query")
+        self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
+        self.listOfQueriesViewTree.heading("Timestamp", text="Timestamp")
 
-        self.tree.column("Query", anchor="w", width=500)
-        self.tree.column("Exec Time", anchor="center", width=100)
-        self.tree.column("Timestamp", anchor="center", width=180)
+        self.listOfQueriesViewTree.column("Query", anchor="w", width=500)
+        self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=100)
+        self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
 
-        self.tree.pack(fill="both", expand=True)
+        self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
         # Refresh button
         self.refreshButton = tk.Button(self.mainFrame, text="Refresh Analytics", font=("Arial", 11, "bold"),
-                                       bg="#4CAF50", fg="white", padx=10, pady=5, command=self.databaseManager.clearDB)
+                                       bg="#4CAF50", fg="white", padx=10, pady=5)
         self.refreshButton.pack(pady=(10, 0))
         
-        self.root.mainloop()
+        
+
+    
+    def fillQueriesTabTree(self):
+        data = self.databaseManager.getQueriesFromDB()
+
+        for query in data:
+            rowToInsert = (
+                query["name"],
+                query["execTime"],
+                query["initTime"]
+            )
+            
+            self.listOfQueriesViewTree.insert("", "end", values=rowToInsert)
 
         

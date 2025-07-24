@@ -6,8 +6,7 @@ import Services.database as db
 
 def main():
     app = GUI.main_window.MainWindow()
-    app.initializeMainView()
-
+    print(f"RUNNING APP : {app}")
 
 
 if __name__ == "__main__":

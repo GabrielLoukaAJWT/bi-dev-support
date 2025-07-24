@@ -18,6 +18,8 @@ class MainWindow:
 
         print(f"MAIN WINDOW CREATED\n")
 
+        self.root.mainloop()
+
 
     def setupMainUI(self):
         self.main_frame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
@@ -64,11 +66,7 @@ class MainWindow:
 
     def clearRoot(self):
         for widget in self.root.winfo_children():
-            widget.destroy()
-
-
-    def initializeMainView(self):
-        self.root.mainloop()
+            widget.destroy()        
 
     
     def initializeQueryViewPortConnection(self):
