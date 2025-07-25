@@ -24,114 +24,156 @@ class QueryView:
         print(F"QUERY VIEW CREATED")
 
     def setupUI(self):
+        self.root.configure(bg="#f7f7f7")
         self.frame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)
 
-        # query section
+        heading_font = ("Arial", 14, "bold")
+        label_font = ("Arial", 12)
+        input_font = ("Courier New", 11)
+        action_button_font = ("Arial", 12, "bold")
+        gray_bg = "#f7f7f7"
 
-        tk.Label(self.frame, text="Enter SQL Query", font=("Arial", 14, "bold"), bg="#f7f7f7").pack(pady=(0, 10))
+        # --- Title ---
+        tk.Label(
+            self.frame,
+            text="Enter SQL Query",
+            font=heading_font,
+            bg=gray_bg,
+            fg="#333"
+        ).pack(pady=(0, 15))
 
-        query_input_frame = tk.Frame(self.frame, bg="#f7f7f7")
+        # --- Query Input Section ---
+        query_input_frame = tk.Frame(self.frame, bg=gray_bg)
         query_input_frame.pack(fill="x", pady=(10, 20))
 
-        tk.Label(query_input_frame,
-                text="Query Name",
-                font=("Arial", 12),
-                anchor="w",
-                bg="#f7f7f7").pack(fill="x", padx=5, pady=(0, 5))
+        tk.Label(
+            query_input_frame,
+            text="Query Name",
+            font=label_font,
+            anchor="w",
+            bg=gray_bg,
+            fg="#444"
+        ).pack(fill="x", padx=5, pady=(0, 5))
 
-        self.queryNameEntry = tk.Entry(query_input_frame,
-                                    font=("Courier New", 11),
-                                    width=30,
-                                    relief="solid",
-                                    bd=1,
-                                    validate="key",
-                                    validatecommand=((self.root.register(self.validateQueryNameForEntry)), '%P')
-                                )
+        self.queryNameEntry = tk.Entry(
+            query_input_frame,
+            font=input_font,
+            relief="solid",
+            bd=1,
+            validate="key",
+            validatecommand=((self.root.register(self.validateQueryNameForEntry)), '%P')
+        )
         self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
 
-        tk.Label(query_input_frame,
-                text="SQL Query",
-                font=("Arial", 12),
-                anchor="w",
-                bg="#f7f7f7").pack(fill="x", padx=5, pady=(15, 5))
+        tk.Label(
+            query_input_frame,
+            text="SQL Query",
+            font=label_font,
+            anchor="w",
+            bg=gray_bg,
+            fg="#444"
+        ).pack(fill="x", padx=5, pady=(15, 5))
 
-        self.query_text = tk.Text(query_input_frame,
-                                height=12,
-                                font=("Courier New", 11),
-                                relief="solid",
-                                bd=1)
+        self.query_text = tk.Text(
+            query_input_frame,
+            height=12,
+            font=input_font,
+            relief="solid",
+            bd=1
+        )
         self.query_text.pack(fill="x", padx=5, pady=(0, 10))
 
+        # --- Run Query Button ---
+        tk.Button(
+            self.frame,
+            text="▶ Run Query",
+            font=action_button_font,
+            bg="#2196F3",
+            fg="white",
+            activebackground="#1976D2",
+            activeforeground="white",
+            padx=15,
+            pady=8,
+            cursor="hand2",
+            command=self.runQuery
+        ).pack(pady=(0, 20))
 
-        tk.Button(self.frame,
-                text="Run Query",
-                font=("Arial", 12, "bold"),
-                bg="#2196F3",
-                fg="white",
-                activebackground="#1976D2",
-                padx=10,
-                pady=5,
-                command=self.runQuery
-                ).pack(pady=(0, 15))
-
-        self.output_box = scrolledtext.ScrolledText(self.frame,
-                                                    height=12,
-                                                    wrap=tk.NONE,
-                                                    font=("Courier New", 10),
-                                                    relief="solid",
-                                                    bd=1,
-                                                    xscrollcommand=None)
-        self.output_box.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        # --- Output Box ---
+        self.output_box = scrolledtext.ScrolledText(
+            self.frame,
+            height=12,
+            wrap=tk.NONE,
+            font=("Courier New", 10),
+            relief="solid",
+            bd=1
+        )
+        self.output_box.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
 
         x_scroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.output_box.xview)
         x_scroll.pack(side=tk.BOTTOM, fill=tk.X)
         self.output_box.config(xscrollcommand=x_scroll.set)
 
-        self.status_label = tk.Label(self.frame,
-                                    text="",
-                                    font=("Arial", 10),
-                                    fg="red",
-                                    bg="#f7f7f7")
+        # --- Status Labels ---
+        self.status_label = tk.Label(
+            self.frame,
+            text="",
+            font=("Arial", 10),
+            fg="red",
+            bg=gray_bg
+        )
         self.status_label.pack(pady=(10, 2))
 
-        self.execTimeLabel = tk.Label(self.frame,
-                                    text="",
-                                    font=("Arial", 14),
-                                    fg="gray",
-                                    bg="#f7f7f7")
-        self.execTimeLabel.pack(pady=(0, 10))
+        self.execTimeLabel = tk.Label(
+            self.frame,
+            text="",
+            font=("Arial", 14),
+            fg="gray",
+            bg=gray_bg
+        )
+        self.execTimeLabel.pack(pady=(0, 15))
 
-
-        # log panel
+        # --- Toggle Logs Button ---
         self.show_logs = False
-        self.toggle_logs_btn = tk.Button(self.frame,
-                                        text="Show Logs",
-                                        font=("Arial", 10),
-                                        command=self.toggleLogs,
-                                        bg="#eeeeee")
+        self.toggle_logs_btn = tk.Button(
+            self.frame,
+            text="🪵 Show Logs",
+            font=("Arial", 10),
+            command=self.toggleLogs,
+            bg="#eeeeee",
+            fg="#333",
+            relief="flat",
+            cursor="hand2"
+        )
         self.toggle_logs_btn.pack(pady=(10, 0))
 
+        # --- Logs Frame ---
         self.logs_frame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1)
-        self.logs_box = scrolledtext.ScrolledText(self.logs_frame,
-                                                height=10,
-                                                width=100,
-                                                state="disabled",
-                                                font=("Courier New", 10),
-                                                wrap="word")
+        self.logs_box = scrolledtext.ScrolledText(
+            self.logs_frame,
+            height=10,
+            width=100,
+            state="disabled",
+            font=("Courier New", 10),
+            wrap="word"
+        )
         self.logs_box.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # analytics 
-        self.accessAnalyticsButton = tk.Button(self.frame,
-                text="Access analytics",
-                font=("Arial", 12, "bold"),
-                bg="#2196F3",
-                fg="white",
-                activebackground="#1976D2",
-                padx=10,
-                pady=5,
-                command=self.openAnalyticsWindow
-        ).pack(pady=(0, 15), side=tk.TOP, anchor=tk.NE)
+        # --- Access Analytics Button ---
+        self.accessAnalyticsButton = tk.Button(
+            self.frame,
+            text="📈 Access Analytics",
+            font=action_button_font,
+            bg="#4CAF50",
+            fg="white",
+            activebackground="#45a049",
+            padx=15,
+            pady=8,
+            command=self.openAnalyticsWindow,
+            cursor="hand2"
+        )
+        self.accessAnalyticsButton.pack(pady=(10, 5), anchor="e")
+
 
 
     def runQuery(self):    
