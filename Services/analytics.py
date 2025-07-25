@@ -26,6 +26,7 @@ class AnalyticsManager:
 
         for query in data:
             rowToInsert = (
+                query["id"],
                 query["name"],
                 query["execTime"],
                 query["initTime"],
@@ -40,15 +41,19 @@ class AnalyticsManager:
     def getQueryWithLongestExecTime(self):
         data = self.databaseManager.getQueriesFromDB()
         idAndExecTimeMap = {}
+        slowestQueryID = 0
 
-        if data:
-            for query in data:
-                idAndExecTimeMap[query["id"]] = query["execTime"]
+        try:
+            if data:
+                for query in data:
+                    idAndExecTimeMap[query["id"]] = query["execTime"]
 
-            slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
+                slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
 
-            return self.databaseManager.find(slowestQueryID)
-        else:
-            return {}
+            return self.databaseManager.queriesLocalDB.find(slowestQueryID)
+        
+        except Exception as error:
+            print(f"{error}")
+        
 
 

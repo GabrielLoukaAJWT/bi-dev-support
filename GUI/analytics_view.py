@@ -19,6 +19,8 @@ class AnalyticsView:
         self.setupUI()
 
         self.fillQueriesTabTree()
+        
+        self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
 
         print(F"ANALYTICS WINDOW CREATED")
 
@@ -44,7 +46,7 @@ class AnalyticsView:
         self.avgTimeLabel = tk.Label(self.summaryFrame, text="Avg Exec Time: 0.00s", font=("Arial", 11), bg="#ffffff")
         self.avgTimeLabel.pack(side="left", padx=20, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text="Slowest Query: N/A", font=("Arial", 11), bg="#ffffff")
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"Slowest Query: {self.getSlowestQuery()}", font=("Arial", 11), bg="#ffffff")
         self.slowQueryLabel.pack(side="left", padx=20, pady=10)
 
         # Chart section
@@ -63,13 +65,15 @@ class AnalyticsView:
         self.tableFrame = tk.LabelFrame(self.mainFrame, text="Queries", bg="#ffffff", padx=10, pady=10)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
-        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("Query", "Exec Time", "Timestamp", "Number of rows"), show="headings")
+        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("ID", "Query", "Exec Time", "Timestamp", "Number of rows"), show="headings")
+        self.listOfQueriesViewTree.heading("ID", text="Id")
         self.listOfQueriesViewTree.heading("Query", text="Query")
         self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
         self.listOfQueriesViewTree.heading("Timestamp", text="Executed on")
         self.listOfQueriesViewTree.heading("Number of rows", text="Number of rows")
 
-        self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
+        self.listOfQueriesViewTree.column("ID", anchor="center", width=200)
+        self.listOfQueriesViewTree.column("Query", anchor="center", width=400)
         self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=100)
         self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
         self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=180)
@@ -89,5 +93,21 @@ class AnalyticsView:
 
 
     def getSlowestQuery(self):
-        self.analyticsManager.getQueryWithLongestExecTime()
+        id = self.analyticsManager.getQueryWithLongestExecTime()["id"] 
+        name = self.analyticsManager.getQueryWithLongestExecTime()["name"]
+        time = self.analyticsManager.getQueryWithLongestExecTime()["execTime"]
+        return f"{name} | {time}"        
+
+
+    def selectQueryFromTreeView(self, event=None):
+        slowestId = self.analyticsManager.getQueryWithLongestExecTime()["id"] 
+
+        for item_id in self.listOfQueriesViewTree.get_children():
+            item = self.listOfQueriesViewTree.item(item_id)
+
+            if item["values"][0] == slowestId: 
+                self.listOfQueriesViewTree.selection_set(item_id)  
+                self.listOfQueriesViewTree.focus(item_id)         
+                self.listOfQueriesViewTree.see(item_id)  
+                break
 
