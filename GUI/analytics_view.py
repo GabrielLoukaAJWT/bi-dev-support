@@ -29,61 +29,93 @@ class AnalyticsView:
         
 
     def setupUI(self):
+        self.root.configure(bg="#f7f7f7")
+
         self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
         self.mainFrame.pack(fill="both", expand=True)
 
         # Title
-        title = tk.Label(self.mainFrame, text="Query Performance Analytics", font=("Arial", 18, "bold"), bg="#f7f7f7")
+        title = tk.Label(
+            self.mainFrame,
+            text="📊 Query Performance Analytics",
+            font=("Arial", 20, "bold"),
+            fg="#333333",
+            bg="#f7f7f7"
+        )
         title.pack(pady=(0, 20))
 
-        # Summary section (query count, avg time, etc.)
-        self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="groove", bd=1)
+        # Summary section
+        self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"Number of queries: {self.analyticsManager.computeTotalQueries()}", font=("Arial", 11), bg="#ffffff")
-        self.totalQueriesLabel.pack(side="left", padx=20, pady=10)
+        label_style = {"font": ("Arial", 11), "bg": "#ffffff", "fg": "#333"}
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text="Avg Exec Time: 0.00s", font=("Arial", 11), bg="#ffffff")
-        self.avgTimeLabel.pack(side="left", padx=20, pady=10)
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}", **label_style)
+        self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"Slowest Query: {self.getSlowestQuery()}", font=("Arial", 11), bg="#ffffff")
-        self.slowQueryLabel.pack(side="left", padx=20, pady=10)
+        self.avgTimeLabel = tk.Label(self.summaryFrame, text="⏱ Avg Exec Time: 0.00s", **label_style)
+        self.avgTimeLabel.pack(side="left", padx=30, pady=10)
+
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}", fg="#d9534f", bg="#ffffff", font = ("Arial", 11))
+        self.slowQueryLabel.pack(side="left", padx=30, pady=10)
+        self.slowQueryLabel.config(cursor="hand2")
 
         # Chart section
         self.chartFrame = tk.Frame(self.mainFrame, bg="#f7f7f7")
         self.chartFrame.pack(fill="both", expand=True, pady=(20, 10))
 
-        # Left chart area
-        self.leftChart = tk.LabelFrame(self.chartFrame, text="Execution Time Distribution", bg="#ffffff", padx=10, pady=10)
+        frame_style = {"bg": "#ffffff", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
+
+        self.leftChart = tk.LabelFrame(self.chartFrame, text="Execution Time Distribution", **frame_style)
         self.leftChart.pack(side="left", fill="both", expand=True, padx=(0, 10))
 
-        # Right chart area
-        self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour", bg="#ffffff", padx=10, pady=10)
+        self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour", **frame_style)
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
         # Table/log section
-        self.tableFrame = tk.LabelFrame(self.mainFrame, text="Queries", bg="#ffffff", padx=10, pady=10)
+        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"))
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
-        self.listOfQueriesViewTree = ttk.Treeview(self.tableFrame, columns=("ID", "Query", "Exec Time", "Timestamp", "Number of rows"), show="headings")
-        self.listOfQueriesViewTree.heading("ID", text="Id")
+        style = ttk.Style()
+        style.configure("Treeview.Heading", font=("Arial", 11, "bold"), background="#eaeaea")
+        style.configure("Treeview", font=("Courier New", 10), rowheight=25)
+
+        self.listOfQueriesViewTree = ttk.Treeview(
+            self.tableFrame,
+            columns=("ID", "Query", "Exec Time", "Timestamp", "Number of rows"),
+            show="headings",
+            selectmode="browse"
+        )
+
+        self.listOfQueriesViewTree.heading("ID", text="ID")
         self.listOfQueriesViewTree.heading("Query", text="Query")
         self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
-        self.listOfQueriesViewTree.heading("Timestamp", text="Executed on")
-        self.listOfQueriesViewTree.heading("Number of rows", text="Number of rows")
+        self.listOfQueriesViewTree.heading("Timestamp", text="Executed On")
+        self.listOfQueriesViewTree.heading("Number of rows", text="Rows")
 
-        self.listOfQueriesViewTree.column("ID", anchor="center", width=200)
-        self.listOfQueriesViewTree.column("Query", anchor="center", width=400)
-        self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=100)
+        self.listOfQueriesViewTree.column("ID", anchor="center", width=120)
+        self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
+        self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=120)
         self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
-        self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=180)
+        self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=140)
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
         # Refresh button
-        self.refreshButton = tk.Button(self.mainFrame, text="Refresh Analytics", font=("Arial", 11, "bold"),
-                                       bg="#4CAF50", fg="white", padx=10, pady=5)
+        self.refreshButton = tk.Button(
+            self.mainFrame,
+            text="🔄 Refresh Analytics",
+            font=("Arial", 11, "bold"),
+            bg="#4CAF50",
+            fg="white",
+            padx=15,
+            pady=8,
+            relief="flat",
+            cursor="hand2",
+            activebackground="#45a049"
+        )
         self.refreshButton.pack(pady=(10, 0))
+
         
             
     def fillQueriesTabTree(self):

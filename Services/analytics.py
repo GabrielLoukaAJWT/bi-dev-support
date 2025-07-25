@@ -17,7 +17,7 @@ class AnalyticsManager:
 
 
     def computeTotalQueries(self):
-        return str(len(self.logs))
+        return str(len(self.databaseManager.getQueriesFromDB()))
     
 
     def getRowsForTree(self):
