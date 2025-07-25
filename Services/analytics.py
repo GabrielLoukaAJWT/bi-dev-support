@@ -60,11 +60,13 @@ class AnalyticsManager:
         data = self.databaseManager.getQueriesFromDB()
         totalExecTime = 0
 
-        if data:
+        if data and len(data) != 0:
             for query in data:
                 totalExecTime += query["execTime"]
 
-        return "{:.6f}".format(totalExecTime / self.computeTotalQueries())
+            return "{:.6f}".format(totalExecTime / self.computeTotalQueries())
+        else:
+            return 0
         
 
 

@@ -56,7 +56,7 @@ class AnalyticsView:
         self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.getAverageExecTime())} sec", **label_style)
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}", fg="#d9534f", bg="#ffffff", font = ("Arial", 11))
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#ffffff", font = ("Arial", 11))
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
@@ -116,8 +116,22 @@ class AnalyticsView:
         )
         self.refreshButton.pack(pady=(10, 0))
 
-        
-            
+        self.deleteDbButton = tk.Button(
+            self.mainFrame,
+            text="🗑️ Delete Local DB",
+            font=("Arial", 10, "bold"),
+            bg="#f44336",
+            fg="white",
+            activebackground="#d32f2f",
+            padx=12,
+            pady=6,
+            cursor="hand2",
+            command=self.deleteDB
+        )
+        self.deleteDbButton.pack(pady=(10, 0), anchor="e")
+
+
+                    
     def fillQueriesTabTree(self):
         rows = self.analyticsManager.getRowsForTree()
         for row in rows:                    
@@ -125,10 +139,14 @@ class AnalyticsView:
 
 
     def getSlowestQuery(self):
-        id = self.analyticsManager.getQueryWithLongestExecTime()["id"] 
-        name = self.analyticsManager.getQueryWithLongestExecTime()["name"]
-        time = self.analyticsManager.getQueryWithLongestExecTime()["execTime"]
-        return f"{name} | {time}"        
+        query = self.analyticsManager.getQueryWithLongestExecTime()
+        if query:
+            id = query["id"] 
+            name = query["name"]
+            time = query["execTime"]
+            return f"{name} | {time}"        
+        else:
+            return ""
 
 
     def selectQueryFromTreeView(self, event=None):
@@ -146,4 +164,19 @@ class AnalyticsView:
 
     def getAverageExecTime(self):
         return self.analyticsManager.computeAvgExecTime()
+    
+
+    def deleteDB(self):
+        self.databaseManager.clearDB()
+        self.mainFrame.after(0, self.updateUI)
+
+    
+    def updateUI(self):
+        self.totalQueriesLabel.config(text="Number of queries: 0")
+        self.avgTimeLabel.config(text="Avg Exec Time: 0.00s")
+        self.slowQueryLabel.config(text="🐢 Slowest Query: None")
+
+        for row in self.listOfQueriesViewTree.get_children():
+            self.listOfQueriesViewTree.delete(row)
+
 
