@@ -29,4 +29,5 @@ class DatabaseManager:
     
     
     def clearDB(self):
-        self.queriesLocalDB.deleteAll()
+        if len(self.getQueriesFromDB()) > 0:
+            self.queriesLocalDB.deleteAll()

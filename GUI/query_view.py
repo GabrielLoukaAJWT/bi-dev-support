@@ -1,13 +1,19 @@
+import threading
+import oracledb
+
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
-import oracledb
+
+from multiprocessing import Queue, Process
+import queue
 
 import Services.db_connection as cnx
 import Services.logging as log
 import Services.database as db
 
 import GUI.analytics_view as analytics_view
+
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
@@ -18,6 +24,11 @@ class QueryView:
         self.queryLoggerManager = log.QueryLoggerManager()   
         self.databaseManager = db.DatabaseManager()
 
+        # have to create a process for running a query because it crashes when clicking the window while running
+        
+        self.query_result_queue = queue.Queue()
+
+        self.queryLoggerManager.clearLogsFile()
         self.setupUI()
 
 
@@ -85,7 +96,7 @@ class QueryView:
         self.query_text.pack(fill="x", padx=5, pady=(0, 10))
 
         # --- Run Query Button ---
-        tk.Button(
+        self.runQueryButton = tk.Button(
             self.frame,
             text="▶ Run Query",
             font=action_button_font,
@@ -97,7 +108,8 @@ class QueryView:
             pady=8,
             cursor="hand2",
             command=self.runQuery
-        ).pack(pady=(0, 20))
+        )
+        self.runQueryButton.pack(pady=(0, 20))
 
         # --- Output Box ---
         self.output_box = scrolledtext.ScrolledText(
@@ -175,8 +187,34 @@ class QueryView:
         self.accessAnalyticsButton.pack(pady=(10, 5), anchor="e")
 
 
+    def runQueryThread(self, sql, query_name):
+        try:
+            err = self.oracleConnector.runQuery(sql, query_name)
+
+            if err:              
+                self.status_label.config(text=err, fg="red")  
+                self.execTimeLabel.config(text="")
+                self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
+            else:
+                self.status_label.config(text="") 
+                text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
+                self.execTimeLabel.config(text=text)
+
+                self.displayQueryOutput()
+
+                self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
+                self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
+
+            self.query_result_queue.put(("success", err))
+
+            self.runQueryButton.config(state="normal")
+        except Exception as e:
+            self.query_result_queue.put(("error", str(e)))
+
 
     def runQuery(self):    
+        self.runQueryButton.config(state="disabled")
+
         sql = self.query_text.get("1.0", tk.END).strip()
         queryName = self.queryNameEntry.get()
 
@@ -192,18 +230,11 @@ class QueryView:
             self.execTimeLabel.config(text="")
             return
 
-        err = self.oracleConnector.runQuery(sql, queryName)
-        if err:              
-            self.status_label.config(text=err, fg="red")  
-            self.execTimeLabel.config(text="")
-            self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
-        else:
-            self.status_label.config(text="") 
-            text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
-            self.execTimeLabel.config(text=text)
-            self.displayQueryOutput()
-            self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
-            self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
+        self.status_label.config(text="⏳ Running query...", fg="blue")
+        self.execTimeLabel.config(text="")
+
+        thread = threading.Thread(target=self.runQueryThread, args=(sql, queryName))
+        thread.start()        
 
         self.displayLogsOnToggle()
 
@@ -290,7 +321,6 @@ class QueryView:
         self.logs_box.see(tk.END)
         self.logs_box.config(state="disabled")
 
-        f.close()
 
 
     def openAnalyticsWindow(self):
