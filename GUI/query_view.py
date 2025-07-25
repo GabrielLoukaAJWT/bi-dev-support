@@ -24,8 +24,7 @@ class QueryView:
         self.queryLoggerManager = log.QueryLoggerManager()   
         self.databaseManager = db.DatabaseManager()
 
-        # have to create a process for running a query because it crashes when clicking the window while running
-        
+        # have to create a process for running a query because it crashes when clicking the window while running        
         self.query_result_queue = queue.Queue()
 
         self.queryLoggerManager.clearLogsFile()
