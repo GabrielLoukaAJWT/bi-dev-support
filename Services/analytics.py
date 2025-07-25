@@ -17,7 +17,7 @@ class AnalyticsManager:
 
 
     def computeTotalQueries(self):
-        return str(len(self.databaseManager.getQueriesFromDB()))
+        return len(self.databaseManager.getQueriesFromDB())
     
 
     def getRowsForTree(self):
@@ -54,6 +54,17 @@ class AnalyticsManager:
         
         except Exception as error:
             print(f"{error}")
+
+
+    def computeAvgExecTime(self):
+        data = self.databaseManager.getQueriesFromDB()
+        totalExecTime = 0
+
+        if data:
+            for query in data:
+                totalExecTime += query["execTime"]
+
+        return "{:.6f}".format(totalExecTime / self.computeTotalQueries())
         
 
 

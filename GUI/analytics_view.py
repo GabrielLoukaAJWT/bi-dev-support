@@ -53,7 +53,7 @@ class AnalyticsView:
         self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}", **label_style)
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text="⏱ Avg Exec Time: 0.00s", **label_style)
+        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.getAverageExecTime())} sec", **label_style)
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
         self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}", fg="#d9534f", bg="#ffffff", font = ("Arial", 11))
@@ -73,7 +73,7 @@ class AnalyticsView:
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
         # Table/log section
-        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"))
+        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"), height=200)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
         style = ttk.Style()
@@ -142,4 +142,8 @@ class AnalyticsView:
                 self.listOfQueriesViewTree.focus(item_id)         
                 self.listOfQueriesViewTree.see(item_id)  
                 break
+
+
+    def getAverageExecTime(self):
+        return self.analyticsManager.computeAvgExecTime()
 
