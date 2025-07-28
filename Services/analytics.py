@@ -76,7 +76,7 @@ class AnalyticsManager:
 
         for log in self.logs:
             errorSplit = log.split('-')
-            print(errorSplit)
+            
             if errorSplit[4] == " ERROR ":
                 error = errorSplit[5] + errorSplit[6].split('\n')[0]
                 errors.append(error)
@@ -89,4 +89,11 @@ class AnalyticsManager:
         return mostCommonError
         
 
+    def getExecTimes(self):
+        data = self.databaseManager.getQueriesFromDB()
+        execTimesArr = []
 
+        for query in data:
+            execTimesArr.append(query["execTime"])
+
+        return execTimesArr
