@@ -17,7 +17,8 @@ class AnalyticsView:
     def __init__(self, root, loggingManager):
         self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
-        self.root.geometry("1500x800")
+        self.root.state('zoomed') 
+        # self.root.geometry("1500x800")
         # self.root.attributes('-topmost', True)
         # self.root.grab_set()
 
@@ -203,30 +204,41 @@ class AnalyticsView:
 
     def setupPlot(self):
         plt.style.use('_mpl-gallery')
+
+        # since matplotlib has to work on the main thread, but im using a thread for plotting (because might have some huge plots),
+        # the app stays blocked (not crashing though)
+        # also, im not generating a GUI specifically for the plots (for now), its just binded to the canvas
         matplotlib.use('agg')
 
 
     def plotThread(self):
         try:
+            execTimes = self.analyticsManager.getExecTimes()
+            nbRows = self.analyticsManager.getNbRowsOutput()
 
-            x = 0.5 + np.arange(8)
-            y = [4.8, 5.5, 3.5, 4.6, 6.5, 6.6, 2.6, 3.0]
+            y = np.array(execTimes)
+            x = np.array(nbRows)
 
-            # plot
-            fig, ax = plt.subplots()
+            for widget in self.leftChart.winfo_children():
+                widget.destroy()
 
-            ax.bar(x, y, width=1, edgecolor="white", linewidth=0.7)
+            fig, ax = plt.subplots(figsize=(4, 4))
+            ax.scatter(x, y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
 
-            ax.set(xlim=(0, 8), xticks=np.arange(1, 8),
-                ylim=(0, 8), yticks=np.arange(1, 8))
+            ax.set_xlabel("Number of Rows", fontsize=11)
+            ax.set_ylabel("Execution Time (s)", fontsize=11)
+            ax.grid(True)
+
+            plt.tight_layout()
             
             canvas = tkplot.FigureCanvasTkAgg(fig, master=self.leftChart)
-            canvas._tkcanvas.pack(fill=tk.BOTH, expand=True)
-        
+            canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
             self.query_result_queue.put(("success", "canvas created"))
 
         except Exception as e:
             self.query_result_queue.put(("error", str(e)))
+
 
 
     def getPlots(self):

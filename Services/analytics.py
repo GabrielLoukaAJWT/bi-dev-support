@@ -97,3 +97,23 @@ class AnalyticsManager:
             execTimesArr.append(query["execTime"])
 
         return execTimesArr
+    
+
+    def getExecDates(self):
+        data = self.databaseManager.getQueriesFromDB()
+        execDates = []
+
+        for query in data:
+            execDates.append(query["execTime"])
+
+        return execDates
+    
+
+    def getNbRowsOutput(self):
+        data = self.databaseManager.getQueriesFromDB()
+        nbRows = []
+
+        for query in data:
+            nbRows.append(query["nb_rows"])
+
+        return nbRows

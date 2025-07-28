@@ -18,7 +18,7 @@ class DatabaseManager:
             # "columns": [str(col) for col in query.columns],
             # "rows": [[str(cell) for cell in row] for row in query.rows],
             "code": query.code,
-            "nb_rows" : str(len(query.rows))
+            "nb_rows" : len(query.rows)
         }
 
         self.queriesLocalDB.add(queryJSON)
