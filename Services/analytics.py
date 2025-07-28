@@ -124,10 +124,9 @@ class AnalyticsManager:
 
         hour_counts = Counter(hours)
 
-        all_hours = list(range(8, 17))
+        # might be problematic for different timezones maybe?
+        all_hours = list(range(8, 18))
         counts = [hour_counts.get(h, 0) for h in all_hours]
-
-        print(counts, all_hours)
 
         return (all_hours, counts)
 

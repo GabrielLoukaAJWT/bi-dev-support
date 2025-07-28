@@ -17,33 +17,37 @@ class AnalyticsView:
     def __init__(self, root, loggingManager):
         self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
-        self.root.state('zoomed') 
-        # self.root.geometry("1500x800")
-        # self.root.attributes('-topmost', True)
-        # self.root.grab_set()
+        self.root.state('zoomed')
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
         self.databaseManager = db.DatabaseManager()
 
-        self.setupUI()
+        self.query_result_queue = queue.Queue()
 
-        self.fillQueriesTabTree()
-
-        self.setupPlot()
+        self.setupPlotSettings()
+        self.initializeAnalyticsData()
         self.getPlots()
+        self.setupUI()        
+        self.fillQueriesTabTree()
         
         self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
-
-        self.query_result_queue = queue.Queue()
+        # self.root.bind("<Destroy>", lambda event: self.onDestroy)
 
         print(F"ANALYTICS WINDOW CREATED")
 
         self.root.mainloop()
 
-        
 
+    def onDestroy(self, event):
+        if event.widget != self.root:
+            return
+        parent = self.root.winfo_toplevel()
+        parent.accessAnalyticsButton.config(state="normal")
+
+        
     def setupUI(self):
+        print(f"SETING UP THE MAIN UI")
         self.root.configure(bg="#f7f7f7")
 
         self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
@@ -63,17 +67,17 @@ class AnalyticsView:
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.totQueries}",font = ("Arial", 11))
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.getAverageExecTime())} sec", font = ("Arial", 11))
+        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.avgExectTime)} sec", font = ("Arial", 11))
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#fff56e", font = ("Arial", 11))
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.slowestQuery}" , bg="#fff56e", font = ("Arial", 11))
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
-        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.getMostCommonError()}" , bg="#ffa962", font = ("Arial", 11))
+        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.commonErr}" , bg="#ffa962", font = ("Arial", 11))
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
         # Chart section
@@ -128,7 +132,8 @@ class AnalyticsView:
             pady=8,
             relief="flat",
             cursor="hand2",
-            activebackground="#45a049"
+            activebackground="#45a049",
+            command=self.initializeAnalyticsData
         )
         self.refreshButton.pack(pady=(10, 0))
 
@@ -146,6 +151,15 @@ class AnalyticsView:
         )
         self.deleteDbButton.pack(pady=(10, 0), anchor="e")
 
+
+    def initializeAnalyticsData(self):
+        print(f"FETCHING THE DATA FOR ANALYTICS")        
+        self.totQueries = self.analyticsManager.computeTotalQueries()
+        self.avgExectTime = self.analyticsManager.computeAvgExecTime()
+        self.slowestQuery = self.getSlowestQuery()
+        self.commonErr = self.analyticsManager.getMostCommonErrorLog()
+
+        
 
                     
     def fillQueriesTabTree(self):
@@ -200,7 +214,7 @@ class AnalyticsView:
             self.listOfQueriesViewTree.delete(row)
 
 
-    def setupPlot(self):
+    def setupPlotSettings(self):
         plt.style.use('_mpl-gallery')
 
         # since matplotlib has to work on the main thread, but im using a thread for plotting (because might have some huge plots),
@@ -228,46 +242,53 @@ class AnalyticsView:
 
 
     def showExecTimeCorrelation(self):
+        # Clear all widgets from the chart frame
+        for widget in self.leftChart.winfo_children():
+            widget.destroy()
+
         execTimes = self.analyticsManager.getExecTimes()
         nbRows = self.analyticsManager.getNbRowsOutput()
 
-        y = np.array(execTimes)
-        x = np.array(nbRows)
+        self.y = np.array(execTimes)
+        self.x = np.array(nbRows)
 
         for widget in self.leftChart.winfo_children():
             widget.destroy()
 
-        fig, ax = plt.subplots(figsize=(3, 3))
-        ax.scatter(x, y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
+        self.fig1, self.ax1 = plt.subplots(figsize=(3, 3))
+        self.ax1.scatter(self.x, self.y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
 
-        ax.set_xlabel("Number of Rows", fontsize=12)
-        ax.set_ylabel("Execution Time (s)", fontsize=12)
-        ax.tick_params(axis='x', labelrotation=45)
-        ax.grid(True)
+        self.ax1.set_xlabel("Number of Rows", fontsize=12)
+        self.ax1.set_ylabel("Execution Time (s)", fontsize=12)
+        self.ax1.tick_params(axis='x', labelrotation=45)
+        self.ax1.grid(True)
 
         plt.tight_layout()
         
-        canvas = tkplot.FigureCanvasTkAgg(fig, master=self.leftChart)
-        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.canvas1 = tkplot.FigureCanvasTkAgg(self.fig1, master=self.leftChart)
+        self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     
-    def showQueriesPerHour(self):
+    def showQueriesPerHour(self):    
+        for widget in self.rightChart.winfo_children():
+            widget.destroy()    
         hours, counts = self.analyticsManager.getNbQueriesPerHour()
 
-        fig, ax = plt.subplots(figsize=(3, 3))
-        ax.bar(hours, counts, color="#4CAF50")
-        ax.set_xticks(hours)
-        ax.set_xlabel("Hour of Day", fontsize=12)
-        ax.set_ylabel("Number of Queries", fontsize=12)
-        ax.grid(axis="y", linestyle="--", alpha=0.6)
+        self.fig2, self.ax2 = plt.subplots(figsize=(3, 3))
+        self.ax2.bar(hours, counts, color="#4CAF50")
+        self.ax2.set_xticks(hours)
+        self.ax2.set_xlabel("Hour of Day", fontsize=12)
+        self.ax2.set_ylabel("Number of Queries", fontsize=12)
+        self.ax2.grid(axis="y", linestyle="--", alpha=0.6)
 
         plt.tight_layout()
         
-        canvas = tkplot.FigureCanvasTkAgg(fig, master=self.rightChart)
-        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.canvas2 = tkplot.FigureCanvasTkAgg(self.fig2, master=self.rightChart)
+        self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 
     def getPlots(self):
+        print(f"CREATING THE PLOTS")
         thread1 = threading.Thread(target=self.threadCorrelation)
         thread1.start() 
         

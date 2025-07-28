@@ -322,9 +322,9 @@ class QueryView:
 
 
     def openAnalyticsWindow(self):
-        if self.tl is None:
-            self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
-            print("Accessing analytics window\n")
+        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
+        self.accessAnalyticsButton.config(state="disabled")
+        print("Accessing analytics window\n")
 
 
     def validateQueryNameForRun(self, queryName):
