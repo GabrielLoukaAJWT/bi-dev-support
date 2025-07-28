@@ -253,8 +253,6 @@ class AnalyticsView:
     
     def showQueriesPerHour(self):
         hours, counts = self.analyticsManager.getNbQueriesPerHour()
-        print(f"HOURS : {hours}")
-        print(f"COUNTS : {counts}")
 
         fig, ax = plt.subplots(figsize=(3, 3))
         ax.bar(hours, counts, color="#4CAF50")

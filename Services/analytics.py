@@ -118,11 +118,8 @@ class AnalyticsManager:
         timestamps = []
         for ts in timeStrings:
             date = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S,%f")
-            print(date)
             timestamps.append(date)
         
-        print(f"TIME STRINGS {timestamps}")
-
         hours = [ts.hour for ts in timestamps]
 
         hour_counts = Counter(hours)
