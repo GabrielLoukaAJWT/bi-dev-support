@@ -69,4 +69,24 @@ class AnalyticsManager:
             return 0
         
 
+    def getMostCommonErrorLog(self):
+        mostCommonError = ""
+        errors = []
+        errorMap = {}
+
+        for log in self.logs:
+            errorSplit = log.split('-')
+            print(errorSplit)
+            if errorSplit[4] == " ERROR ":
+                error = errorSplit[5] + errorSplit[6].split('\n')[0]
+                errors.append(error)
+
+        for err in errors:
+            errorMap[err] = errorMap.get(err, 0) + 1
+        
+        mostCommonError = max(errorMap, key=errorMap.get)
+
+        return mostCommonError
+        
+
 

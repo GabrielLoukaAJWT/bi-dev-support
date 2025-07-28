@@ -17,7 +17,7 @@ class QueryLoggerManager:
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-        self.logs = self.readLogFile("./logs/queries.log")
+        self.logs = self.getQueriesFromFile("./logs/queries.log")
         listHandler = ListHandler(self.logs)
         listHandler.setFormatter(formatter)
 
@@ -33,7 +33,7 @@ class QueryLoggerManager:
                 )
             case "error":
                 self.logger.error(
-                    f"Detected error : {msg}"
+                    f"{msg}"
                 )
 
 
@@ -43,7 +43,7 @@ class QueryLoggerManager:
         log_file.close()
 
 
-    def readLogFile(self, filepath: str) -> list[str]:
+    def getQueriesFromFile(self, filepath: str) -> list[str]:
         log_entries = []
         current_entry = ""
 

@@ -60,6 +60,9 @@ class AnalyticsView:
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
+        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.getMostCommonError()}" , bg="#ffa962", font = ("Arial", 11))
+        self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
+        
         # Chart section
         self.chartFrame = tk.Frame(self.mainFrame, bg="#f7f7f7")
         self.chartFrame.pack(fill="both", expand=True, pady=(20, 10))
@@ -164,6 +167,10 @@ class AnalyticsView:
 
     def getAverageExecTime(self):
         return self.analyticsManager.computeAvgExecTime()
+    
+
+    def getMostCommonError(self):
+        return self.analyticsManager.getMostCommonErrorLog()
     
 
     def deleteDB(self):

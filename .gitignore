@@ -12,3 +12,8 @@
 
 # db
 /local_DB
+
+# build
+/build
+/dist
+/main.spec
