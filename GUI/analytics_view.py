@@ -63,15 +63,13 @@ class AnalyticsView:
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        label_style = {"font": ("Arial", 11), "bg": "#ffffff", "fg": "#333"}
-
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}", **label_style)
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.getAverageExecTime())} sec", **label_style)
+        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.getAverageExecTime())} sec", font = ("Arial", 11))
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#ffffff", font = ("Arial", 11))
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#fff56e", font = ("Arial", 11))
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
@@ -79,12 +77,12 @@ class AnalyticsView:
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
         # Chart section
-        self.chartFrame = tk.Frame(self.mainFrame, bg="#f7f7f7", height=500)
-        self.chartFrame.pack(fill="both", expand=True, pady=(20, 10))
-
         frame_style = {"bg": "#ffffff", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
 
-        self.leftChart = tk.LabelFrame(self.chartFrame, text="Execution Time Distribution", **frame_style)
+        self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General stats", height=500, **frame_style)
+        self.chartFrame.pack(fill=tk.BOTH, expand=True, pady=(10, 10))
+
+        self.leftChart = tk.LabelFrame(self.chartFrame, text="Correlation between number of rows and execution time", **frame_style)
         self.leftChart.pack(side="left", fill="both", expand=True, padx=(0, 10))
 
         self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour", **frame_style)
@@ -211,36 +209,69 @@ class AnalyticsView:
         matplotlib.use('agg')
 
 
-    def plotThread(self):
-        try:
-            execTimes = self.analyticsManager.getExecTimes()
-            nbRows = self.analyticsManager.getNbRowsOutput()
+    def threadCorrelation(self):
+        try:            
+            self.showExecTimeCorrelation()
+            self.query_result_queue.put(("success", "canvas created"))
 
-            y = np.array(execTimes)
-            x = np.array(nbRows)
-
-            for widget in self.leftChart.winfo_children():
-                widget.destroy()
-
-            fig, ax = plt.subplots(figsize=(4, 4))
-            ax.scatter(x, y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
-
-            ax.set_xlabel("Number of Rows", fontsize=11)
-            ax.set_ylabel("Execution Time (s)", fontsize=11)
-            ax.grid(True)
-
-            plt.tight_layout()
-            
-            canvas = tkplot.FigureCanvasTkAgg(fig, master=self.leftChart)
-            canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
+        except Exception as e:
+            self.query_result_queue.put(("error", str(e)))
+    
+    
+    def threadQueriesPerHour(self):
+        try:            
+            self.showQueriesPerHour()
             self.query_result_queue.put(("success", "canvas created"))
 
         except Exception as e:
             self.query_result_queue.put(("error", str(e)))
 
 
+    def showExecTimeCorrelation(self):
+        execTimes = self.analyticsManager.getExecTimes()
+        nbRows = self.analyticsManager.getNbRowsOutput()
+
+        y = np.array(execTimes)
+        x = np.array(nbRows)
+
+        for widget in self.leftChart.winfo_children():
+            widget.destroy()
+
+        fig, ax = plt.subplots(figsize=(3, 3))
+        ax.scatter(x, y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
+
+        ax.set_xlabel("Number of Rows", fontsize=12)
+        ax.set_ylabel("Execution Time (s)", fontsize=12)
+        ax.tick_params(axis='x', labelrotation=45)
+        ax.grid(True)
+
+        plt.tight_layout()
+        
+        canvas = tkplot.FigureCanvasTkAgg(fig, master=self.leftChart)
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    
+    def showQueriesPerHour(self):
+        hours, counts = self.analyticsManager.getNbQueriesPerHour()
+        print(f"HOURS : {hours}")
+        print(f"COUNTS : {counts}")
+
+        fig, ax = plt.subplots(figsize=(3, 3))
+        ax.bar(hours, counts, color="#4CAF50")
+        ax.set_xticks(hours)
+        ax.set_xlabel("Hour of Day", fontsize=12)
+        ax.set_ylabel("Number of Queries", fontsize=12)
+        ax.grid(axis="y", linestyle="--", alpha=0.6)
+
+        plt.tight_layout()
+        
+        canvas = tkplot.FigureCanvasTkAgg(fig, master=self.rightChart)
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
 
     def getPlots(self):
-        thread = threading.Thread(target=self.plotThread)
-        thread.start() 
+        thread1 = threading.Thread(target=self.threadCorrelation)
+        thread1.start() 
+        
+        thread2 = threading.Thread(target=self.threadQueriesPerHour)
+        thread2.start() 

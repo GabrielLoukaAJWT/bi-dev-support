@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import Counter
 import Services.database as db
 
 class AnalyticsManager:
@@ -117,3 +119,27 @@ class AnalyticsManager:
             nbRows.append(query["nb_rows"])
 
         return nbRows
+
+
+    def getNbQueriesPerHour(self):
+        data = self.databaseManager.getQueriesFromDB()
+        timeStrings = [query["initTime"] for query in data]
+        timestamps = []
+        for ts in timeStrings:
+            date = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S,%f")
+            print(date)
+            timestamps.append(date)
+        
+        print(f"TIME STRINGS {timestamps}")
+
+        hours = [ts.hour for ts in timestamps]
+
+        hour_counts = Counter(hours)
+
+        all_hours = list(range(8, 17))
+        counts = [hour_counts.get(h, 0) for h in all_hours]
+
+        print(counts, all_hours)
+
+        return (all_hours, counts)
+
