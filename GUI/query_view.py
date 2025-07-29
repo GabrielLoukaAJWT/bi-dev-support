@@ -29,7 +29,7 @@ class QueryView:
 
         # self.queryLoggerManager.clearLogsFile()
         self.setupUI()
-        self.checkIfAnalyticsViewWindowClosed()
+        self.enableButtonAfterAnalyticsWindowClosed()
 
         print(F"QUERY VIEW CREATED")
 
@@ -324,9 +324,10 @@ class QueryView:
 
     def openAnalyticsWindow(self):
         self.accessAnalyticsButton.config(state="disabled")
-        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, on_close_callback=self.checkIfAnalyticsViewWindowClosed)
+        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, on_close_callback=self.enableButtonAfterAnalyticsWindowClosed)
 
-    def checkIfAnalyticsViewWindowClosed(self):
+
+    def enableButtonAfterAnalyticsWindowClosed(self):
         self.accessAnalyticsButton.config(state="normal")
         print("ANALYTICS WINDOW HAS BEEN CLOSED => ENABLE BTN")
 

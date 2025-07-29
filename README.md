@@ -8,10 +8,9 @@ This project is a Python-based tool that connects to an Oracle database using th
 
 ## Features
 
-- Connects securely to Oracle using `oracledb` (thick mode)
-- Executes arbitrary SQL queries from `.sql` files or inline input
-- Measures execution time (runtime benchmarking)
-- Saves query history and performance logs (CSV or SQLite)
+- Allows to run SQL Queries via input
+- Shows performace analytics
+- Saves query history and performance logs
 - Easy-to-use and extendable structure
 
 ---
@@ -21,9 +20,7 @@ This project is a Python-based tool that connects to an Oracle database using th
 - Python 3.13
 - [`oracledb`](https://python-oracledb.readthedocs.io/en/latest/index.html)
 - Oracle Instant Client (for thick mode)
-<!-- - `getpass` for secure credential input -->
-- `pandas` and `matplotlib` (optional for analysis/plotting)
-- `sqlite3` (optional for logging history)
+- `matplotlib`, `numpy`
 
 ---
 
@@ -40,3 +37,9 @@ but the current Oracle account was created with 10G.
 - Option 1 : change password for the database user
 - Option 2 : Install Oracle Instant Client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
                          and put the directory to be used for the connection (See LIB_DIR in constants.py)
+
+### 3. Install packages
+Run 'pip install -r requirements.txt'
+
+### 4. How to build
+To build the project, run ''
