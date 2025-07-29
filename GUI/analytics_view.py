@@ -1,34 +1,29 @@
 import queue
 import threading
 import tkinter as tk
-from tkinter import Widget, ttk
-
+from tkinter import ttk
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as tkplot
-from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-
 import numpy as np
 
 import Services.analytics as analytics
 import Services.database as db
 
-import GUI.query_view as query_view
-
 
 class AnalyticsView:
-    def __init__(self, root, loggingManager, on_close_callback=None):
+    def __init__(self, root, loggingManager, onCloseCallback=None):
         self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
         self.root.state('zoomed')
         
-        self.on_close_callback = on_close_callback
+        self.onCloseCallback = onCloseCallback
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
         self.databaseManager = db.DatabaseManager()
 
-        self.query_result_queue = queue.Queue()
+        self.plotsQueue = queue.Queue()
 
         self.setupUI()        
         self.setupPlotSettings()
@@ -43,20 +38,19 @@ class AnalyticsView:
         self.root.mainloop()
 
 
-    def onDestroy(self):
-        if self.on_close_callback:
-            self.on_close_callback()
+    def onDestroy(self) -> None:
+        if self.onCloseCallback:
+            self.onCloseCallback()
         self.root.destroy()
 
         
-    def setupUI(self):
+    def setupUI(self) -> None:
         print(f"SETING UP THE MAIN UI")
         self.root.configure(bg="#f7f7f7")
 
         self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
         self.mainFrame.pack(fill="both", expand=True)
 
-        # Title
         title = tk.Label(
             self.mainFrame,
             text="📊 Query Performance Analytics",
@@ -66,7 +60,6 @@ class AnalyticsView:
         )
         title.pack(pady=(0, 20))
 
-        # Summary section
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
@@ -83,7 +76,6 @@ class AnalyticsView:
         self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.analyticsManager.getMostCommonErrorLog()}" , bg="#ffa962", font = ("Arial", 11))
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
-        # Chart section
         frame_style = {"bg": "#ffffff", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
 
         self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General stats", height=500, **frame_style)
@@ -95,7 +87,6 @@ class AnalyticsView:
         self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour", **frame_style)
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
-        # Table/log section
         self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"), height=100)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
@@ -124,7 +115,6 @@ class AnalyticsView:
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
-        # Refresh button
         self.refreshButton = tk.Button(
             self.mainFrame,
             text="🔄 Refresh Analytics",
@@ -155,7 +145,7 @@ class AnalyticsView:
         self.deleteDbButton.pack(pady=(10, 0), anchor="e")
 
 
-    def refreshAnalytics(self):
+    def refreshAnalytics(self) -> None:
         self.totalQueriesLabel.config(text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}")
         self.avgTimeLabel.config(text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec")
         self.slowQueryLabel.config(text=f"🐢 Slowest Query: {self.getSlowestQuery()}")
@@ -164,19 +154,20 @@ class AnalyticsView:
         self.fillQueriesTabTree()
         
                     
-    def fillQueriesTabTree(self):
+    def fillQueriesTabTree(self) -> None:
         for row in self.listOfQueriesViewTree.get_children():
             self.listOfQueriesViewTree.delete(row)
 
         rows = self.analyticsManager.getRowsForTree()
+
         for row in rows:                    
             self.listOfQueriesViewTree.insert("", "end", values=row)        
 
 
-    def getSlowestQuery(self):
+    def getSlowestQuery(self) -> str:
         query = self.analyticsManager.getQueryWithLongestExecTime()
+
         if query:
-            id = query["id"] 
             name = query["name"]
             time = query["execTime"]
             return f"{name} | {time}"        
@@ -184,7 +175,7 @@ class AnalyticsView:
             return "None"
 
 
-    def selectQueryFromTreeView(self, event=None):
+    def selectQueryFromTreeView(self, event=None) -> None:
         slowestId = self.analyticsManager.getQueryWithLongestExecTime()["id"] 
 
         for item_id in self.listOfQueriesViewTree.get_children():
@@ -195,24 +186,16 @@ class AnalyticsView:
                 self.listOfQueriesViewTree.focus(item_id)         
                 self.listOfQueriesViewTree.see(item_id)  
                 break
-
-
-    def getAverageExecTime(self):
-        return self.analyticsManager.computeAvgExecTime()
     
 
-    def getMostCommonError(self):
-        return self.analyticsManager.getMostCommonErrorLog()
-    
-
-    def deleteDB(self):
+    def deleteDB(self) -> None:
         self.databaseManager.clearDB()
         self.mainFrame.after(0, self.clearUiAfterDeletion)
 
     
-    def clearUiAfterDeletion(self):
-        self.totalQueriesLabel.config(text="Number of queries: 0")
-        self.avgTimeLabel.config(text="Avg Exec Time: 0 sec")
+    def clearUiAfterDeletion(self) -> None:
+        self.totalQueriesLabel.config(text="🧮 Total queries: 0")
+        self.avgTimeLabel.config(text="⏱ Avg Exec Time: 0 sec")
         self.slowQueryLabel.config(text="🐢 Slowest Query: None")
 
         for row in self.listOfQueriesViewTree.get_children():
@@ -225,7 +208,7 @@ class AnalyticsView:
             widget.destroy()
 
 
-    def setupPlotSettings(self):
+    def setupPlotSettings(self) -> None:
         plt.style.use('_mpl-gallery')
 
         # since matplotlib has to work on the main thread, but im using a thread for plotting (because might have some huge plots),
@@ -234,25 +217,25 @@ class AnalyticsView:
         matplotlib.use('agg')
 
 
-    def threadCorrelation(self):
+    def threadCorrelation(self) -> None:
         try:            
             self.showExecTimeCorrelation()
-            self.query_result_queue.put(("success", "canvas created"))
+            self.plotsQueue.put(("success", "canvas created"))
 
         except Exception as e:
-            self.query_result_queue.put(("error", str(e)))
+            self.plotsQueue.put(("error", str(e)))
     
     
-    def threadQueriesPerHour(self):
+    def threadQueriesPerHour(self) -> None:
         try:            
             self.showQueriesPerHour()
-            self.query_result_queue.put(("success", "canvas created"))
+            self.plotsQueue.put(("success", "canvas created"))
 
         except Exception as e:
-            self.query_result_queue.put(("error", str(e)))
+            self.plotsQueue.put(("error", str(e)))
 
 
-    def showExecTimeCorrelation(self):
+    def showExecTimeCorrelation(self) -> None:
         execTimes = self.analyticsManager.getExecTimes()
         nbRows = self.analyticsManager.getNbRowsOutput()
 
@@ -273,7 +256,7 @@ class AnalyticsView:
         self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     
-    def showQueriesPerHour(self):    
+    def showQueriesPerHour(self) -> None:    
         hours, counts = self.analyticsManager.getNbQueriesPerHour()
 
         self.fig2, self.ax2 = plt.subplots(figsize=(3, 3))
@@ -289,7 +272,7 @@ class AnalyticsView:
         self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 
-    def getPlots(self):
+    def getPlots(self) -> None:
         print(f"CREATING THE PLOTS")
         for widget in self.leftChart.winfo_children():
             widget.destroy()

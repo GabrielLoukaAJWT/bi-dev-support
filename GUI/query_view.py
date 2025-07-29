@@ -1,25 +1,20 @@
 import threading
 import oracledb
-
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
-
-from multiprocessing import Queue, Process
 import queue
 
 import Services.db_connection as cnx
 import Services.logging as log
 import Services.database as db
-
 import GUI.analytics_view as analytics_view
 
-analyticsViewOpened = False
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
         self.root = root        
-        self.tl = None
+        self.analyticsPage = None
 
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager()   
@@ -33,42 +28,41 @@ class QueryView:
 
         print(F"QUERY VIEW CREATED")
 
-    def setupUI(self):
+    
+    def setupUI(self) -> None:
         self.root.configure(bg="#f7f7f7")
         self.frame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
         self.frame.pack(fill="both", expand=True)
 
-        heading_font = ("Arial", 14, "bold")
-        label_font = ("Arial", 12)
-        input_font = ("Courier New", 11)
-        action_button_font = ("Arial", 12, "bold")
-        gray_bg = "#f7f7f7"
+        headingFont = ("Arial", 14, "bold")
+        labelFont = ("Arial", 12)
+        inputFont = ("Courier New", 11)
+        actionBtnFont = ("Arial", 12, "bold")
+        gray = "#f7f7f7"
 
-        # --- Title ---
         tk.Label(
             self.frame,
             text="Enter SQL Query",
-            font=heading_font,
-            bg=gray_bg,
+            font=headingFont,
+            bg=gray,
             fg="#333"
         ).pack(pady=(0, 15))
 
-        # --- Query Input Section ---
-        query_input_frame = tk.Frame(self.frame, bg=gray_bg)
-        query_input_frame.pack(fill="x", pady=(10, 20))
+        queryInputFrame = tk.Frame(self.frame, bg=gray)
+        queryInputFrame.pack(fill="x", pady=(10, 20))
 
         tk.Label(
-            query_input_frame,
+            queryInputFrame,
             text="Query Name",
-            font=label_font,
+            font=labelFont,
             anchor="w",
-            bg=gray_bg,
+            bg=gray,
             fg="#444"
         ).pack(fill="x", padx=5, pady=(0, 5))
 
         self.queryNameEntry = tk.Entry(
-            query_input_frame,
-            font=input_font,
+            queryInputFrame,
+            font=inputFont,
             relief="solid",
             bd=1,
             validate="key",
@@ -77,28 +71,27 @@ class QueryView:
         self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
 
         tk.Label(
-            query_input_frame,
+            queryInputFrame,
             text="SQL Query",
-            font=label_font,
+            font=labelFont,
             anchor="w",
-            bg=gray_bg,
+            bg=gray,
             fg="#444"
         ).pack(fill="x", padx=5, pady=(15, 5))
 
-        self.query_text = tk.Text(
-            query_input_frame,
+        self.queryText = tk.Text(
+            queryInputFrame,
             height=12,
-            font=input_font,
+            font=inputFont,
             relief="solid",
             bd=1
         )
-        self.query_text.pack(fill="x", padx=5, pady=(0, 10))
+        self.queryText.pack(fill="x", padx=5, pady=(0, 10))
 
-        # --- Run Query Button ---
         self.runQueryButton = tk.Button(
             self.frame,
             text="▶ Run Query",
-            font=action_button_font,
+            font=actionBtnFont,
             bg="#2196F3",
             fg="white",
             activebackground="#1976D2",
@@ -110,8 +103,7 @@ class QueryView:
         )
         self.runQueryButton.pack(pady=(0, 20))
 
-        # --- Output Box ---
-        self.output_box = scrolledtext.ScrolledText(
+        self.outputBox = scrolledtext.ScrolledText(
             self.frame,
             height=12,
             wrap=tk.NONE,
@@ -119,34 +111,32 @@ class QueryView:
             relief="solid",
             bd=1
         )
-        self.output_box.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+        self.outputBox.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
 
-        x_scroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.output_box.xview)
-        x_scroll.pack(side=tk.BOTTOM, fill=tk.X)
-        self.output_box.config(xscrollcommand=x_scroll.set)
+        xScroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.outputBox.xview)
+        xScroll.pack(side=tk.BOTTOM, fill=tk.X)
+        self.outputBox.config(xscrollcommand=xScroll.set)
 
-        # --- Status Labels ---
-        self.status_label = tk.Label(
+        self.statusLabel = tk.Label(
             self.frame,
             text="",
             font=("Arial", 10),
             fg="red",
-            bg=gray_bg
+            bg=gray
         )
-        self.status_label.pack(pady=(10, 2))
+        self.statusLabel.pack(pady=(10, 2))
 
         self.execTimeLabel = tk.Label(
             self.frame,
             text="",
             font=("Arial", 14),
             fg="gray",
-            bg=gray_bg
+            bg=gray
         )
         self.execTimeLabel.pack(pady=(0, 15))
 
-        # --- Toggle Logs Button ---
-        self.show_logs = False
-        self.toggle_logs_btn = tk.Button(
+        self.areLogsShown = False
+        self.toggleLogsBtn = tk.Button(
             self.frame,
             text="🪵 Show Logs",
             font=("Arial", 10),
@@ -156,25 +146,23 @@ class QueryView:
             relief="flat",
             cursor="hand2"
         )
-        self.toggle_logs_btn.pack(pady=(10, 0))
+        self.toggleLogsBtn.pack(pady=(10, 0))
 
-        # --- Logs Frame ---
-        self.logs_frame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1)
-        self.logs_box = scrolledtext.ScrolledText(
-            self.logs_frame,
+        self.logsFrame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1)
+        self.logsBox = scrolledtext.ScrolledText(
+            self.logsFrame,
             height=10,
             width=100,
             state="disabled",
             font=("Courier New", 10),
             wrap="word"
         )
-        self.logs_box.pack(padx=10, pady=10, fill="both", expand=True)
+        self.logsBox.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # --- Access Analytics Button ---
         self.accessAnalyticsButton = tk.Button(
             self.frame,
             text="📈 Access Analytics",
-            font=action_button_font,
+            font=actionBtnFont,
             bg="#4CAF50",
             fg="white",
             activebackground="#45a049",
@@ -186,17 +174,17 @@ class QueryView:
         self.accessAnalyticsButton.pack(pady=(10, 5), anchor="e")
 
 
-    def runQueryThread(self, sql, query_name):
+    def runQueryThread(self, sql: str, queryName: str) -> None:
         self.runQueryButton.config(state="disabled")
         try:
-            err = self.oracleConnector.runQuery(sql, query_name)
+            err = self.oracleConnector.runQuery(sql, queryName)
 
             if err:              
-                self.status_label.config(text=err, fg="red")  
+                self.statusLabel.config(text=err, fg="red")  
                 self.execTimeLabel.config(text="")
                 self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
             else:
-                self.status_label.config(text="") 
+                self.statusLabel.config(text="") 
                 text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
                 self.execTimeLabel.config(text=text)
 
@@ -212,23 +200,23 @@ class QueryView:
             self.query_result_queue.put(("error", str(e)))
 
 
-    def runQuery(self):            
-        sql = self.query_text.get("1.0", tk.END).strip()
+    def runQuery(self) -> None:            
+        sql = self.queryText.get("1.0", tk.END).strip()
         queryName = self.queryNameEntry.get()
 
         if not sql:
             messagebox.showwarning("Empty query", "Please enter a query.")
-            self.status_label.config(text="") 
+            self.statusLabel.config(text="") 
             self.execTimeLabel.config(text="")
             return
         
         if not queryName or not self.validateQueryNameForRun(queryName):
             messagebox.showwarning("Empty query name", "Please enter a valid query name.")
-            self.status_label.config(text="") 
+            self.statusLabel.config(text="") 
             self.execTimeLabel.config(text="")
             return
 
-        self.status_label.config(text="⏳ Running query...", fg="blue")
+        self.statusLabel.config(text="⌛️ Running query...", fg="blue")
         self.execTimeLabel.config(text="")
 
         thread = threading.Thread(target=self.runQueryThread, args=(sql, queryName))
@@ -237,22 +225,27 @@ class QueryView:
         self.displayLogsOnToggle()
 
 
-    def displayQueryOutput(self):
-        self.output_box.delete("1.0", tk.END)
+    def displayQueryOutput(self) -> None:
+        self.outputBox.delete("1.0", tk.END)
+
         if not self.oracleConnector.currentQuery.rows:
-            self.output_box.insert(tk.END, "No results found.")
+            self.outputBox.insert(tk.END, "No results found.")
             return
+        
         formatted = self.formatRows(
             self.oracleConnector.currentQuery.columns, 
             self.oracleConnector.currentQuery.rows)
-        self.output_box.insert(tk.END, formatted)
+        
+        self.outputBox.insert(tk.END, formatted)
 
 
-    def calculateColumnWidths(self, columns, rows):
+    def calculateColumnWidths(self, columns: list, rows: list) -> list[int]:
         widths = [len(col) for col in columns]
+
         for row in rows:
             if len(row) != len(columns):
                 raise ValueError("Row length does not match number of columns")
+            
             for i, val in enumerate(row):
                 if isinstance(val, oracledb.LOB):
                     val_str = "[LOB]"
@@ -262,12 +255,15 @@ class QueryView:
                     val_str = ""
                 else:
                     val_str = str(val)
+
                 widths[i] = max(widths[i], len(val_str))
+
         return widths
     
     
-    def formatRowSafely(self, row, col_widths):
+    def formatRowSafely(self, row: str, colWidths: list[int]) -> str:
         formatted = []
+
         for i, val in enumerate(row):
             if isinstance(val, oracledb.LOB):
                 val_str = "[LOB]"
@@ -277,11 +273,12 @@ class QueryView:
                 val_str = ""
             else:
                 val_str = str(val)
-            formatted.append(val_str.ljust(col_widths[i]))
+            formatted.append(val_str.ljust(colWidths[i]))
+
         return " | ".join(formatted)
 
         
-    def formatRows(self, columns, rows):
+    def formatRows(self, columns: list, rows: list) -> str:
         col_widths = self.calculateColumnWidths(columns, rows)
 
         header = " | ".join(col.ljust(col_widths[i]) for i, col in enumerate(columns))
@@ -295,47 +292,48 @@ class QueryView:
         return "\n".join(lines)
     
 
-    def toggleLogs(self):
-        if self.show_logs:
-            self.logs_frame.pack_forget()
-            self.toggle_logs_btn.config(text="Show Logs")
+    def toggleLogs(self) -> None:
+        if self.areLogsShown:
+            self.logsFrame.pack_forget()
+            self.toggleLogsBtn.config(text="Show Logs")
         else:
             self.displayLogsOnToggle()
-            self.logs_frame.pack(fill="both", expand=True, pady=(5, 10))
-            self.toggle_logs_btn.config(text="Hide Logs")
-        self.show_logs = not self.show_logs
+            self.logsFrame.pack(fill="both", expand=True, pady=(5, 10))
+            self.toggleLogsBtn.config(text="Hide Logs")
+
+        self.areLogsShown = not self.areLogsShown
 
 
-    def displayLogsOnToggle(self):
+    def displayLogsOnToggle(self) -> None:
         try:
             with open("./logs/queries.log", "r", encoding="utf-8") as f:
                 log_content = f.read()
         except FileNotFoundError:
             log_content = "No log file found."
 
-        self.logs_box.config(state="normal")
-        self.logs_box.delete("1.0", "end")
-        self.logs_box.insert("1.0", log_content)
-        self.logs_box.see(tk.END)
-        self.logs_box.config(state="disabled")
+        self.logsBox.config(state="normal")
+        self.logsBox.delete("1.0", "end")
+        self.logsBox.insert("1.0", log_content)
+        self.logsBox.see(tk.END)
+        self.logsBox.config(state="disabled")
 
 
 
-    def openAnalyticsWindow(self):
+    def openAnalyticsWindow(self) -> None:
         self.accessAnalyticsButton.config(state="disabled")
-        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, on_close_callback=self.enableButtonAfterAnalyticsWindowClosed)
+        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed)
 
 
-    def enableButtonAfterAnalyticsWindowClosed(self):
+    def enableButtonAfterAnalyticsWindowClosed(self) -> None:
         self.accessAnalyticsButton.config(state="normal")
         print("ANALYTICS WINDOW HAS BEEN CLOSED => ENABLE BTN")
 
 
-    def validateQueryNameForRun(self, queryName):
+    def validateQueryNameForRun(self, queryName: str) -> bool:
         return len(queryName) > 0 and len(queryName) <= 40
 
 
-    def validateQueryNameForEntry(self, queryName):
+    def validateQueryNameForEntry(self, queryName) -> bool:
         return len(queryName) <= 40
 
 

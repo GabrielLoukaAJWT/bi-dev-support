@@ -1,9 +1,8 @@
 import tkinter as tk
-import time
 
 import Services.db_connection as cnx
 import GUI.query_view as qryview
-
+import constants as cta
 
 
 class MainWindow:
@@ -11,7 +10,7 @@ class MainWindow:
         self.oracleConnector = cnx.OracleConnector()
 
         self.root = tk.Tk()
-        self.root.title("SQL analytics")
+        self.root.title(cta.APP_TITLE)
         self.root.geometry("800x600")
         
         self.setupMainUI()
@@ -21,28 +20,28 @@ class MainWindow:
         self.root.mainloop()
 
 
-    def setupMainUI(self):
-        self.main_frame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
-        self.main_frame.pack(expand=True)
+    def setupMainUI(self) -> None:
+        self.mainFrame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
+        self.mainFrame.pack(expand=True)
 
-        title_label = tk.Label(self.main_frame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#f7f7f7")
-        title_label.pack(pady=(0, 20))
+        titleLabel = tk.Label(self.mainFrame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#f7f7f7")
+        titleLabel.pack(pady=(0, 20))
 
-        tk.Label(self.main_frame, text="Enter Oracle DB Password:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
+        tk.Label(self.mainFrame, text="Enter Oracle DB Password:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
 
-        self.password_entry = tk.Entry(self.main_frame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
-        self.password_entry.pack(pady=5, ipady=4)
+        self.pswEntry = tk.Entry(self.mainFrame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
+        self.pswEntry.pack(pady=5, ipady=4)
 
-        connect_btn = tk.Button(self.main_frame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white",
+        connectBtn = tk.Button(self.mainFrame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white",
                                 activebackground="#45A049", padx=10, pady=5, command=self.handleConnection)
-        connect_btn.pack(pady=20)        
+        connectBtn.pack(pady=20)        
         
-        self.status_label = tk.Label(self.main_frame, text="", font=("Arial", 10), bg="#f7f7f7")
-        self.status_label.pack(pady=10)
+        self.connectionStatusLabel = tk.Label(self.mainFrame, text="", font=("Arial", 10), bg="#f7f7f7")
+        self.connectionStatusLabel.pack(pady=10)
 
         
-    def handleConnection(self):
-        password = self.password_entry.get()
+    def handleConnection(self) -> None:
+        password = self.pswEntry.get()
         isSuccessful = self.oracleConnector.connectToOracle(password)
 
         print(self.oracleConnector.connection)
@@ -53,22 +52,23 @@ class MainWindow:
         if isSuccessful:            
             self.root.update_idletasks()
             self.root.after(1000, self.clearRoot())
-            self.initializeQueryViewPortConnection()
+            self.accessQueryView()
         
 
-    def showStatus(self, success: bool):
+    def showStatus(self, success: bool) -> None:
         if success:
-            self.status_label.config(text="Connection successful :)", fg="green")  
+            self.connectionStatusLabel.config(text=cta.DB_CONNECTION_SUCCESS, fg="green")  
         else:
-            self.status_label.config(text="Invalid credentials - Connexion denied.", fg="red")  
-        self.status_label.update()
+            self.connectionStatusLabel.config(text=cta.DB_CONNECTION_ERROR, fg="red")  
+
+        self.connectionStatusLabel.update()
 
 
-    def clearRoot(self):
+    def clearRoot(self) -> None:
         for widget in self.root.winfo_children():
             widget.destroy()        
 
     
-    def initializeQueryViewPortConnection(self):
+    def accessQueryView(self) -> None:
         self.queryView = qryview.QueryView(self.root, self.oracleConnector)
         self.root.state('zoomed') 

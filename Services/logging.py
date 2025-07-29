@@ -25,7 +25,7 @@ class QueryLoggerManager:
 
 
 
-    def addLog(self, type: str, query: models.Query, msg: str):
+    def addLog(self, type: str, query: models.Query, msg: str) -> None:
         match type:
             case "info":
                 self.logger.info(
@@ -37,7 +37,7 @@ class QueryLoggerManager:
                 )
 
 
-    def clearLogsFile(self):
+    def clearLogsFile(self) -> None:
         log_file = open('./logs/queries.log', "r+")
         log_file.truncate(0)
         log_file.close()

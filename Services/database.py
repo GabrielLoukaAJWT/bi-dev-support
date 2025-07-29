@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import pysondb 
 
 import Models.Query as models
@@ -8,8 +9,7 @@ class DatabaseManager:
         print(f"DATABASE : {self.queriesLocalDB}")
 
 
-    def addQueryToDB(self, query: models.Query):
-
+    def addQueryToDB(self, query: models.Query) -> None:
         queryJSON = {
             "name": query.name,
             "initTime": query.initTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
@@ -24,10 +24,13 @@ class DatabaseManager:
         self.queriesLocalDB.add(queryJSON)
 
 
-    def getQueriesFromDB(self):
+    def getQueriesFromDB(self) -> list[Dict[str, Any]]:
         return self.queriesLocalDB.getAll()
     
     
-    def clearDB(self):
+    def clearDB(self) -> None:
         if len(self.getQueriesFromDB()) > 0:
             self.queriesLocalDB.deleteAll()
+
+    
+    

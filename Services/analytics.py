@@ -12,17 +12,18 @@ class AnalyticsManager:
         print(F"CREATED ANALYTICS MANAGER\n")
 
 
-    def readLogs(self):
+    def readLogs(self) -> None:
         for log in self.logs:
-            print(log) 
+            print(log)
+
         print(f"count of queries ran = {len(self.logs)}")
 
 
-    def computeTotalQueries(self):
+    def computeTotalQueries(self) -> int:
         return len(self.databaseManager.getQueriesFromDB())
     
 
-    def getRowsForTree(self):
+    def getRowsForTree(self) -> list:
         data = self.databaseManager.getQueriesFromDB()
         rows = []
 
@@ -40,7 +41,7 @@ class AnalyticsManager:
         return rows
     
 
-    def getQueryWithLongestExecTime(self):
+    def getQueryWithLongestExecTime(self) -> dict:
         data = self.databaseManager.getQueriesFromDB()
         idAndExecTimeMap = {}
         slowestQueryID = 0
@@ -58,7 +59,7 @@ class AnalyticsManager:
             print(f"{error}")
 
 
-    def computeAvgExecTime(self):
+    def computeAvgExecTime(self) -> float:
         data = self.databaseManager.getQueriesFromDB()
         totalExecTime = 0
 
@@ -71,7 +72,7 @@ class AnalyticsManager:
             return 0
         
 
-    def getMostCommonErrorLog(self):
+    def getMostCommonErrorLog(self) -> str:
         mostCommonError = ""
         errors = []
         errorMap = {}
@@ -91,28 +92,28 @@ class AnalyticsManager:
         return mostCommonError
         
 
-    def getExecTimes(self):
+    def getExecTimes(self) -> list:
         data = self.databaseManager.getQueriesFromDB()
         execTimesArr = [query["execTime"] for query in data]
 
         return execTimesArr
     
 
-    def getExecDates(self):
+    def getExecDates(self) -> list:
         data = self.databaseManager.getQueriesFromDB()
         execDates = [query["execTime"] for query in data]
 
         return execDates
     
 
-    def getNbRowsOutput(self):
+    def getNbRowsOutput(self) -> list[int]:
         data = self.databaseManager.getQueriesFromDB()
         nbRows = [query["nb_rows"] for query in data]        
 
         return nbRows
 
 
-    def getNbQueriesPerHour(self):
+    def getNbQueriesPerHour(self) -> tuple[list[int], list[int]]:
         data = self.databaseManager.getQueriesFromDB()
         timeStrings = [query["initTime"] for query in data]
         timestamps = []

@@ -1,7 +1,6 @@
 import oracledb 
 import os
 import platform
-from typing import Tuple
 import datetime
 
 import constants as cta
@@ -13,48 +12,55 @@ class OracleConnector:
         self.connection = None
         self.cursor = None
 
-        self.columnsNames = []
         self.queryOutput = []
 
-        self.currentQuery = qry.Query(None, None, 0.0, [], [])
+        self.currentQuery = qry.Query()
 
 
-    def getOracleInstantClient(self):
+    def getOracleInstantClient(self) -> None:
         print("ARCH:", platform.architecture())
         print("FILES AT lib_dir:")
-        for name in os.listdir(cta.LIB_DIR):
+        for name in os.listdir(cta.LIB_DIR_AJWT):
             print(name)
 
 
-    def connectToOracle(self, psw : str) -> Tuple[bool, str] :
+    def validateOracleInstantClientFiles(self) -> bool:
+        isOracleClientValid = False
+
         try:
-            oracledb.init_oracle_client(lib_dir=cta.LIB_DIR)
-            print("Initialized Oracle Instant Client.\n")
+            oracledb.init_oracle_client(lib_dir=cta.LIB_DIR_AJWT)
+            isOracleClientValid = True
+            print(f"{cta.VALID_ORACLE_INSTANT_CLIENT}\n")
         except Exception as error:
-            print("Error connecting:  oracledb.init_oracle_client() ==> missing instant client files\n")
+            print(f"{cta.INVALID_ORACLE_INSTANT_CLIENT}\n")
             print(error)
 
-        try:    
-            self.connection = oracledb.connect(
-                user=cta.USERNAME,
-                password=psw,
-                dsn=cta.CONNECTION_STRING
-            )
-            self.cursor = self.connection.cursor()
-            print("Valid credentials - connection successful.\n")
-
-            return True
-        
-        except Exception as error:
-            print("Invalid credentials - connexion denied.\n")
-            self.connection = None
-
-            return False
+        return isOracleClientValid
 
 
-    def runQuery(self, sqlQuery: str, queryName: str):
+    def connectToOracle(self, psw : str) -> bool:
+        isOICValid = self.validateOracleInstantClientFiles()
+
+        if isOICValid:
+            try:    
+                self.connection = oracledb.connect(
+                    user=cta.USERNAME,
+                    password=psw,
+                    dsn=cta.CONNECTION_STRING
+                )
+                self.cursor = self.connection.cursor()
+
+                return True
+            
+            except Exception as error:
+                self.connection = None
+                print(error)
+                return False
+
+
+    def runQuery(self, sqlQuery: str, queryName: str) -> str:
         if self.connection is None or self.cursor is None:
-            print("Connection lost.\n")
+            print(f"{cta.LOST_CONNECTION}\n")
 
         else:
             try:
@@ -66,20 +72,16 @@ class OracleConnector:
                 self.currentQuery.code = ""
                 self.currentQuery.name = ""
                 
-                self.columnsNames = []
-                self.queryOutput = []
-
                 self.currentQuery.initTime = datetime.datetime.today()
+
                 for r in self.cursor.execute(sqlQuery):
                     self.queryOutput.append(r)
                     self.currentQuery.rows.append(r)
+
                 self.currentQuery.endTime = datetime.datetime.today()
                 self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
-
                 self.currentQuery.code = sqlQuery
                 self.currentQuery.name = queryName
-
-                self.columnsNames = [row[0] for row in self.cursor.description]
                 self.currentQuery.columns = [row[0] for row in self.cursor.description]                
             
             except Exception as error:
