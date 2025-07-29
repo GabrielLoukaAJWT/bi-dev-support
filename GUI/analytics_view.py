@@ -32,7 +32,7 @@ class AnalyticsView:
         self.fillQueriesTabTree()
         
         self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
-        # self.root.bind("<Destroy>", lambda event: self.onDestroy)
+        self.root.bind("<Destroy>", lambda event: self.onDestroy)
 
         print(F"ANALYTICS WINDOW CREATED")
 
@@ -42,6 +42,7 @@ class AnalyticsView:
     def onDestroy(self, event):
         if event.widget != self.root:
             return
+        print("just closed")
         parent = self.root.winfo_toplevel()
         parent.accessAnalyticsButton.config(state="normal")
 
