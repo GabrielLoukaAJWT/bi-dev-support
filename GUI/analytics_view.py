@@ -1,7 +1,7 @@
 import queue
 import threading
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Widget, ttk
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -13,11 +13,16 @@ import numpy as np
 import Services.analytics as analytics
 import Services.database as db
 
+import GUI.query_view as query_view
+
+
 class AnalyticsView:
-    def __init__(self, root, loggingManager):
+    def __init__(self, root, loggingManager, on_close_callback=None):
         self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
         self.root.state('zoomed')
+        
+        self.on_close_callback = on_close_callback
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
@@ -32,19 +37,17 @@ class AnalyticsView:
         self.fillQueriesTabTree()
         
         self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
-        self.root.bind("<Destroy>", lambda event: self.onDestroy)
+        self.root.protocol("WM_DELETE_WINDOW", self.onDestroy)
 
         print(F"ANALYTICS WINDOW CREATED")
 
         self.root.mainloop()
 
 
-    def onDestroy(self, event):
-        if event.widget != self.root:
-            return
-        print("just closed")
-        parent = self.root.winfo_toplevel()
-        parent.accessAnalyticsButton.config(state="normal")
+    def onDestroy(self):
+        if self.on_close_callback:
+            self.on_close_callback()
+        self.root.destroy()
 
         
     def setupUI(self):
@@ -167,7 +170,9 @@ class AnalyticsView:
         
                     
     def fillQueriesTabTree(self):
-        rows = []
+        for row in self.listOfQueriesViewTree.get_children():
+            self.listOfQueriesViewTree.delete(row)
+
         rows = self.analyticsManager.getRowsForTree()
         for row in rows:                    
             self.listOfQueriesViewTree.insert("", "end", values=row)        

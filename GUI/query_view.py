@@ -14,6 +14,7 @@ import Services.database as db
 
 import GUI.analytics_view as analytics_view
 
+analyticsViewOpened = False
 
 class QueryView:
     def __init__(self, root, oracleConnector: cnx.OracleConnector):        
@@ -28,7 +29,7 @@ class QueryView:
 
         # self.queryLoggerManager.clearLogsFile()
         self.setupUI()
-
+        self.checkIfAnalyticsViewWindowClosed()
 
         print(F"QUERY VIEW CREATED")
 
@@ -323,9 +324,11 @@ class QueryView:
 
     def openAnalyticsWindow(self):
         self.accessAnalyticsButton.config(state="disabled")
-        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
-        print(self.accessAnalyticsButton.config)
-        print("Accessing analytics window\n")
+        self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, on_close_callback=self.checkIfAnalyticsViewWindowClosed)
+
+    def checkIfAnalyticsViewWindowClosed(self):
+        self.accessAnalyticsButton.config(state="normal")
+        print("ANALYTICS WINDOW HAS BEEN CLOSED => ENABLE BTN")
 
 
     def validateQueryNameForRun(self, queryName):
