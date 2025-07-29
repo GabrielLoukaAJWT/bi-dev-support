@@ -25,10 +25,10 @@ class AnalyticsView:
 
         self.query_result_queue = queue.Queue()
 
-        self.setupPlotSettings()
         self.initializeAnalyticsData()
-        self.getPlots()
         self.setupUI()        
+        self.setupPlotSettings()
+        self.getPlots()
         self.fillQueriesTabTree()
         
         self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
@@ -133,7 +133,7 @@ class AnalyticsView:
             relief="flat",
             cursor="hand2",
             activebackground="#45a049",
-            command=self.initializeAnalyticsData
+            command=self.refreshAnalytics
         )
         self.refreshButton.pack(pady=(10, 0))
 
@@ -159,10 +159,14 @@ class AnalyticsView:
         self.slowestQuery = self.getSlowestQuery()
         self.commonErr = self.analyticsManager.getMostCommonErrorLog()
 
+    def refreshAnalytics(self):
+        self.initializeAnalyticsData()
+        self.getPlots()
+        self.fillQueriesTabTree()
         
-
                     
     def fillQueriesTabTree(self):
+        rows = []
         rows = self.analyticsManager.getRowsForTree()
         for row in rows:                    
             self.listOfQueriesViewTree.insert("", "end", values=row)        
@@ -213,6 +217,12 @@ class AnalyticsView:
         for row in self.listOfQueriesViewTree.get_children():
             self.listOfQueriesViewTree.delete(row)
 
+        for widget in self.leftChart.winfo_children():
+            widget.destroy()
+            
+        for widget in self.rightChart.winfo_children():
+            widget.destroy()
+
 
     def setupPlotSettings(self):
         plt.style.use('_mpl-gallery')
@@ -242,18 +252,11 @@ class AnalyticsView:
 
 
     def showExecTimeCorrelation(self):
-        # Clear all widgets from the chart frame
-        for widget in self.leftChart.winfo_children():
-            widget.destroy()
-
         execTimes = self.analyticsManager.getExecTimes()
         nbRows = self.analyticsManager.getNbRowsOutput()
 
         self.y = np.array(execTimes)
         self.x = np.array(nbRows)
-
-        for widget in self.leftChart.winfo_children():
-            widget.destroy()
 
         self.fig1, self.ax1 = plt.subplots(figsize=(3, 3))
         self.ax1.scatter(self.x, self.y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
@@ -270,8 +273,6 @@ class AnalyticsView:
 
     
     def showQueriesPerHour(self):    
-        for widget in self.rightChart.winfo_children():
-            widget.destroy()    
         hours, counts = self.analyticsManager.getNbQueriesPerHour()
 
         self.fig2, self.ax2 = plt.subplots(figsize=(3, 3))
@@ -289,6 +290,12 @@ class AnalyticsView:
 
     def getPlots(self):
         print(f"CREATING THE PLOTS")
+        for widget in self.leftChart.winfo_children():
+            widget.destroy()
+            
+        for widget in self.rightChart.winfo_children():
+            widget.destroy()
+
         thread1 = threading.Thread(target=self.threadCorrelation)
         thread1.start() 
         

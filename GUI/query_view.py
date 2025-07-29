@@ -323,7 +323,7 @@ class QueryView:
 
     def openAnalyticsWindow(self):
         self.tl = analytics_view.AnalyticsView(self.root, self.queryLoggerManager)
-        self.accessAnalyticsButton.config(state="disabled")
+        # self.accessAnalyticsButton.config(state="disabled")
         print("Accessing analytics window\n")
 
 
