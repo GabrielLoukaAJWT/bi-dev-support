@@ -30,7 +30,6 @@ class AnalyticsView:
 
         self.query_result_queue = queue.Queue()
 
-        self.initializeAnalyticsData()
         self.setupUI()        
         self.setupPlotSettings()
         self.getPlots()
@@ -71,17 +70,17 @@ class AnalyticsView:
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.totQueries}",font = ("Arial", 11))
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {(self.avgExectTime)} sec", font = ("Arial", 11))
+        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec", font = ("Arial", 11))
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.slowestQuery}" , bg="#fff56e", font = ("Arial", 11))
+        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#fff56e", font = ("Arial", 11))
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
-        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.commonErr}" , bg="#ffa962", font = ("Arial", 11))
+        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.analyticsManager.getMostCommonErrorLog()}" , bg="#ffa962", font = ("Arial", 11))
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
         # Chart section
@@ -156,15 +155,11 @@ class AnalyticsView:
         self.deleteDbButton.pack(pady=(10, 0), anchor="e")
 
 
-    def initializeAnalyticsData(self):
-        print(f"FETCHING THE DATA FOR ANALYTICS")        
-        self.totQueries = self.analyticsManager.computeTotalQueries()
-        self.avgExectTime = self.analyticsManager.computeAvgExecTime()
-        self.slowestQuery = self.getSlowestQuery()
-        self.commonErr = self.analyticsManager.getMostCommonErrorLog()
-
     def refreshAnalytics(self):
-        self.initializeAnalyticsData()
+        self.totalQueriesLabel.config(text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}")
+        self.avgTimeLabel.config(text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec")
+        self.slowQueryLabel.config(text=f"🐢 Slowest Query: {self.getSlowestQuery()}")
+        
         self.getPlots()
         self.fillQueriesTabTree()
         
@@ -186,7 +181,7 @@ class AnalyticsView:
             time = query["execTime"]
             return f"{name} | {time}"        
         else:
-            return ""
+            return "None"
 
 
     def selectQueryFromTreeView(self, event=None):
@@ -212,12 +207,12 @@ class AnalyticsView:
 
     def deleteDB(self):
         self.databaseManager.clearDB()
-        self.mainFrame.after(0, self.updateUI)
+        self.mainFrame.after(0, self.clearUiAfterDeletion)
 
     
-    def updateUI(self):
+    def clearUiAfterDeletion(self):
         self.totalQueriesLabel.config(text="Number of queries: 0")
-        self.avgTimeLabel.config(text="Avg Exec Time: 0.00s")
+        self.avgTimeLabel.config(text="Avg Exec Time: 0 sec")
         self.slowQueryLabel.config(text="🐢 Slowest Query: None")
 
         for row in self.listOfQueriesViewTree.get_children():

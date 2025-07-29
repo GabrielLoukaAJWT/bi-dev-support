@@ -187,6 +187,7 @@ class QueryView:
 
 
     def runQueryThread(self, sql, query_name):
+        self.runQueryButton.config(state="disabled")
         try:
             err = self.oracleConnector.runQuery(sql, query_name)
 
@@ -211,9 +212,7 @@ class QueryView:
             self.query_result_queue.put(("error", str(e)))
 
 
-    def runQuery(self):    
-        self.runQueryButton.config(state="disabled")
-
+    def runQuery(self):            
         sql = self.query_text.get("1.0", tk.END).strip()
         queryName = self.queryNameEntry.get()
 
