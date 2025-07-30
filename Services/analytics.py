@@ -1,5 +1,7 @@
 from datetime import datetime
+import pytz
 from typing import Counter
+
 import Services.database as db
 
 class AnalyticsManager:
@@ -117,9 +119,16 @@ class AnalyticsManager:
         data = self.databaseManager.getQueriesFromDB()
         timeStrings = [query["initTime"] for query in data]
         timestamps = []
+
         for ts in timeStrings:
             date = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S,%f")
-            timestamps.append(date)
+            
+            today = datetime.today()
+
+            print(f"TODAY : {today}")
+            print(f"TIMESTAMPT DATE : {date}")
+            if date.date() == today.date():
+                timestamps.append(date)
         
         hours = [ts.hour for ts in timestamps]
 

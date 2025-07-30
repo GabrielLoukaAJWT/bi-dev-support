@@ -63,7 +63,7 @@ class AnalyticsView:
         self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
+        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total Queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
         self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec", font = ("Arial", 11))
@@ -73,18 +73,18 @@ class AnalyticsView:
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
-        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Common error: {self.analyticsManager.getMostCommonErrorLog()}" , bg="#ffa962", font = ("Arial", 11))
+        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Most Common Error: {self.analyticsManager.getMostCommonErrorLog()}" , bg="#ffa962", font = ("Arial", 11))
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
         frame_style = {"bg": "#ffffff", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
 
-        self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General stats", height=500, **frame_style)
+        self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General Stats", height=500, **frame_style)
         self.chartFrame.pack(fill=tk.BOTH, expand=True, pady=(10, 10))
 
-        self.leftChart = tk.LabelFrame(self.chartFrame, text="Correlation between number of rows and execution time", **frame_style)
+        self.leftChart = tk.LabelFrame(self.chartFrame, text="Correlation Between Number of Rows and Execution Time", **frame_style)
         self.leftChart.pack(side="left", fill="both", expand=True, padx=(0, 10))
 
-        self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour", **frame_style)
+        self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour Today", **frame_style)
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
         self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"), height=100)
@@ -146,7 +146,7 @@ class AnalyticsView:
 
 
     def refreshAnalytics(self) -> None:
-        self.totalQueriesLabel.config(text=f"🧮 Total queries: {self.analyticsManager.computeTotalQueries()}")
+        self.totalQueriesLabel.config(text=f"🧮 Total Queries: {self.analyticsManager.computeTotalQueries()}")
         self.avgTimeLabel.config(text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec")
         self.slowQueryLabel.config(text=f"🐢 Slowest Query: {self.getSlowestQuery()}")
         
@@ -194,7 +194,7 @@ class AnalyticsView:
 
     
     def clearUiAfterDeletion(self) -> None:
-        self.totalQueriesLabel.config(text="🧮 Total queries: 0")
+        self.totalQueriesLabel.config(text="🧮 Total Queries: 0")
         self.avgTimeLabel.config(text="⏱ Avg Exec Time: 0 sec")
         self.slowQueryLabel.config(text="🐢 Slowest Query: None")
 

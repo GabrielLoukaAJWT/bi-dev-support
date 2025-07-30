@@ -326,7 +326,6 @@ class QueryView:
 
     def enableButtonAfterAnalyticsWindowClosed(self) -> None:
         self.accessAnalyticsButton.config(state="normal")
-        print("ANALYTICS WINDOW HAS BEEN CLOSED => ENABLE BTN")
 
 
     def validateQueryNameForRun(self, queryName: str) -> bool:
