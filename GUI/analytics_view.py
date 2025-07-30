@@ -9,10 +9,11 @@ import numpy as np
 
 import Services.analytics as analytics
 import Services.database as db
+import Services.logging as log
 
 
 class AnalyticsView:
-    def __init__(self, root, loggingManager, onCloseCallback=None):
+    def __init__(self, root: tk.Tk, loggingManager: log.QueryLoggerManager, onCloseCallback=None):
         self.root = tk.Toplevel(root)        
         self.root.title("Queries analytics")
         self.root.state('zoomed')

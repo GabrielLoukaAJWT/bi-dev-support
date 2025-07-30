@@ -69,6 +69,8 @@ class MainWindow:
         connectionString = self.connectionStringEntry.get()
         password = self.pswEntry.get()
 
+        # CHECK FOR SQL INJECTIONS
+
         isSuccessful = self.oracleConnector.connectToOracle(username, connectionString, password)
 
         print(self.oracleConnector.connection)
@@ -103,7 +105,7 @@ class MainWindow:
         self.root.state('zoomed') 
 
     
-    def handleSaveSettingsCheckbox(self):
+    def handleSaveSettingsCheckbox(self) -> None:
         if self.checkboxVar.get() == 1:
             username = self.usernameEntry.get()
             connectionString = self.connectionStringEntry.get()
@@ -114,12 +116,12 @@ class MainWindow:
             self.settingsManager.editSettings("", "", "", 0)
 
 
-    def loadSavedCredentialsToUI(self):
+    def loadSavedCredentialsToUI(self) -> None:
         value = self.settingsManager.checkboxVarSettings
         credentials = self.settingsManager.credentialsSettings
 
         if value == 1:
             self.usernameEntry.insert(0, credentials["username"])
             self.connectionStringEntry.insert(0, credentials["connectionString"])
-            self.pswEntry.insert(0, credentials["pwd"])
+            # self.pswEntry.insert(0, credentials["pwd"])
         

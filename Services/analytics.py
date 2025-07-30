@@ -125,8 +125,6 @@ class AnalyticsManager:
             
             today = datetime.today()
 
-            print(f"TODAY : {today}")
-            print(f"TIMESTAMPT DATE : {date}")
             if date.date() == today.date():
                 timestamps.append(date)
         

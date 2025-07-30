@@ -20,3 +20,6 @@
 
 # settings
 /settings/settings.json
+
+# env
+/.env

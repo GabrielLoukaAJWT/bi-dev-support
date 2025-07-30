@@ -5,6 +5,7 @@ import datetime
 
 import constants as cta
 import Models.Query as qry
+import Services.settings as settings
 
 
 class OracleConnector:
@@ -15,6 +16,8 @@ class OracleConnector:
         self.queryOutput = []
 
         self.currentQuery = qry.Query()
+
+        self.settingsManager = settings.SettingsManager()
 
 
     def getOracleInstantClient(self) -> None:
@@ -38,24 +41,25 @@ class OracleConnector:
         return isOracleClientValid
 
 
-    def connectToOracle(self, username: str, connectionString: str, psw : str) -> bool:
+    def connectToOracle(self, username: str, connectionString: str, pwd : str) -> bool:
         isOICValid = self.validateOracleInstantClientFiles()
 
         if isOICValid:
-            try:    
-                self.connection = oracledb.connect(
-                    user=username,
-                    password=psw,
-                    dsn=connectionString
-                )
-                self.cursor = self.connection.cursor()
+            # if self.settingsManager.validatePasswordHash(pwd):
+                try:    
+                    self.connection = oracledb.connect(
+                        user=username,
+                        password=pwd,
+                        dsn=connectionString
+                    )
+                    self.cursor = self.connection.cursor()
 
-                return True
-            
-            except Exception as error:
-                self.connection = None
-                print(error)
-                return False
+                    return True
+                
+                except Exception as error:
+                    self.connection = None
+                    print(error)
+                    return False
 
 
     def runQuery(self, sqlQuery: str, queryName: str) -> str:

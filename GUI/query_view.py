@@ -12,7 +12,7 @@ import GUI.analytics_view as analytics_view
 
 
 class QueryView:
-    def __init__(self, root, oracleConnector: cnx.OracleConnector):        
+    def __init__(self, root: tk.Tk, oracleConnector: cnx.OracleConnector):        
         self.root = root        
         self.analyticsPage = None
 
