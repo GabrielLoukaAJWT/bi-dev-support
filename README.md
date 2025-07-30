@@ -39,7 +39,7 @@ but the current Oracle account was created with 10G.
                          and put the directory to be used for the connection (See LIB_DIR in constants.py)
 
 ### 3. Install packages
-Run 'pip install -r requirements.txt'
+Run 'pip install -r requirements.txt' in a virtual environment (create one by running 'pip -m venv myenv')
 
 ### 4. How to build
-To build the project, run ''
+To build the project, run 'pyinstaller main.py --icon=assets/images/favicon.ico --noconsole --name SQL-Analytics'
