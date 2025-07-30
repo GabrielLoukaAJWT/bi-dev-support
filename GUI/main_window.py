@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 
 import Services.db_connection as cnx
 import Services.settings as settings
@@ -25,7 +26,7 @@ class MainWindow:
 
 
     def setupMainUI(self) -> None:
-        self.mainFrame = tk.Frame(self.root, padx=30, pady=30, bg="#f7f7f7")
+        self.mainFrame = tk.Frame(self.root, padx=60, pady=30, bg="#f7f7f7", width=1000)
         self.mainFrame.pack(expand=True)
 
         titleLabel = tk.Label(self.mainFrame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#f7f7f7")
@@ -63,13 +64,20 @@ class MainWindow:
                    relief="raised", padx=10, pady=5)
         self.checkbox.pack(padx=40, pady=40)
 
+        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.0", anchor="e", bg="#f7f7f7")
+        self.version_label.pack(side="bottom", fill="x")
+
+        self.menubar = tk.Menu(self.root)
+        self.helpManu = tk.Menu(self.menubar, tearoff=0)
+        self.helpManu.add_command(label="About", command=self.show_about_dialog)
+        self.menubar.add_cascade(label="Help", menu=self.helpManu)
+        self.root.config(menu=self.menubar)
+
         
     def handleConnection(self) -> None:
         username = self.usernameEntry.get()
         connectionString = self.connectionStringEntry.get()
         password = self.pswEntry.get()
-
-        # CHECK FOR SQL INJECTIONS
 
         isSuccessful = self.oracleConnector.connectToOracle(username, connectionString, password)
 
@@ -124,4 +132,16 @@ class MainWindow:
             self.usernameEntry.insert(0, credentials["username"])
             self.connectionStringEntry.insert(0, credentials["connectionString"])
             # self.pswEntry.insert(0, credentials["pwd"])
+
+
+    def show_about_dialog(self) -> None:
+        about_text = (
+            "SQL Companion v1.0\n\n"
+            "Built by Gabriel Louka\n"
+            "This software helps you connect to Oracle DBs,\n"
+            "run queries, view stats, and analyze performance.\n\n"
+            "© 2025 Gabriel Louka. All rights reserved."
+        )
+        messagebox.showinfo("About SQL Companion", about_text)
+
         
