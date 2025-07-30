@@ -77,19 +77,22 @@ class AnalyticsManager:
     def getMostCommonErrorLog(self) -> str:
         mostCommonError = ""
         errors = []
-        errorMap = {}
+        errorMap = {}        
 
-        for log in self.logs:
-            errorSplit = log.split('-')
+        if len(self.logs) == 0:
+            return ""
+        else:
+            for log in self.logs:
+                errorSplit = log.split('-')
+                
+                if errorSplit[4] == " ERROR ":
+                    error = errorSplit[5] + errorSplit[6].split('\n')[0]
+                    errors.append(error)
+
+            for err in errors:
+                errorMap[err] = errorMap.get(err, 0) + 1
             
-            if errorSplit[4] == " ERROR ":
-                error = errorSplit[5] + errorSplit[6].split('\n')[0]
-                errors.append(error)
-
-        for err in errors:
-            errorMap[err] = errorMap.get(err, 0) + 1
-        
-        mostCommonError = max(errorMap, key=errorMap.get)
+            mostCommonError = max(errorMap, key=errorMap.get)
 
         return mostCommonError
         
