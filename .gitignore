@@ -17,3 +17,6 @@
 /build
 /dist
 /main.spec
+
+# settings
+/settings/settings.json

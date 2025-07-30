@@ -38,15 +38,15 @@ class OracleConnector:
         return isOracleClientValid
 
 
-    def connectToOracle(self, psw : str) -> bool:
+    def connectToOracle(self, username: str, connectionString: str, psw : str) -> bool:
         isOICValid = self.validateOracleInstantClientFiles()
 
         if isOICValid:
             try:    
                 self.connection = oracledb.connect(
-                    user=cta.USERNAME,
+                    user=username,
                     password=psw,
-                    dsn=cta.CONNECTION_STRING
+                    dsn=connectionString
                 )
                 self.cursor = self.connection.cursor()
 
