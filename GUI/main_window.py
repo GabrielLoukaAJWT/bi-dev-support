@@ -89,7 +89,7 @@ class MainWindow:
         if isSuccessful:            
             self.handleSaveSettingsCheckbox()
             self.root.update_idletasks()
-            self.root.after(1000, self.clearRoot())
+            self.root.after(2000, self.clearRoot())   
             self.accessQueryView()
 
         
