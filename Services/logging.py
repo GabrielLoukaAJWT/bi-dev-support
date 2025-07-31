@@ -7,8 +7,10 @@ class QueryLoggerManager:
     def __init__(self):
         self.logger = logging.getLogger('sql logger')
         self.logger.setLevel(logging.INFO)
+
         fh = logging.FileHandler('./logs/queries.log')
         ch = logging.StreamHandler()        
+
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         
         fh.setFormatter(formatter)
@@ -18,6 +20,7 @@ class QueryLoggerManager:
         self.logger.addHandler(ch)
 
         self.logs = self.getQueriesFromFile("./logs/queries.log")
+
         listHandler = ListHandler(self.logs)
         listHandler.setFormatter(formatter)
 
@@ -67,9 +70,6 @@ class QueryLoggerManager:
 
         return log_entries
         
-
-
-
 
 
 class ListHandler(logging.Handler):

@@ -148,10 +148,10 @@ class QueryView:
         )
         self.toggleLogsBtn.pack(pady=(10, 0))
 
-        self.logsFrame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1)
+        self.logsFrame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1, height=20)
         self.logsBox = scrolledtext.ScrolledText(
             self.logsFrame,
-            height=10,
+            height=20,
             width=100,
             state="disabled",
             font=("Courier New", 10),
@@ -193,6 +193,7 @@ class QueryView:
                 self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
                 self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
 
+            self.displayLogsOnToggle()
             self.query_result_queue.put(("success", err))
 
             self.runQueryButton.config(state="normal")
@@ -221,8 +222,7 @@ class QueryView:
 
         thread = threading.Thread(target=self.runQueryThread, args=(sql, queryName))
         thread.start()        
-
-        self.displayLogsOnToggle()
+        
 
 
     def displayQueryOutput(self) -> None:
@@ -297,26 +297,25 @@ class QueryView:
             self.logsFrame.pack_forget()
             self.toggleLogsBtn.config(text="Show Logs")
         else:
-            self.displayLogsOnToggle()
             self.logsFrame.pack(fill="both", expand=True, pady=(5, 10))
             self.toggleLogsBtn.config(text="Hide Logs")
 
+        self.displayLogsOnToggle()
         self.areLogsShown = not self.areLogsShown
 
 
     def displayLogsOnToggle(self) -> None:
-        try:
-            with open("./logs/queries.log", "r", encoding="utf-8") as f:
-                log_content = f.read()
-        except FileNotFoundError:
-            log_content = "No log file found."
+        logs = self.queryLoggerManager.getQueriesFromFile("./logs/queries.log")        
 
         self.logsBox.config(state="normal")
         self.logsBox.delete("1.0", "end")
-        self.logsBox.insert("1.0", log_content)
+
+        for log in logs:
+            formattedLog = f"{log}\n\n"
+            self.logsBox.insert("end", formattedLog)
+        
         self.logsBox.see(tk.END)
         self.logsBox.config(state="disabled")
-
 
 
     def openAnalyticsWindow(self) -> None:

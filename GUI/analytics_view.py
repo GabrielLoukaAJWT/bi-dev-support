@@ -172,6 +172,7 @@ class AnalyticsView:
         if query:
             name = query["name"]
             time = query["execTime"]
+            
             return f"{name} | {time}"        
         else:
             return "None"

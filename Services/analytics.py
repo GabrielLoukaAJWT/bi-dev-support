@@ -29,16 +29,17 @@ class AnalyticsManager:
         data = self.databaseManager.getQueriesFromDB()
         rows = []
 
-        for query in data:
-            rowToInsert = (
-                query["id"],
-                query["name"],
-                query["execTime"],
-                query["initTime"],
-                query["nb_rows"]
-            )
+        if data:
+            for query in data:
+                rowToInsert = (
+                    query["id"],
+                    query["name"],
+                    query["execTime"],
+                    query["initTime"],
+                    query["nb_rows"]
+                )
 
-            rows.append(rowToInsert)
+                rows.append(rowToInsert)
 
         return rows
     
@@ -49,7 +50,7 @@ class AnalyticsManager:
         slowestQueryID = 0
 
         try:
-            if data:
+            if data and len(data) != 0:
                 for query in data:
                     idAndExecTimeMap[query["id"]] = query["execTime"]
 
@@ -104,28 +105,38 @@ class AnalyticsManager:
 
     def getExecTimes(self) -> list:
         data = self.databaseManager.getQueriesFromDB()
-        execTimesArr = [query["execTime"] for query in data]
+        
+        if data and len(data) != 0:
+            execTimesArr = [query["execTime"] for query in data]
 
         return execTimesArr
     
 
     def getExecDates(self) -> list:
         data = self.databaseManager.getQueriesFromDB()
-        execDates = [query["execTime"] for query in data]
+        
+        if data and len(data) != 0:
+            execDates = [query["execTime"] for query in data]
 
         return execDates
     
 
     def getNbRowsOutput(self) -> list[int]:
         data = self.databaseManager.getQueriesFromDB()
-        nbRows = [query["nb_rows"] for query in data]        
+
+        if data and len(data) != 0:
+            nbRows = [query["nb_rows"] for query in data]        
 
         return nbRows
 
 
     def getNbQueriesPerHour(self) -> tuple[list[int], list[int]]:
         data = self.databaseManager.getQueriesFromDB()
-        timeStrings = [query["initTime"] for query in data]
+
+        if data and len(data) != 0:
+            timeStrings = [query["initTime"] for query in data]
+        else:
+            return ([], [])
         timestamps = []
 
         for ts in timeStrings:
