@@ -88,11 +88,16 @@ class AnalyticsManager:
                 if errorSplit[4] == " ERROR ":
                     error = errorSplit[5] + errorSplit[6].split('\n')[0]
                     errors.append(error)
+                else:
+                    continue
 
-            for err in errors:
-                errorMap[err] = errorMap.get(err, 0) + 1
+            if errors:
+                for err in errors:
+                    errorMap[err] = errorMap.get(err, 0) + 1    
+            else:
+                return ""       
             
-            mostCommonError = max(errorMap, key=errorMap.get)
+            mostCommonError = max(errorMap, key=errorMap.get, default={})
 
         return mostCommonError
         

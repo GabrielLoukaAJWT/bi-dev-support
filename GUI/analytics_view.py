@@ -150,6 +150,7 @@ class AnalyticsView:
         self.totalQueriesLabel.config(text=f"🧮 Total Queries: {self.analyticsManager.computeTotalQueries()}")
         self.avgTimeLabel.config(text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec")
         self.slowQueryLabel.config(text=f"🐢 Slowest Query: {self.getSlowestQuery()}")
+        self.mostCommonErrorLabel.config(text=f"⚠️ Most Common Error: {self.analyticsManager.getMostCommonErrorLog()}")
         
         self.getPlots()
         self.fillQueriesTabTree()
