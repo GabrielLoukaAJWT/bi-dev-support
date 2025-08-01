@@ -6,7 +6,7 @@ CONNECTION_STRING = "AW-CA1A-QTM-P01:1521/cctl"
 APP_TITLE = "SQL Analytics"
 
 # Refer to README.MD ==> Section : Setup Instructions ==> Step 2, Option 2
-LIB_DIR_AJWT = r"C:\Users\Gabriel.Louka\oracle instant client\instantclient_23_8"
+LIB_DIR_AJWT = r"oracle instant client\instantclient_23_8"
 LIB_DIR_HOME = r"C:\Users\gab_l\oracle instant client\instantclient_23_8"
 
 

@@ -23,3 +23,6 @@
 
 # env
 /.env
+
+# oracle instant client
+/oracle instant client
