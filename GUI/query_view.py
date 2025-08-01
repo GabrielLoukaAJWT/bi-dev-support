@@ -1,4 +1,4 @@
-import oracledb
+import oracledb # type: ignore
 import threading
 from tkinter import ttk
 import tkinter as tk
