@@ -1,5 +1,6 @@
-import threading
 import oracledb
+import threading
+from tkinter import ttk
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
@@ -28,150 +29,117 @@ class QueryView:
 
         print(F"QUERY VIEW CREATED")
 
-    
+
     def setupUI(self) -> None:
+        self.root.title("SQL Companion")
         self.root.configure(bg="#f7f7f7")
-        self.frame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")
-        self.frame.pack(fill="both", expand=True)
 
-        headingFont = ("Arial", 14, "bold")
-        labelFont = ("Arial", 12)
-        inputFont = ("Courier New", 11)
-        actionBtnFont = ("Arial", 12, "bold")
-        gray = "#f7f7f7"
+        if not hasattr(self, "frame"):
+            self.frame = ttk.Frame(self.root, padding=16)
+            self.frame.pack(fill="both", expand=True)
+        else:
+            self.frame.configure(padding=16)
+            self.frame.pack(fill="both", expand=True)
 
-        tk.Label(
-            self.frame,
-            text="Enter SQL Query",
-            font=headingFont,
-            bg=gray,
-            fg="#333"
-        ).pack(pady=(0, 15))
+        style = ttk.Style(self.root)
+        style.theme_use("default")
+        style.configure("Card.TFrame", background="#ffffff", relief="flat")
+        style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), background="#f7f7f7", foreground="#222")
+        style.configure("Label.TLabel", font=("Segoe UI", 11), background="#f7f7f7", foreground="#444")
+        style.configure("Status.TLabel", font=("Segoe UI", 10), background="#f7f7f7", foreground="red")
+        style.configure("Action.TButton", font=("Segoe UI", 11, "bold"))
+        style.map("Action.TButton",
+                background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
+                foreground=[("!disabled", "white")])
 
-        queryInputFrame = tk.Frame(self.frame, bg=gray)
-        queryInputFrame.pack(fill="x", pady=(10, 20))
+        main_pane = ttk.PanedWindow(self.frame, orient="horizontal")
+        main_pane.pack(fill="both", expand=True)
 
-        tk.Label(
-            queryInputFrame,
-            text="Query Name",
-            font=labelFont,
-            anchor="w",
-            bg=gray,
-            fg="#444"
-        ).pack(fill="x", padx=5, pady=(0, 5))
+        # Left card: query input
+        left_card = ttk.Frame(main_pane, style="Card.TFrame", padding=16)
+        main_pane.add(left_card, weight=1)
 
-        self.queryNameEntry = tk.Entry(
-            queryInputFrame,
-            font=inputFont,
-            relief="solid",
-            bd=1,
-            validate="key",
-            validatecommand=((self.root.register(self.validateQueryNameForEntry)), '%P')
-        )
-        self.queryNameEntry.pack(fill="x", padx=5, ipady=5)
+        ttk.Label(left_card, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
-        tk.Label(
-            queryInputFrame,
-            text="SQL Query",
-            font=labelFont,
-            anchor="w",
-            bg=gray,
-            fg="#444"
-        ).pack(fill="x", padx=5, pady=(15, 5))
+        # Query name
+        ttk.Label(left_card, text="Query Name", style="Label.TLabel").grid(row=1, column=0, sticky="w", pady=(12, 2))
+        self.queryNameEntry = ttk.Entry(left_card, font=("Courier New", 11))
+        vcmd = (self.root.register(self.validateQueryNameForEntry), "%P")
+        self.queryNameEntry.configure(validate="key", validatecommand=vcmd)
+        self.queryNameEntry.grid(row=2, column=0, sticky="ew", ipady=6)
 
-        self.queryText = tk.Text(
-            queryInputFrame,
-            height=12,
-            font=inputFont,
-            relief="solid",
-            bd=1
-        )
-        self.queryText.pack(fill="x", padx=5, pady=(0, 10))
+        # SQL text
+        ttk.Label(left_card, text="SQL Query", style="Label.TLabel").grid(row=3, column=0, sticky="w", pady=(12, 2))
+        self.queryText = tk.Text(left_card, height=10, font=("Courier New", 11), relief="solid", bd=1, wrap="none")
+        q_scroll_y = ttk.Scrollbar(left_card, orient="vertical", command=self.queryText.yview)
+        q_scroll_x = ttk.Scrollbar(left_card, orient="horizontal", command=self.queryText.xview)
+        self.queryText.configure(yscrollcommand=q_scroll_y.set, xscrollcommand=q_scroll_x.set)
+        self.queryText.grid(row=4, column=0, sticky="nsew")
+        q_scroll_y.grid(row=4, column=1, sticky="ns")
+        q_scroll_x.grid(row=5, column=0, sticky="ew", pady=(2, 0))
 
-        self.runQueryButton = tk.Button(
-            self.frame,
-            text="▶ Run Query",
-            font=actionBtnFont,
-            bg="#2196F3",
-            fg="white",
-            activebackground="#1976D2",
-            activeforeground="white",
-            padx=15,
-            pady=8,
-            cursor="hand2",
-            command=self.runQuery
-        )
-        self.runQueryButton.pack(pady=(0, 20))
+        # Action bar (Run + Analytics)
+        action_frame = ttk.Frame(left_card)
+        action_frame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
+        self.runQueryButton = ttk.Button(action_frame, text="▶ Run Query", style="Action.TButton", command=self.runQuery)
+        self.runQueryButton.pack(side="left")
+        self.accessAnalyticsButton = ttk.Button(action_frame, text="📈 Access Analytics", style="Action.TButton", command=self.openAnalyticsWindow)
+        self.accessAnalyticsButton.pack(side="left", padx=(8, 0))
 
-        self.outputBox = scrolledtext.ScrolledText(
-            self.frame,
-            height=12,
-            wrap=tk.NONE,
-            font=("Courier New", 10),
-            relief="solid",
-            bd=1
-        )
-        self.outputBox.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+        # Footer: status + exec time
+        footer = ttk.Frame(left_card)
+        footer.grid(row=7, column=0, sticky="ew", pady=(12, 0))
+        self.statusLabel = ttk.Label(footer, text="", style="Status.TLabel")
+        self.statusLabel.pack(side="left", fill="x", expand=True)
+        self.execTimeLabel = ttk.Label(footer, text="", font=("Segoe UI", 14), foreground="#666")
+        self.execTimeLabel.pack(side="right")
 
-        xScroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.outputBox.xview)
-        xScroll.pack(side=tk.BOTTOM, fill=tk.X)
-        self.outputBox.config(xscrollcommand=xScroll.set)
+        # Configure expansion
+        left_card.rowconfigure(4, weight=1)
+        left_card.columnconfigure(0, weight=1)
 
-        self.statusLabel = tk.Label(
-            self.frame,
-            text="",
-            font=("Arial", 10),
-            fg="red",
-            bg=gray
-        )
-        self.statusLabel.pack(pady=(10, 2))
+        # Right card: output + logs
+        right_card = ttk.Frame(main_pane, style="Card.TFrame", padding=16)
+        main_pane.add(right_card, weight=2)
 
-        self.execTimeLabel = tk.Label(
-            self.frame,
-            text="",
-            font=("Arial", 14),
-            fg="gray",
-            bg=gray
-        )
-        self.execTimeLabel.pack(pady=(0, 15))
+        ttk.Label(right_card, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
-        self.areLogsShown = False
-        self.toggleLogsBtn = tk.Button(
-            self.frame,
-            text="🪵 Show Logs",
-            font=("Arial", 10),
-            command=self.toggleLogs,
-            bg="#eeeeee",
-            fg="#333",
-            relief="flat",
-            cursor="hand2"
-        )
-        self.toggleLogsBtn.pack(pady=(10, 0))
+        # Output box
+        self.outputBox = scrolledtext.ScrolledText(right_card, height=12, wrap="none", font=("Courier New", 10), relief="solid", bd=1)
+        self.outputBox.grid(row=1, column=0, sticky="nsew", pady=(4, 2))
+        xScroll = ttk.Scrollbar(right_card, orient="horizontal", command=self.outputBox.xview)
+        self.outputBox.configure(xscrollcommand=xScroll.set)
+        xScroll.grid(row=2, column=0, sticky="ew")
 
-        self.logsFrame = tk.Frame(self.frame, bg="#f0f0f0", relief="groove", bd=1, height=20)
+        # Logs toggle
+        toggle_frame = ttk.Frame(right_card)
+        toggle_frame.grid(row=3, column=0, sticky="ew", pady=(12, 4))
+        self.toggleLogsBtn = ttk.Button(toggle_frame, text="🪵 Show Logs", command=self.toggleLogs)
+        self.toggleLogsBtn.pack(side="left")
+
+        # Logs container (hidden initially)
+        self.logsContainer = ttk.Frame(right_card, padding=4)
+        self.logsContainer.grid(row=4, column=0, sticky="nsew")
+        self.logsContainer.grid_remove()  # start hidden
+
         self.logsBox = scrolledtext.ScrolledText(
-            self.logsFrame,
-            height=20,
-            width=100,
-            state="disabled",
+            self.logsContainer,
+            height=10,
             font=("Courier New", 10),
-            wrap="word"
+            wrap="word",
+            state="disabled",
+            relief="solid",
+            bd=1
         )
-        self.logsBox.pack(padx=10, pady=10, fill="both", expand=True)
+        self.logsBox.pack(fill="both", expand=True)
 
-        self.accessAnalyticsButton = tk.Button(
-            self.frame,
-            text="📈 Access Analytics",
-            font=actionBtnFont,
-            bg="#4CAF50",
-            fg="white",
-            activebackground="#45a049",
-            padx=15,
-            pady=8,
-            command=self.openAnalyticsWindow,
-            cursor="hand2"
-        )
-        self.accessAnalyticsButton.pack(pady=(10, 5), anchor="e")
+        right_card.rowconfigure(1, weight=1)
+        right_card.rowconfigure(4, weight=1)
+        right_card.columnconfigure(0, weight=1)
+
+        # Keep internal flag
+        self.areLogsShown = False
+
 
 
     def runQueryThread(self, sql: str, queryName: str) -> None:
@@ -180,7 +148,9 @@ class QueryView:
             err = self.oracleConnector.runQuery(sql, queryName)
 
             if err:              
-                self.statusLabel.config(text=err, fg="red")  
+                print(f"ERRROR BAD QUERY {err}")
+
+                self.statusLabel.config(text=err, foreground="red")  
                 self.execTimeLabel.config(text="")
                 self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
             else:
@@ -192,11 +162,12 @@ class QueryView:
 
                 self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
                 self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
+                self.query_result_queue.put(("success", err))
 
-            self.displayLogsOnToggle()
-            self.query_result_queue.put(("success", err))
+            self.displayLogs()
 
             self.runQueryButton.config(state="normal")
+
         except Exception as e:
             self.query_result_queue.put(("error", str(e)))
 
@@ -217,13 +188,12 @@ class QueryView:
             self.execTimeLabel.config(text="")
             return
 
-        self.statusLabel.config(text="⌛️ Running query...", fg="blue")
+        self.statusLabel.config(text="⌛️ Running query...", foreground="blue")
         self.execTimeLabel.config(text="")
 
         thread = threading.Thread(target=self.runQueryThread, args=(sql, queryName))
-        thread.start()        
+        thread.start()            
         
-
 
     def displayQueryOutput(self) -> None:
         self.outputBox.delete("1.0", tk.END)
@@ -294,26 +264,24 @@ class QueryView:
 
     def toggleLogs(self) -> None:
         if self.areLogsShown:
-            self.logsFrame.pack_forget()
-            self.toggleLogsBtn.config(text="Show Logs")
+            self.logsContainer.grid_remove()
+            self.toggleLogsBtn.config(text="🪵 Show Logs")
         else:
-            self.logsFrame.pack(fill="both", expand=True, pady=(5, 10))
-            self.toggleLogsBtn.config(text="Hide Logs")
-
-        self.displayLogsOnToggle()
+            self.logsContainer.grid()
+            self.toggleLogsBtn.config(text="🪵 Hide Logs")
         self.areLogsShown = not self.areLogsShown
+        self.displayLogs()
 
 
-    def displayLogsOnToggle(self) -> None:
-        logs = self.queryLoggerManager.getQueriesFromFile("./logs/queries.log")        
+    def displayLogs(self) -> None:
+        logs = self.queryLoggerManager.getQueriesFromFile("./logs/queries.log")
 
         self.logsBox.config(state="normal")
         self.logsBox.delete("1.0", "end")
 
-        for log in logs:
-            formattedLog = f"{log}\n\n"
-            self.logsBox.insert("end", formattedLog)
-        
+        for log_entry in logs:  # newest last
+            self.logsBox.insert(tk.END, f"{log_entry}\n\n")
+
         self.logsBox.see(tk.END)
         self.logsBox.config(state="disabled")
 

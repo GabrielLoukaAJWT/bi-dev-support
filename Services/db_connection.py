@@ -34,11 +34,12 @@ class OracleConnector:
             oracledb.init_oracle_client(lib_dir=cta.LIB_DIR_AJWT)
             isOracleClientValid = True
             print(f"{cta.VALID_ORACLE_INSTANT_CLIENT}\n")
+            
+            return isOracleClientValid
         except Exception as error:
             print(f"{cta.INVALID_ORACLE_INSTANT_CLIENT}\n")
             print(error)
 
-        return isOracleClientValid
 
 
     def connectToOracle(self, username: str, connectionString: str, pwd : str) -> bool:
