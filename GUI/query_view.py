@@ -10,6 +10,7 @@ import Services.db_connection as cnx
 import Services.logging as log
 import Services.database as db
 import GUI.analytics_view as analytics_view
+import constants as cta
 
 
 class QueryView:
@@ -27,6 +28,7 @@ class QueryView:
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
         self.displayLogs()
+        
 
 
         print(F"QUERY VIEW CREATED")
@@ -286,7 +288,7 @@ class QueryView:
 
 
     def displayLogs(self) -> None:
-        logs = self.queryLoggerManager.getQueriesFromFile("./logs/queries.log")
+        logs = self.queryLoggerManager.getDailyLogs()
 
         self.logsBox.config(state="normal")
         self.logsBox.delete("1.0", "end")
@@ -315,7 +317,7 @@ class QueryView:
         return len(queryName) <= 40
     
 
-    def clearLogsClick(self):
+    def clearLogsClick(self) -> None:
         self.queryLoggerManager.clearLogsFile()
         self.displayLogs()
 

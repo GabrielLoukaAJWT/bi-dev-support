@@ -17,5 +17,5 @@ VALID_ORACLE_INSTANT_CLIENT = "Initialized Oracle Instant Client"
 INVALID_ORACLE_INSTANT_CLIENT = "Error connecting:  oracledb.init_oracle_client() ==> missing instant client files"
 LOST_CONNECTION = "Connection lost"
 
-# Logging messages
-SUCCESSFUL_QUERY = ""
+# Logging 
+LOGS_FILE = "./logs/queries.log"

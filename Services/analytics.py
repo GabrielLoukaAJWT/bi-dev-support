@@ -139,11 +139,10 @@ class AnalyticsManager:
             return ([], [])
         timestamps = []
 
+        today = datetime.today()
         for ts in timeStrings:
             date = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S,%f")
             
-            today = datetime.today()
-
             if date.date() == today.date():
                 timestamps.append(date)
         
