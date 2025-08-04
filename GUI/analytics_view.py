@@ -15,7 +15,7 @@ import Services.logging as log
 class AnalyticsView:
     def __init__(self, root: tk.Tk, loggingManager: log.QueryLoggerManager, onCloseCallback=None):
         self.root = tk.Toplevel(root)        
-        self.root.title("Queries analytics")
+        self.root.title("SQL Analytics")
         self.root.state('zoomed')
         
         self.onCloseCallback = onCloseCallback
@@ -116,31 +116,20 @@ class AnalyticsView:
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
-        self.refreshButton = tk.Button(
+        self.refreshButton = ttk.Button(
             self.mainFrame,
             text="🔄 Refresh Analytics",
-            font=("Arial", 11, "bold"),
-            bg="#4CAF50",
-            fg="white",
-            padx=15,
-            pady=8,
-            relief="flat",
+            style="Action.TButton",
             cursor="hand2",
-            activebackground="#45a049",
             command=self.refreshAnalytics
         )
         self.refreshButton.pack(pady=(10, 0))
 
-        self.deleteDbButton = tk.Button(
-            self.mainFrame,
-            text="🗑️ Delete Local DB",
-            font=("Arial", 10, "bold"),
-            bg="#f44336",
-            fg="white",
-            activebackground="#d32f2f",
-            padx=12,
-            pady=6,
+        self.deleteDbButton = ttk.Button(
+            self.mainFrame, 
+            text="🗑️ Delete local DB",
             cursor="hand2",
+            style="Clear.TButton",                                        
             command=self.deleteDB
         )
         self.deleteDbButton.pack(pady=(10, 0), anchor="e")

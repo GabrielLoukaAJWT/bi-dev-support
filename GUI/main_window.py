@@ -45,7 +45,7 @@ class MainWindow:
         self.pswEntry = tk.Entry(self.mainFrame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
         self.pswEntry.pack(pady=5, ipady=4)
 
-        connectBtn = tk.Button(self.mainFrame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white",
+        connectBtn = tk.Button(self.mainFrame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", cursor="hand2",
                                 activebackground="#45A049", padx=10, pady=5, command=self.handleConnection)
         connectBtn.pack(pady=20)        
         
@@ -58,7 +58,8 @@ class MainWindow:
                                        text="Save credentials", 
                                        variable=self.checkboxVar, 
                                        onvalue=1, 
-                                       offvalue=0,                                        
+                                       offvalue=0,    
+                                       cursor="hand2"                                    
                                     )
         self.checkbox.config(bg="lightgrey", fg="blue", font=("Arial", 12), 
                    relief="raised", padx=10, pady=5)

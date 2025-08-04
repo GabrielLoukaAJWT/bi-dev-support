@@ -26,12 +26,14 @@ class QueryView:
         # self.queryLoggerManager.clearLogsFile()
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
+        self.displayLogs()
+
 
         print(F"QUERY VIEW CREATED")
 
 
     def setupUI(self) -> None:
-        self.root.title("SQL Companion")
+        self.root.title("SQL Analytics")
         self.root.configure(bg="#f7f7f7")
 
         if not hasattr(self, "frame"):
@@ -47,47 +49,52 @@ class QueryView:
         style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), background="#f7f7f7", foreground="#222")
         style.configure("Label.TLabel", font=("Segoe UI", 11), background="#f7f7f7", foreground="#444")
         style.configure("Status.TLabel", font=("Segoe UI", 10), background="#f7f7f7", foreground="red")
+        style.configure("Clear.TButton", font=("Segoe UI", 11, "bold"))
+        style.map("Clear.TButton",
+                background=[("active", "#FF1414"), ("!disabled", "#FF3B3B")],
+                foreground=[("active", "white")])
         style.configure("Action.TButton", font=("Segoe UI", 11, "bold"))
         style.map("Action.TButton",
                 background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
                 foreground=[("!disabled", "white")])
 
-        main_pane = ttk.PanedWindow(self.frame, orient="horizontal")
-        main_pane.pack(fill="both", expand=True)
+        mainPanel = ttk.PanedWindow(self.frame, orient="horizontal")
+        mainPanel.pack(fill="both", expand=True)
 
         # Left card: query input
-        left_card = ttk.Frame(main_pane, style="Card.TFrame", padding=16)
-        main_pane.add(left_card, weight=1)
+        leftCard = ttk.Frame(mainPanel, style="Card.TFrame", padding=16)
+        mainPanel.add(leftCard, weight=1)
 
-        ttk.Label(left_card, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Label(leftCard, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
         # Query name
-        ttk.Label(left_card, text="Query Name", style="Label.TLabel").grid(row=1, column=0, sticky="w", pady=(12, 2))
-        self.queryNameEntry = ttk.Entry(left_card, font=("Courier New", 11))
+        ttk.Label(leftCard, text="Query Name", style="Label.TLabel").grid(row=1, column=0, sticky="w", pady=(12, 2))
+        self.queryNameEntry = ttk.Entry(leftCard, font=("Courier New", 11))
         vcmd = (self.root.register(self.validateQueryNameForEntry), "%P")
         self.queryNameEntry.configure(validate="key", validatecommand=vcmd)
         self.queryNameEntry.grid(row=2, column=0, sticky="ew", ipady=6)
+        self.queryNameEntry.insert(0, "Ex: Here is my amazing query name")
 
         # SQL text
-        ttk.Label(left_card, text="SQL Query", style="Label.TLabel").grid(row=3, column=0, sticky="w", pady=(12, 2))
-        self.queryText = tk.Text(left_card, height=10, font=("Courier New", 11), relief="solid", bd=1, wrap="none")
-        q_scroll_y = ttk.Scrollbar(left_card, orient="vertical", command=self.queryText.yview)
-        q_scroll_x = ttk.Scrollbar(left_card, orient="horizontal", command=self.queryText.xview)
+        ttk.Label(leftCard, text="SQL Query", style="Label.TLabel").grid(row=3, column=0, sticky="w", pady=(12, 2))
+        self.queryText = tk.Text(leftCard, height=10, font=("Courier New", 11), relief="solid", bd=1, wrap="none")
+        q_scroll_y = ttk.Scrollbar(leftCard, orient="vertical", command=self.queryText.yview)
+        q_scroll_x = ttk.Scrollbar(leftCard, orient="horizontal", command=self.queryText.xview)
         self.queryText.configure(yscrollcommand=q_scroll_y.set, xscrollcommand=q_scroll_x.set)
         self.queryText.grid(row=4, column=0, sticky="nsew")
         q_scroll_y.grid(row=4, column=1, sticky="ns")
         q_scroll_x.grid(row=5, column=0, sticky="ew", pady=(2, 0))
 
         # Action bar (Run + Analytics)
-        action_frame = ttk.Frame(left_card)
-        action_frame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
-        self.runQueryButton = ttk.Button(action_frame, text="▶ Run Query", style="Action.TButton", command=self.runQuery)
+        actionFrame = ttk.Frame(leftCard)
+        actionFrame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
+        self.runQueryButton = ttk.Button(actionFrame, text="▶ Run Query", style="Action.TButton", cursor="hand2", command=self.runQuery)
         self.runQueryButton.pack(side="left")
-        self.accessAnalyticsButton = ttk.Button(action_frame, text="📈 Access Analytics", style="Action.TButton", command=self.openAnalyticsWindow)
+        self.accessAnalyticsButton = ttk.Button(actionFrame, text="📈 Access Analytics", style="Action.TButton", cursor="hand2", command=self.openAnalyticsWindow)
         self.accessAnalyticsButton.pack(side="left", padx=(8, 0))
 
         # Footer: status + exec time
-        footer = ttk.Frame(left_card)
+        footer = ttk.Frame(leftCard)
         footer.grid(row=7, column=0, sticky="ew", pady=(12, 0))
         self.statusLabel = ttk.Label(footer, text="", style="Status.TLabel")
         self.statusLabel.pack(side="left", fill="x", expand=True)
@@ -95,30 +102,39 @@ class QueryView:
         self.execTimeLabel.pack(side="right")
 
         # Configure expansion
-        left_card.rowconfigure(4, weight=1)
-        left_card.columnconfigure(0, weight=1)
+        leftCard.rowconfigure(4, weight=1)
+        leftCard.columnconfigure(0, weight=1)
 
         # Right card: output + logs
-        right_card = ttk.Frame(main_pane, style="Card.TFrame", padding=16)
-        main_pane.add(right_card, weight=2)
+        rightCard = ttk.Frame(mainPanel, style="Card.TFrame", padding=16)
+        mainPanel.add(rightCard, weight=2)
 
-        ttk.Label(right_card, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Label(rightCard, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
         # Output box
-        self.outputBox = scrolledtext.ScrolledText(right_card, height=12, wrap="none", font=("Courier New", 10), relief="solid", bd=1)
+        self.outputBox = scrolledtext.ScrolledText(rightCard, height=12, wrap="none", font=("Courier New", 10), relief="solid", bd=1)
         self.outputBox.grid(row=1, column=0, sticky="nsew", pady=(4, 2))
-        xScroll = ttk.Scrollbar(right_card, orient="horizontal", command=self.outputBox.xview)
+        xScroll = ttk.Scrollbar(rightCard, orient="horizontal", command=self.outputBox.xview)
         self.outputBox.configure(xscrollcommand=xScroll.set)
         xScroll.grid(row=2, column=0, sticky="ew")
 
         # Logs toggle
-        toggle_frame = ttk.Frame(right_card)
+        self.areLogsShown = False
+
+        toggle_frame = ttk.Frame(rightCard)
         toggle_frame.grid(row=3, column=0, sticky="ew", pady=(12, 4))
-        self.toggleLogsBtn = ttk.Button(toggle_frame, text="🪵 Show Logs", command=self.toggleLogs)
+        
+        self.toggleLogsBtn = ttk.Button(toggle_frame, text="🪵 Show Logs", cursor="hand2", style="Action.TButton", command=self.toggleLogs)
         self.toggleLogsBtn.pack(side="left")
 
+        self.clearLogsBtn = ttk.Button(toggle_frame, text="🗑️ Clear all logs",
+                                        cursor="hand2",
+                                        style="Clear.TButton",
+                                        command=self.clearLogsClick)
+        self.clearLogsBtn.pack(side='right')
+
         # Logs container (hidden initially)
-        self.logsContainer = ttk.Frame(right_card, padding=4)
+        self.logsContainer = ttk.Frame(rightCard, padding=4)
         self.logsContainer.grid(row=4, column=0, sticky="nsew")
         self.logsContainer.grid_remove()  # start hidden
 
@@ -133,12 +149,9 @@ class QueryView:
         )
         self.logsBox.pack(fill="both", expand=True)
 
-        right_card.rowconfigure(1, weight=1)
-        right_card.rowconfigure(4, weight=1)
-        right_card.columnconfigure(0, weight=1)
-
-        # Keep internal flag
-        self.areLogsShown = False
+        rightCard.rowconfigure(1, weight=1)
+        rightCard.rowconfigure(4, weight=1)
+        rightCard.columnconfigure(0, weight=1)
 
 
 
@@ -270,7 +283,6 @@ class QueryView:
             self.logsContainer.grid()
             self.toggleLogsBtn.config(text="🪵 Hide Logs")
         self.areLogsShown = not self.areLogsShown
-        self.displayLogs()
 
 
     def displayLogs(self) -> None:
@@ -279,7 +291,7 @@ class QueryView:
         self.logsBox.config(state="normal")
         self.logsBox.delete("1.0", "end")
 
-        for log_entry in logs:  # newest last
+        for log_entry in logs:
             self.logsBox.insert(tk.END, f"{log_entry}\n\n")
 
         self.logsBox.see(tk.END)
@@ -301,6 +313,11 @@ class QueryView:
 
     def validateQueryNameForEntry(self, queryName) -> bool:
         return len(queryName) <= 40
+    
+
+    def clearLogsClick(self):
+        self.queryLoggerManager.clearLogsFile()
+        self.displayLogs()
 
 
 
