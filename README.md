@@ -47,5 +47,5 @@ To build the project, run 'pyinstaller main.py --icon=assets/images/favicon.ico 
 ### 5. Tests and coverage
 To test, run 'python -m unittest discover -v' in root.
 To get a coverage report:
-    - run 'coverage run --branch --source=src -m pytest tests/' in root
-    - run 'coverage html -d .\tests\coverage\htmlreport'
+- run 'coverage run --branch --source=src -m pytest tests/' in root
+- run 'coverage html -d .\tests\coverage\htmlreport'
