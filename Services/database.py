@@ -40,6 +40,7 @@ class DatabaseManager:
             df = pd.DataFrame(query.rows, columns=query.columns)
         else:
             return pd.DataFrame([], [])
+        
         return df
     
     
