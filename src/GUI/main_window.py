@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 
-import Services.db_connection as cnx
-import Services.settings as settings
-import GUI.query_view as qryview
+import src.Services.db_connection as cnx
+import src. Services.settings as settings
+import src. GUI.query_view as qryview
 import constants as cta
 
 

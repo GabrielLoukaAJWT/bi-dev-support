@@ -5,7 +5,7 @@ import datetime
 
 import constants as cta
 import Models.Query as qry
-import Services.settings as settings
+import src.Services.settings as settings
 
 
 class OracleConnector:

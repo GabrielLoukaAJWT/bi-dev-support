@@ -19,3 +19,9 @@ LOST_CONNECTION = "Connection lost"
 
 # Logging 
 LOGS_FILE = "./logs/queries.log"
+
+# assets
+ICON = "assets\images\icon.ico"
+DIR_LOCAL_DB = "local_DB\queries.json"
+DIR_LOGS = "logs\queries.log"
+DIR_SETTINGS = "settings\settings.json"

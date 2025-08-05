@@ -28,3 +28,7 @@
 
 # oracle instant client
 /oracle instant client
+
+# tests + coverage
+/.pytest_cache
+.coverage

@@ -1,0 +1,45 @@
+2025-08-04 14:51:57 - sql logger - INFO - Exec time : 0:00:00.012763
+
+2025-08-04 14:52:13 - sql logger - INFO - Exec time : 0:00:00.012282
+
+2025-08-04 14:53:05 - sql logger - INFO - Exec time : 0:00:32.342009
+
+2025-08-04 14:54:34 - sql logger - INFO - Exec time : 0:00:01.083617
+
+2025-08-04 14:54:53 - sql logger - INFO - Exec time : 0:00:00.167695
+
+2025-08-04 15:01:33 - sql logger - INFO - Exec time : 0:00:00.011980
+
+2025-08-04 15:13:25 - sql logger - INFO - Exec time : 0:00:00.011735
+
+2025-08-04 15:20:41 - sql logger - ERROR - ORA-00900: invalid SQL statement
+Help: https://docs.oracle.com/error-help/db/ora-00900/
+
+2025-08-04 15:25:05 - sql logger - ERROR - ORA-00900: invalid SQL statement
+Help: https://docs.oracle.com/error-help/db/ora-00900/
+
+2025-08-04 15:25:24 - sql logger - INFO - Exec time : 0:00:00.013510
+
+2025-08-05 08:04:13 - sql logger - INFO - Exec time : 0:00:00.011778
+
+2025-08-05 08:07:00 - sql logger - INFO - Exec time : 0:00:00.012817
+
+2025-08-05 08:10:40 - sql logger - INFO - Exec time : 0:00:00.011942
+
+2025-08-05 08:11:42 - sql logger - INFO - Exec time : 0:00:33.043840
+
+2025-08-05 08:42:05 - sql logger - INFO - Exec time : 0:00:00.002992
+
+2025-08-05 08:43:15 - sql logger - INFO - Exec time : 0:00:00.010359
+
+2025-08-05 08:49:03 - sql logger - INFO - Exec time : 0:00:00.009615
+
+2025-08-05 08:50:38 - sql logger - ERROR - ORA-00900: invalid SQL statement
+Help: https://docs.oracle.com/error-help/db/ora-00900/
+
+2025-08-05 08:50:47 - sql logger - INFO - Exec time : 0:00:00.011613
+
+2025-08-05 08:52:22 - sql logger - INFO - Exec time : 0:00:00.008188
+
+2025-08-05 08:53:36 - sql logger - INFO - Exec time : 0:00:30.020465
+

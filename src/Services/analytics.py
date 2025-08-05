@@ -2,7 +2,7 @@ from datetime import datetime
 import pytz
 from typing import Counter
 
-import Services.database as db
+import src.Services.database as db
 
 class AnalyticsManager:
     def __init__(self, loggingManager):

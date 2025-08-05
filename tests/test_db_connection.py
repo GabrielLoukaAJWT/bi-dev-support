@@ -30,7 +30,7 @@ class DBConnectionTest(unittest.TestCase):
         # Arrange
         # Act
         # Assert
-        self.assertTrue(True)
+        pass
 
     # def test_another_case(self):
     #     """Another placeholder."""

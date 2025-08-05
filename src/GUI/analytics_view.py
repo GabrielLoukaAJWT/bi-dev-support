@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as tkplot
 import numpy as np
 
-import Services.analytics as analytics
-import Services.database as db
-import Services.logging as log
+import src.Services.analytics as analytics
+import src.Services.database as db
+import src.Services.logging as log
 
 
 class AnalyticsView:

@@ -43,3 +43,9 @@ Run 'pip install -r requirements.txt' in a virtual environment (create one by ru
 
 ### 4. How to build
 To build the project, run 'pyinstaller main.py --icon=assets/images/favicon.ico --noconsole --name SQL-Analytics'
+
+### 5. Tests and coverage
+To test, run 'python -m unittest discover -v' in root.
+To get a coverage report:
+    - run 'coverage run --branch --source=src -m pytest tests/' in root
+    - run 'coverage html -d .\tests\coverage\htmlreport'

@@ -7,10 +7,10 @@ from tkinter import messagebox
 import queue
 import pandastable as pdt
 
-import Services.db_connection as cnx
-import Services.logging as log
-import Services.database as db
-import GUI.analytics_view as analytics_view
+import src.Services.db_connection as cnx
+import src.Services.logging as log
+import src.Services.database as db
+import src.GUI.analytics_view as analytics_view
 import constants as cta
 
 

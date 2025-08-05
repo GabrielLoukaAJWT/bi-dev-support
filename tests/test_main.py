@@ -1,40 +1,19 @@
 import unittest
 
+import main
+import constants as cta
+
 class SQLAnalyticsMainTest(unittest.TestCase):
-    """UnitTest template for my_module.py"""
 
-    @classmethod
-    def setUpClass(cls):
-        """Called once before any tests."""
-        # e.g. load fixtures, start test DB, etc.
-        pass
+    def test_all_files_exist(self):
+        '''Check if the Orcale Instant Client folder exits - it's necessary for thick mode'''
+        
+        self.assertTrue(main.checkIfAllFilesExist())
 
-    @classmethod
-    def tearDownClass(cls):
-        """Called once after all tests."""
-        # e.g. tear down test DB, cleanup files, etc.
-        pass
+    def test_one_missing_file(self):
+        badFile = "blah blah"
 
-    def setUp(self):
-        """Called before each test method."""
-        # e.g. create fresh objects, reset state, etc.
-        pass
-
-    def tearDown(self):
-        """Called after each test method."""
-        # e.g. destroy objects, reset mocks, etc.
-        pass
-
-    def test_something_happens(self):
-        """Placeholder for a real test."""
-        # Arrange
-        # Act
-        # Assert
-        self.assertTrue(False, "not implemented")
-
-    # def test_another_case(self):
-    #     """Another placeholder."""
-    #     ...
+        self.assertFalse(main.resource_path(badFile))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
