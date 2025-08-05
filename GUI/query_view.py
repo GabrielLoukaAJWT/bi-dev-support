@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
 import queue
+import pandastable as pdt
 
 import Services.db_connection as cnx
 import Services.logging as log
@@ -27,7 +28,7 @@ class QueryView:
         # self.queryLoggerManager.clearLogsFile()
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
-        self.displayLogs()
+        self.displayLogsText()
         
 
 
@@ -47,7 +48,8 @@ class QueryView:
 
         style = ttk.Style(self.root)
         style.theme_use("default")
-        style.configure("Card.TFrame", background="#ffffff", relief="flat")
+        style.configure("LeftCard.TFrame", background="#f7f7f7", relief="flat")
+        style.configure("RightCard.TFrame", background="#f7f7f7", relief="flat")
         style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), background="#f7f7f7", foreground="#222")
         style.configure("Label.TLabel", font=("Segoe UI", 11), background="#f7f7f7", foreground="#444")
         style.configure("Status.TLabel", font=("Segoe UI", 10), background="#f7f7f7", foreground="red")
@@ -64,7 +66,8 @@ class QueryView:
         mainPanel.pack(fill="both", expand=True)
 
         # Left card: query input
-        leftCard = ttk.Frame(mainPanel, style="Card.TFrame", padding=16)
+        leftCard = ttk.Frame(mainPanel, style="LeftCard.TFrame", padding=16, width=50)
+        leftCard.pack(side="left", fill="y") 
         mainPanel.add(leftCard, weight=1)
 
         ttk.Label(leftCard, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
@@ -108,41 +111,53 @@ class QueryView:
         leftCard.columnconfigure(0, weight=1)
 
         # Right card: output + logs
-        rightCard = ttk.Frame(mainPanel, style="Card.TFrame", padding=16)
-        mainPanel.add(rightCard, weight=2)
+        self.rightCard = ttk.PanedWindow(mainPanel, orient="vertical", style="RightCard.TFrame")
+        mainPanel.add(self.rightCard, weight=2)
 
-        ttk.Label(rightCard, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
-
-        # Output box
-        self.outputBox = scrolledtext.ScrolledText(rightCard, height=12, wrap="none", font=("Courier New", 10), relief="solid", bd=1)
-        self.outputBox.grid(row=1, column=0, sticky="nsew", pady=(4, 2))
-        xScroll = ttk.Scrollbar(rightCard, orient="horizontal", command=self.outputBox.xview)
-        self.outputBox.configure(xscrollcommand=xScroll.set)
-        xScroll.grid(row=2, column=0, sticky="ew")
+        ttk.Label(self.rightCard, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
         # Logs toggle
-        self.areLogsShown = False
+        self.rightSplitter = ttk.Panedwindow(self.rightCard, orient="vertical")
+        self.rightSplitter.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
 
-        toggle_frame = ttk.Frame(rightCard)
-        toggle_frame.grid(row=3, column=0, sticky="ew", pady=(12, 4))
-        
-        self.toggleLogsBtn = ttk.Button(toggle_frame, text="🪵 Show Logs", cursor="hand2", style="Action.TButton", command=self.toggleLogs)
+        # Output pane
+        self.outputPane = ttk.Frame(self.rightSplitter)
+        self.rightSplitter.add(self.outputPane, weight=3)
+
+        # Logs pane (wrapper for toggle + logs)
+        self.logsWrapper = ttk.Frame(self.rightSplitter)
+        self.rightSplitter.add(self.logsWrapper, weight=1)
+
+        # Toggle bar above logs
+        toggle_frame = ttk.Frame(self.logsWrapper)
+        toggle_frame.pack(fill="x", pady=(0, 4))
+
+        self.areLogsShown = False
+        self.toggleLogsBtn = ttk.Button(
+            toggle_frame,
+            text="🧾 Show Logs",
+            cursor="hand2",
+            style="Action.TButton",
+            command=self.toggleLogs
+        )
         self.toggleLogsBtn.pack(side="left")
 
-        self.clearLogsBtn = ttk.Button(toggle_frame, text="🗑️ Clear all logs",
-                                        cursor="hand2",
-                                        style="Clear.TButton",
-                                        command=self.clearLogsClick)
-        self.clearLogsBtn.pack(side='right')
+        self.clearLogsBtn = ttk.Button(
+            toggle_frame,
+            text="🗑️ Clear all logs",
+            cursor="hand2",
+            style="Clear.TButton",
+            command=self.clearLogsClick
+        )
+        self.clearLogsBtn.pack(side="right")
 
-        # Logs container (hidden initially)
-        self.logsContainer = ttk.Frame(rightCard, padding=4)
-        self.logsContainer.grid(row=4, column=0, sticky="nsew")
-        self.logsContainer.grid_remove()  # start hidden
+        # Logs container (start hidden)
+        self.logsContainer = ttk.Frame(self.logsWrapper)
+        self.logsContainer.pack(fill="both", expand=True)
+        self.logsContainer.pack_forget()
 
         self.logsBox = scrolledtext.ScrolledText(
             self.logsContainer,
-            height=10,
             font=("Courier New", 10),
             wrap="word",
             state="disabled",
@@ -151,9 +166,9 @@ class QueryView:
         )
         self.logsBox.pack(fill="both", expand=True)
 
-        rightCard.rowconfigure(1, weight=1)
-        rightCard.rowconfigure(4, weight=1)
-        rightCard.columnconfigure(0, weight=1)
+        # Configure weights so rightCard expands
+        self.rightCard.rowconfigure(1, weight=1)
+        self.rightCard.columnconfigure(0, weight=1)
 
 
 
@@ -173,13 +188,14 @@ class QueryView:
                 text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
                 self.execTimeLabel.config(text=text)
 
-                self.displayQueryOutput()
+                # self.displayQueryOutput()
 
                 self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
                 self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
+                self.displayDataframe()
                 self.query_result_queue.put(("success", err))
 
-            self.displayLogs()
+            self.displayLogsText()
 
             self.runQueryButton.config(state="normal")
 
@@ -210,84 +226,18 @@ class QueryView:
         thread.start()            
         
 
-    def displayQueryOutput(self) -> None:
-        self.outputBox.delete("1.0", tk.END)
-
-        if not self.oracleConnector.currentQuery.rows:
-            self.outputBox.insert(tk.END, "No results found.")
-            return
-        
-        formatted = self.formatRows(
-            self.oracleConnector.currentQuery.columns, 
-            self.oracleConnector.currentQuery.rows)
-        
-        self.outputBox.insert(tk.END, formatted)
-
-
-    def calculateColumnWidths(self, columns: list, rows: list) -> list[int]:
-        widths = [len(col) for col in columns]
-
-        for row in rows:
-            if len(row) != len(columns):
-                raise ValueError("Row length does not match number of columns")
-            
-            for i, val in enumerate(row):
-                if isinstance(val, oracledb.LOB):
-                    val_str = "[LOB]"
-                elif isinstance(val, bytes):
-                    val_str = val.decode('utf-8', errors='replace')
-                elif val is None:
-                    val_str = ""
-                else:
-                    val_str = str(val)
-
-                widths[i] = max(widths[i], len(val_str))
-
-        return widths
-    
-    
-    def formatRowSafely(self, row: str, colWidths: list[int]) -> str:
-        formatted = []
-
-        for i, val in enumerate(row):
-            if isinstance(val, oracledb.LOB):
-                val_str = "[LOB]"
-            elif isinstance(val, bytes):
-                val_str = val.decode('utf-8', errors='replace')
-            elif val is None:
-                val_str = ""
-            else:
-                val_str = str(val)
-            formatted.append(val_str.ljust(colWidths[i]))
-
-        return " | ".join(formatted)
-
-        
-    def formatRows(self, columns: list, rows: list) -> str:
-        col_widths = self.calculateColumnWidths(columns, rows)
-
-        header = " | ".join(col.ljust(col_widths[i]) for i, col in enumerate(columns))
-        separator = "-+-".join("-" * w for w in col_widths)
-
-        lines = [header, separator]
-
-        for row in rows:
-            lines.append(self.formatRowSafely(row, col_widths))
-
-        return "\n".join(lines)
-    
-
     def toggleLogs(self) -> None:
         if self.areLogsShown:
-            self.logsContainer.grid_remove()
-            self.toggleLogsBtn.config(text="🪵 Show Logs")
+            self.logsContainer.pack_forget()
+            self.toggleLogsBtn.config(text="🧾 Show Logs")
         else:
-            self.logsContainer.grid()
-            self.toggleLogsBtn.config(text="🪵 Hide Logs")
+            self.logsContainer.pack()
+            self.toggleLogsBtn.config(text="🧾 Hide Logs")
         self.areLogsShown = not self.areLogsShown
 
 
-    def displayLogs(self) -> None:
+
+    def displayLogsText(self) -> None:
         logs = self.queryLoggerManager.getDailyLogs()
 
         self.logsBox.config(state="normal")
@@ -319,7 +269,19 @@ class QueryView:
 
     def clearLogsClick(self) -> None:
         self.queryLoggerManager.clearLogsFile()
-        self.displayLogs()
+        self.displayLogsText()
+
+
+    def displayDataframe(self) -> None:
+        self.outputDataframTable = pdt.Table(
+            self.outputPane, 
+            dataframe=self.databaseManager.createDataframe(self.oracleConnector.currentQuery), 
+            showtoolbar=True, 
+            showstatusbar=True
+        )
+        self.outputDataframTable.show()
+        self.outputDataframTable.redraw()
+        self.outputDataframTable.after(100, lambda: self.outputDataframTable.movetoSelection(row=0))
 
 
 

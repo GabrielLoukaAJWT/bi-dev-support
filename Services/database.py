@@ -1,5 +1,6 @@
 from typing import Any, Dict
 import pysondb 
+import pandas as pd
 
 import Models.Query as models
 
@@ -32,5 +33,12 @@ class DatabaseManager:
         if len(self.getQueriesFromDB()) > 0:
             self.queriesLocalDB.deleteAll()
 
+
+    def createDataframe(self, query: models.Query) -> pd.DataFrame:
+        if query:
+            df = pd.DataFrame(query.rows, columns=query.columns)
+        else:
+            return pd.DataFrame([], [])
+        return df
     
     

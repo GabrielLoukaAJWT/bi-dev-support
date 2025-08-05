@@ -66,7 +66,6 @@ class QueryLoggerManager:
                         current_entry += line
                 if current_entry:
                     log_entries.append(current_entry.strip())
-                    print(f"CURRENT ENTRY READ {current_entry.strip()}")
         except FileNotFoundError:
             print(f"Log file not found: {filepath}")
         except Exception as e:

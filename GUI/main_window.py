@@ -141,7 +141,7 @@ class MainWindow:
             "Built by Gabriel Louka\n"
             "This software helps you connect to Oracle DBs,\n"
             "run queries, view stats, and analyze performance.\n\n"
-            "© 2025 Gabriel Louka. All rights reserved."
+            # "© 2025 Gabriel Louka. All rights reserved."
         )
         messagebox.showinfo("About SQL Companion", about_text)
 
