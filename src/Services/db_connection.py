@@ -1,10 +1,10 @@
 import oracledb 
-import os, getpass
-import platform
+import getpass
 import datetime
 
 import constants as cta
 import Models.Query as qry
+import Models.Exceptions as exc
 import src.Services.settings as settings
 
 
@@ -12,6 +12,7 @@ class OracleConnector:
     def __init__(self):
         self.connection = None
         self.cursor = None
+        self.isOracleClientValid = False
 
         self.queryOutput = []
 
@@ -20,32 +21,23 @@ class OracleConnector:
         self.settingsManager = settings.SettingsManager()
 
 
-    def getOracleInstantClient(self) -> None:
-        print("ARCH:", platform.architecture())
-        print("FILES AT lib_dir:")
-        for name in os.listdir(cta.LIB_DIR_AJWT):
-            print(name)
-
-
-    def validateOracleInstantClientFiles(self) -> bool:
-        isOracleClientValid = False
-
+    def validateOracleInstantClientFiles(self, file: str) -> bool:
         try:
-            oracledb.init_oracle_client(lib_dir=cta.LIB_DIR_AJWT)
-            isOracleClientValid = True
-            print(f"{cta.VALID_ORACLE_INSTANT_CLIENT}\n")
+            oracledb.init_oracle_client(lib_dir=file)
+            self.isOracleClientValid = True
+            print(f"{cta.VALID_ORACLE_INSTANT_CLIENT}")
             
-            return isOracleClientValid
-        except Exception as error:
-            print(f"{cta.INVALID_ORACLE_INSTANT_CLIENT}\n")
-            print(error)
+            return self.isOracleClientValid
+        
+        except exc.InvalidOIC as error:
+            raise exc.InvalidOIC
 
 
 
     def connectToOracle(self, username: str, connectionString: str, pwd : str) -> bool:
-        isOICValid = self.validateOracleInstantClientFiles()
+        self.validateOracleInstantClientFiles(cta.LIB_DIR_AJWT)
 
-        if isOICValid:
+        if self.isOracleClientValid:
             # if self.settingsManager.validatePasswordHash(pwd):
                 try:    
                     self.connection = oracledb.connect(
