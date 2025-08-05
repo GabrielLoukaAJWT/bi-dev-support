@@ -16,6 +16,7 @@ class DatabaseManager:
             "initTime": query.initTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "endTime": query.endTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "execTime": query.execTime.total_seconds(),
+            "ranBy": query.ranBy,
             # "columns": [str(col) for col in query.columns],
             # "rows": [[str(cell) for cell in row] for row in query.rows],
             "code": query.code,

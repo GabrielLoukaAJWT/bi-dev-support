@@ -35,6 +35,7 @@ class AnalyticsManager:
                     query["id"],
                     query["name"],
                     query["execTime"],
+                    query["ranBy"],
                     query["initTime"],
                     query["nb_rows"]
                 )

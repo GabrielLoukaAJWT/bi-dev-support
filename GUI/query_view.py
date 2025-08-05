@@ -188,8 +188,6 @@ class QueryView:
                 text = f"{len(self.oracleConnector.currentQuery.rows)} rows in {str(self.oracleConnector.currentQuery.execTime)}"
                 self.execTimeLabel.config(text=text)
 
-                # self.displayQueryOutput()
-
                 self.queryLoggerManager.addLog("info", self.oracleConnector.currentQuery, err)
                 self.databaseManager.addQueryToDB(self.oracleConnector.currentQuery)
                 self.displayDataframe()

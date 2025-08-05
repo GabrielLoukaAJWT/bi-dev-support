@@ -97,7 +97,7 @@ class AnalyticsView:
 
         self.listOfQueriesViewTree = ttk.Treeview(
             self.tableFrame,
-            columns=("ID", "Query", "Exec Time", "Timestamp", "Number of rows"),
+            columns=("ID", "Query", "Exec Time", "User", "Timestamp", "Number of rows"),
             show="headings",
             selectmode="browse"
         )
@@ -105,12 +105,14 @@ class AnalyticsView:
         self.listOfQueriesViewTree.heading("ID", text="ID")
         self.listOfQueriesViewTree.heading("Query", text="Query")
         self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
+        self.listOfQueriesViewTree.heading("User", text="Ran by")
         self.listOfQueriesViewTree.heading("Timestamp", text="Executed On")
         self.listOfQueriesViewTree.heading("Number of rows", text="Rows")
 
         self.listOfQueriesViewTree.column("ID", anchor="center", width=120)
         self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
         self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=120)
+        self.listOfQueriesViewTree.column("User", anchor="center", width=120)
         self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
         self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=140)
 

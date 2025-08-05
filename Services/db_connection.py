@@ -1,5 +1,5 @@
 import oracledb 
-import os
+import os, getpass
 import platform
 import datetime
 
@@ -72,6 +72,7 @@ class OracleConnector:
                 self.currentQuery.initTime = datetime.datetime(1, 1, 1, 0, 0)
                 self.currentQuery.endTime = datetime.datetime(1, 1, 1, 0, 0)
                 self.currentQuery.execTime = datetime.timedelta()
+                self.currentQuery.ranBy = ""
                 self.currentQuery.columns = []
                 self.currentQuery.rows = []
                 self.currentQuery.code = ""
@@ -85,9 +86,10 @@ class OracleConnector:
 
                 self.currentQuery.endTime = datetime.datetime.today()
                 self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
+                self.currentQuery.ranBy = getpass.getuser()
                 self.currentQuery.code = sqlQuery
                 self.currentQuery.name = queryName
-                self.currentQuery.columns = [row[0] for row in self.cursor.description]                
+                self.currentQuery.columns = [row[0] for row in self.cursor.description]  
             
             except Exception as error:
                 return f"{error}\n"

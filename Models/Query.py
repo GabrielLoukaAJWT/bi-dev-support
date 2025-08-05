@@ -8,6 +8,7 @@ class Query:
     initTime: datetime = datetime.datetime(1, 1, 1, 0, 0)
     endTime: datetime = datetime.datetime(1, 1, 1, 0, 0)
     execTime: datetime.timedelta = datetime.timedelta()
+    ranBy: str = ""
     columns: list = field(default_factory=lambda: [])
     rows: list = field(default_factory=lambda: [])
     code: str = ""
