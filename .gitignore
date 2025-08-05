@@ -17,7 +17,7 @@
 /build
 /dist
 /SQL-Analytics.spec
-/SQL-Analytics-v1.0
+/SQL-Analytics-v1.0.spec
 
 # settings
 /settings/settings.json
