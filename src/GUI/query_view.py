@@ -20,12 +20,11 @@ class QueryView:
         self.analyticsPage = None
 
         self.oracleConnector = oracleConnector
-        self.queryLoggerManager = log.QueryLoggerManager()   
+        self.queryLoggerManager = log.QueryLoggerManager(cta.LOGS_FILE)   
         self.databaseManager = db.DatabaseManager()
         
         self.query_result_queue = queue.Queue()
 
-        # self.queryLoggerManager.clearLogsFile()
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
         self.displayLogsText()

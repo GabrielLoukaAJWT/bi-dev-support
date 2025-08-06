@@ -49,7 +49,7 @@ class OracleConnector:
 
                     return True
                 
-                except Exception as error:
+                except exc.OracleConnectionFailure as error:
                     self.connection = None
                     print(error)
                     return False

@@ -6,28 +6,32 @@ import Models.Query as models
 import constants as cta
 
 class QueryLoggerManager:
-    def __init__(self):
+    def __init__(self, file: str):
         self.logger = logging.getLogger('sql logger')
         self.logger.setLevel(logging.INFO)
+        self.file = file
 
-        fh = logging.FileHandler(cta.LOGS_FILE)
+        self.fh = self.setFileHandler(self.file)
         # ch = logging.StreamHandler()        
 
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
         
-        fh.setFormatter(formatter)
+        self.fh.setFormatter(self.formatter)
         # ch.setFormatter(formatter)
 
-        self.logger.addHandler(fh)
+        self.logger.addHandler(self.fh)
         # self.logger.addHandler(ch)
 
-        self.logs = self.getQueriesFromFile(cta.LOGS_FILE)
+        self.logs = self.getQueriesFromFile(self.file)
 
-        listHandler = ListHandler(self.logs)
-        listHandler.setFormatter(formatter)
+        self.listHandler = ListHandler(self.logs)
+        self.listHandler.setFormatter(self.formatter)
 
-        self.logger.addHandler(listHandler)
+        self.logger.addHandler(self.listHandler)
 
+
+    def setFileHandler(self, file: str):
+        return logging.FileHandler(file)
 
 
     def addLog(self, type: str, query: models.Query, msg: str) -> None:
@@ -40,10 +44,12 @@ class QueryLoggerManager:
                 self.logger.error(
                     f"{msg}"
                 )
+            case _:
+                return
 
 
     def clearLogsFile(self) -> None:
-        log_file = open(cta.LOGS_FILE, "r+")
+        log_file = open(self.file, "r+")
         log_file.truncate(0)
         log_file.close()
 
@@ -58,6 +64,7 @@ class QueryLoggerManager:
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 for line in f:
+                    # if a line from the file starts with a date (regex), then it's a singular log as wanted
                     if new_entry_pattern.match(line):
                         if current_entry:
                             log_entries.append(current_entry.strip())
@@ -66,16 +73,15 @@ class QueryLoggerManager:
                         current_entry += line
                 if current_entry:
                     log_entries.append(current_entry.strip())
+
         except FileNotFoundError:
             print(f"Log file not found: {filepath}")
-        except Exception as e:
-            print(f"Error reading log file: {e}")
 
         return log_entries
     
 
     def getDailyLogs(self) -> list[str]:
-        logs = self.getQueriesFromFile(cta.LOGS_FILE)
+        logs = self.getQueriesFromFile(self.file)
 
         if not logs:
             return []
