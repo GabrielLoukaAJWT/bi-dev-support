@@ -21,7 +21,7 @@ class QueryView:
 
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager(cta.LOGS_FILE)   
-        self.databaseManager = db.DatabaseManager()
+        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
         
         self.query_result_queue = queue.Queue()
 

@@ -9,7 +9,7 @@ class AnalyticsManager:
         self.loggingManager = loggingManager
         self.logs = self.loggingManager.logs
 
-        self.databaseManager = db.DatabaseManager()
+        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
 
         print(F"CREATED ANALYTICS MANAGER\n")
 

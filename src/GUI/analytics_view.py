@@ -10,6 +10,7 @@ import numpy as np
 import src.Services.analytics as analytics
 import src.Services.database as db
 import src.Services.logging as log
+import constants as cta
 
 
 class AnalyticsView:
@@ -22,7 +23,7 @@ class AnalyticsView:
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
-        self.databaseManager = db.DatabaseManager()
+        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
 
         self.plotsQueue = queue.Queue()
 

@@ -5,8 +5,9 @@ import pandas as pd
 import Models.Query as models
 
 class DatabaseManager:
-    def __init__(self):
-        self.queriesLocalDB = pysondb.getDb("./local_DB/queries.json")
+    def __init__(self, file: str):
+        self.file = file
+        self.queriesLocalDB = pysondb.getDb(self.file)
         print(f"DATABASE : {self.queriesLocalDB}")
 
 
@@ -17,8 +18,6 @@ class DatabaseManager:
             "endTime": query.endTime.strftime("%Y-%m-%d %H:%M:%S,%f"),
             "execTime": query.execTime.total_seconds(),
             "ranBy": query.ranBy,
-            # "columns": [str(col) for col in query.columns],
-            # "rows": [[str(cell) for cell in row] for row in query.rows],
             "code": query.code,
             "nb_rows" : len(query.rows)
         }

@@ -17,6 +17,9 @@ class LoggingTest(unittest.TestCase):
     def setUp(self):
         self.loggingManager.clearLogsFile()
 
+    def tearDown(self):
+        self.loggingManager.clearLogsFile()
+
     
     def test_init(self):
         self.assertIsNotNone(self.loggingManager.logger)
