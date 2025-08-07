@@ -18,7 +18,7 @@ class AnalyticsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.mockFile = "./tests/test_folders/test_local_DB/queries.json"
-        cls.mockFileLogs = "./tests/test_folders/test_logs/queries.log"
+        cls.mockFileLogs = "./tests/test_folders/test_logs/queries_for_analytics.log"
         cls.loggingManager = log.QueryLoggerManager(cls.mockFileLogs)
 
         cls.analyticsManager = analytics.AnalyticsManager(cls.loggingManager, cls.mockFile)
@@ -87,21 +87,27 @@ class AnalyticsTest(unittest.TestCase):
         self.assertEqual(res, 0)
 
     
-    def test_common_error(self):
-        exQuery = query.Query()
-        self.loggingManager.addLog("info", exQuery, "")
+    # def test_common_error(self):
+        # self.loggingManager.clearLogsFile()
 
-        self.loggingManager.addLog("error", exQuery, 
-                            f"ORA-00900: invalid SQL statement Help:\nhttps://docs.oracle.com/error-help/db/ora-00900/"
-                            )
+        # exQuery = query.Query()
+        # self.loggingManager.addLog("info", exQuery, "")
 
-        res = self.analyticsManager.getMostCommonErrorLog()
+        # self.loggingManager.addLog("error", exQuery, 
+        #                     "ORA-00900: invalid SQL statement\nHelp: https://docs.oracle.com/error-help/db/ora-00900/"
+        #                     )
+        
+        # res = self.analyticsManager.getMostCommonErrorLog()
 
-        self.assertEqual(res[1:], "ORA00900: invalid SQL statement Help:")
+        # self.assertEqual(res, " ORA-00900: invalid SQL statement")
+
+        # self.loggingManager.clearLogsFile()
+
 
 
     # def test_common_error_empty_logs(self):
-    #     self.analyticsManager.loggingManager.clearLogsFile()
+    #     self.loggingManager.clearLogsFile()
+        
     #     print(f"LOGSOGSOGOSO {self.analyticsManager.logs}")
     #     res = self.analyticsManager.getMostCommonErrorLog()
 

@@ -11,14 +11,8 @@ class LoggingTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.mockFile = "./tests/test_folders/test_logs/queries.log"
+        cls.mockFile = "./tests/test_folders/test_logs/queries_for_logs.log"
         cls.loggingManager = log.QueryLoggerManager(cls.mockFile)
-
-    def setUp(self):
-        self.loggingManager.clearLogsFile()
-
-    def tearDown(self):
-        self.loggingManager.clearLogsFile()
 
     
     def test_init(self):
@@ -26,6 +20,8 @@ class LoggingTest(unittest.TestCase):
 
     
     def test_new_log_added(self):
+        self.loggingManager.clearLogsFile()
+
         exQuery = query.Query()
         self.loggingManager.addLog("info", exQuery, "")
 
@@ -38,6 +34,8 @@ class LoggingTest(unittest.TestCase):
         res = self.loggingManager.getLogsFromFile(self.mockFile)
         
         self.assertEqual(len(res), 2)
+        
+        self.loggingManager.clearLogsFile()
 
     
     def test_bad_file(self):
@@ -48,33 +46,32 @@ class LoggingTest(unittest.TestCase):
 
 
     def test_daily_logs(self):
+        self.loggingManager.clearLogsFile()
         exQuery = query.Query()
 
         self.loggingManager.addLog("info", exQuery, "")
-        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         self.loggingManager.addLog("error", exQuery, "errrrrrrrr")
-        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         daily = self.loggingManager.getDailyLogs()
 
         self.assertEqual(len(daily), 2)
 
+        self.loggingManager.clearLogsFile()
+
 
     def test_daily_empty_logs(self):
-        self.loggingManager.logs = []
+        self.loggingManager.clearLogsFile()
         res = self.loggingManager.getDailyLogs()
 
         self.assertEqual(res, [])
 
 
-    def test_daily_not_today(self):
+    def test_daily_today(self):
+        self.loggingManager.clearLogsFile()
         res = self.loggingManager.getDailyLogs()
 
-        self.assertEqual(res, [
-           
-            ]
-        )
+        self.assertEqual(len(res), 0)
 
 
 

@@ -14,7 +14,7 @@ class QueryLoggerManager:
         self.fh = self.setFileHandler(self.file)
         # ch = logging.StreamHandler()        
 
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+        self.formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
         
         self.fh.setFormatter(self.formatter)
         # ch.setFormatter(formatter)
@@ -38,7 +38,7 @@ class QueryLoggerManager:
         match type:
             case "info":
                 self.logger.info(
-                    f"Exec time : {query.execTime}\n"
+                    f"Exec time : {query.execTime}\n" # SEE THIS
                 )
             case "error":
                 self.logger.error(

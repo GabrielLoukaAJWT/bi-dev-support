@@ -83,10 +83,10 @@ class AnalyticsManager:
             return ""
         else:
             for log in self.logs:
-                errorSplit = log.split('-')
+                errorSplit = log.split('|')
                 
-                if errorSplit[4] == " ERROR ":
-                    error = errorSplit[5] + errorSplit[6].split('\n')[0]
+                if errorSplit[2] == " ERROR ":
+                    error = errorSplit[3].split('\n')[0]
                     errors.append(error)
                 else:
                     continue
