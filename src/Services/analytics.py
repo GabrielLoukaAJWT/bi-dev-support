@@ -3,22 +3,18 @@ import pytz
 from typing import Counter
 
 import src.Services.database as db
+import constants as cta
+
 
 class AnalyticsManager:
-    def __init__(self, loggingManager):
+    def __init__(self, loggingManager, file):
         self.loggingManager = loggingManager
         self.logs = self.loggingManager.logs
+        self.file = file
 
-        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
+        self.databaseManager = db.DatabaseManager(self.file)
 
         print(F"CREATED ANALYTICS MANAGER\n")
-
-
-    def readLogs(self) -> None:
-        for log in self.logs:
-            print(log)
-
-        print(f"count of queries ran = {len(self.logs)}")
 
 
     def computeTotalQueries(self) -> int:
@@ -41,6 +37,8 @@ class AnalyticsManager:
                 )
 
                 rows.append(rowToInsert)
+        else:
+            return []
 
         return rows
     
@@ -50,17 +48,17 @@ class AnalyticsManager:
         idAndExecTimeMap = {}
         slowestQueryID = 0
 
-        try:
-            if data and len(data) != 0:
-                for query in data:
-                    idAndExecTimeMap[query["id"]] = query["execTime"]
+        if data and len(data) != 0:
+            for query in data:
+                idAndExecTimeMap[query["id"]] = query["execTime"]
 
-                slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
-
-            return self.databaseManager.queriesLocalDB.find(slowestQueryID)
+            slowestQueryID = max(idAndExecTimeMap, key=idAndExecTimeMap.get)
         
-        except Exception as error:
-            print(f"{error}")
+        else:
+            return {}
+
+        return self.databaseManager.queriesLocalDB.getById(slowestQueryID)
+
 
 
     def computeAvgExecTime(self) -> float:
@@ -109,24 +107,20 @@ class AnalyticsManager:
         
         if data and len(data) != 0:
             execTimesArr = [query["execTime"] for query in data]
+        else:
+            return []
 
         return execTimesArr
     
-
-    def getExecDates(self) -> list:
-        data = self.databaseManager.getQueriesFromDB()
-        
-        if data and len(data) != 0:
-            execDates = [query["execTime"] for query in data]
-
-        return execDates
     
 
     def getNbRowsOutput(self) -> list[int]:
         data = self.databaseManager.getQueriesFromDB()
 
         if data and len(data) != 0:
-            nbRows = [query["nb_rows"] for query in data]        
+            nbRows = [query["nb_rows"] for query in data] 
+        else:
+            return []       
 
         return nbRows
 
@@ -146,6 +140,8 @@ class AnalyticsManager:
             
             if date.date() == today.date():
                 timestamps.append(date)
+            else:
+                continue
         
         hours = [ts.hour for ts in timestamps]
 
@@ -154,6 +150,9 @@ class AnalyticsManager:
         # might be problematic for different timezones maybe?
         all_hours = list(range(8, 18))
         counts = [hour_counts.get(h, 0) for h in all_hours]
+        res = (all_hours, counts)
 
-        return (all_hours, counts)
+        print(res)
+
+        return res
 

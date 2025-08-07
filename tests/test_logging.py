@@ -28,22 +28,21 @@ class LoggingTest(unittest.TestCase):
     def test_new_log_added(self):
         exQuery = query.Query()
         self.loggingManager.addLog("info", exQuery, "")
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
 
         self.loggingManager.addLog("error", exQuery, "errrrrrrrr")
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
+        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         self.assertEqual(len(res), 2)
 
         self.loggingManager.addLog("no type", exQuery, "errrrrrrrr")
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
+        res = self.loggingManager.getLogsFromFile(self.mockFile)
         
         self.assertEqual(len(res), 2)
 
     
     def test_bad_file(self):
         self.mockFile = "badfile"
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
+        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         self.assertEqual(res, [])
 
@@ -52,10 +51,10 @@ class LoggingTest(unittest.TestCase):
         exQuery = query.Query()
 
         self.loggingManager.addLog("info", exQuery, "")
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
+        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         self.loggingManager.addLog("error", exQuery, "errrrrrrrr")
-        res = self.loggingManager.getQueriesFromFile(self.mockFile)
+        res = self.loggingManager.getLogsFromFile(self.mockFile)
 
         daily = self.loggingManager.getDailyLogs()
 

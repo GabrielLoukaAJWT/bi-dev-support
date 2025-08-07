@@ -8,7 +8,7 @@ import Models.Exceptions as exc
 import Models.Query as query
 import src.Services.database as db
 
-class LoggingTest(unittest.TestCase):
+class DatabaseTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):

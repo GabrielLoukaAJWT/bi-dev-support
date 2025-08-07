@@ -6,7 +6,6 @@ import constants as cta
 class SQLAnalyticsMainTest(unittest.TestCase):
 
     def test_all_files_exist(self):
-        '''Check if the Orcale Instant Client folder exits - it's necessary for thick mode'''
         
         self.assertTrue(main.checkIfAllFilesExist())
 

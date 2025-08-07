@@ -22,7 +22,7 @@ class QueryLoggerManager:
         self.logger.addHandler(self.fh)
         # self.logger.addHandler(ch)
 
-        self.logs = self.getQueriesFromFile(self.file)
+        self.logs = self.getLogsFromFile(self.file)
 
         self.listHandler = ListHandler(self.logs)
         self.listHandler.setFormatter(self.formatter)
@@ -54,7 +54,7 @@ class QueryLoggerManager:
         log_file.close()
 
 
-    def getQueriesFromFile(self, filepath: str) -> list[str]:
+    def getLogsFromFile(self, filepath: str) -> list[str]:
         log_entries = []
         current_entry = ""
 
@@ -81,7 +81,7 @@ class QueryLoggerManager:
     
 
     def getDailyLogs(self) -> list[str]:
-        logs = self.getQueriesFromFile(self.file)
+        logs = self.getLogsFromFile(self.file)
 
         if not logs:
             return []

@@ -22,8 +22,8 @@ class AnalyticsView:
         self.onCloseCallback = onCloseCallback
 
         self.loggerManager = loggingManager
-        self.analyticsManager = analytics.AnalyticsManager(self.loggerManager)
-        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
+        self.analyticsManager = analytics.AnalyticsManager(self.loggerManager, cta.DIR_LOCAL_DB)
+        self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
 
         self.plotsQueue = queue.Queue()
 
