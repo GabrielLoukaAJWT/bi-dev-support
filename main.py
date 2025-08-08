@@ -28,7 +28,7 @@ def checkIfAllFilesExist() -> bool:
 
 
 def main():
-    if checkIfAllFilesExist():
+    # if checkIfAllFilesExist():
         app = main_window.MainWindow()
     
         print(f"RUNNING APP : {app}")
