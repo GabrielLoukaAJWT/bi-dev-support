@@ -2,6 +2,7 @@ import queue
 import threading
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog, messagebox
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as tkplot
@@ -110,7 +111,7 @@ class AnalyticsView:
                                                                                      False
                                                                                 )
                                                                         )
-        self.listOfQueriesViewTree.heading("Query", text="Query ↕",
+        self.listOfQueriesViewTree.heading("Query", text="Query Name ↕",
                                            command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
                                                                                      "Query",
                                                                                      False
@@ -122,13 +123,13 @@ class AnalyticsView:
                                                                                      False
                                                                                 )
                                                                         )
-        self.listOfQueriesViewTree.heading("User", text="Ran by ↕",
+        self.listOfQueriesViewTree.heading("User", text="Ran By ↕",
                                            command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
                                                                                      "User",
                                                                                      False
                                                                                 )
                                                                         )
-        self.listOfQueriesViewTree.heading("Timestamp", text="Executed On ↕",
+        self.listOfQueriesViewTree.heading("Timestamp", text="Execution Date ↕",
                                            command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
                                                                                      "Timestamp",
                                                                                      False
@@ -149,6 +150,16 @@ class AnalyticsView:
         self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=140)
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
+
+        self.menuPopup = tk.Menu(self.root, tearoff=0)
+        self.menuPopup.add_command(label="Edit query name", command=self.editNamePopup)
+        self.menuPopup.add_command(label="View full SQL query")
+        self.menuPopup.add_command(label="Export to CSV")
+        self.menuPopup.add_separator()
+        self.menuPopup.add_command(label="Delete query from DB")
+        
+        self.listOfQueriesViewTree.bind("<Button-3>", self.query_selection_popup)
+
 
         self.refreshButton = ttk.Button(
             self.mainFrame,
@@ -336,3 +347,42 @@ class AnalyticsView:
 
         tv.heading(col, command=lambda: \
                 self.treeview_sort_column(tv, col, not reverse))
+        
+
+    def query_selection_popup(self, event):
+        item = self.listOfQueriesViewTree.identify_row(event.y)
+        item_id = self.listOfQueriesViewTree.identify_row(event.y)
+
+        self.listOfQueriesViewTree.selection_remove(self.listOfQueriesViewTree.selection())
+        self.listOfQueriesViewTree.selection_set(item_id)
+        self.listOfQueriesViewTree.focus(item_id)
+        
+        try:
+            self.menuPopup.tk_popup(event.x_root, event.y_root)
+        finally:
+            self.menuPopup.grab_release()
+
+
+    def editNamePopup(self):
+        selectedQuery = self.listOfQueriesViewTree.focus()
+
+        if selectedQuery:
+            currentQueryName = self.listOfQueriesViewTree.item(selectedQuery, "values")[1]
+            currentQueryID = self.listOfQueriesViewTree.item(selectedQuery, "values")[0]
+
+            newName = simpledialog.askstring(
+                "Set a new name for the query",
+                "New name",
+                initialvalue=currentQueryName
+            )
+
+            if newName and newName.strip():
+                self.databaseManager.editQueryName(currentQueryID, newName)
+                self.listOfQueriesViewTree.set(selectedQuery, 
+                                               column=self.listOfQueriesViewTree["columns"][1], 
+                                               value=newName.strip()
+                                            )
+            else:
+                messagebox.showinfo("No change", "Query name was not changed.")
+        else:
+            return

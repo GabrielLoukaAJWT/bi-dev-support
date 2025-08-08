@@ -57,7 +57,7 @@ class AnalyticsManager:
         else:
             return {}
 
-        return self.databaseManager.queriesLocalDB.getById(slowestQueryID)
+        return self.databaseManager.getQueryById(slowestQueryID)
 
 
 

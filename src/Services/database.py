@@ -28,10 +28,18 @@ class DatabaseManager:
     def getQueriesFromDB(self) -> list[Dict[str, Any]]:
         return self.queriesLocalDB.getAll()
     
+
+    def getQueryById(self, id: int):
+        return self.queriesLocalDB.getById(id)
+    
     
     def clearDB(self) -> None:
         if len(self.getQueriesFromDB()) > 0:
             self.queriesLocalDB.deleteAll()
+
+
+    def editQueryName(self, id: int, newName: str) -> None:
+        self.queriesLocalDB.updateById(id, {"name": newName})
 
 
     def createDataframe(self, query: models.Query) -> pd.DataFrame:
@@ -41,5 +49,7 @@ class DatabaseManager:
             return pd.DataFrame([], [])
         
         return df
+    
+
     
     
