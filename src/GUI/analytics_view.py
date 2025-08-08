@@ -6,6 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as tkplot
 import numpy as np
+import mplcursors as mpl
 
 import src.Services.analytics as analytics
 import src.Services.database as db
@@ -238,17 +239,30 @@ class AnalyticsView:
         self.x = np.array(nbRows)
 
         self.fig1, self.ax1 = plt.subplots(figsize=(3, 3))
-        self.ax1.scatter(self.x, self.y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
+        self.scatter = self.ax1.scatter(self.x, self.y, color="#2196F3", edgecolor="white", alpha=0.8, linewidth=0.6)
 
         self.ax1.set_xlabel("Number of Rows", fontsize=12)
         self.ax1.set_ylabel("Execution Time (s)", fontsize=12)
         self.ax1.tick_params(axis='x', labelrotation=45)
         self.ax1.grid(True)
 
+        cursor = mpl.cursor(self.scatter, hover=mpl.HoverMode.Transient)
+        cursor.connect('add', self.update_annot)
+
         plt.tight_layout()
         
         self.canvas1 = tkplot.FigureCanvasTkAgg(self.fig1, master=self.leftChart)
         self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    
+    def update_annot(self, sel) -> None:    
+        x, y = sel.target
+        ind = sel.index
+        
+        if x and y and ind:
+            sel.annotation.set_text(f'{self.x[ind]} rows in {self.y[ind]} s')
+        else:
+            return
 
     
     def showQueriesPerHour(self) -> None:    
@@ -259,12 +273,13 @@ class AnalyticsView:
         self.ax2.set_xticks(hours)
         self.ax2.set_xlabel("Hour of Day", fontsize=12)
         self.ax2.set_ylabel("Number of Queries", fontsize=12)
-        self.ax2.grid(axis="y", linestyle="--", alpha=0.6)
+        self.ax2.grid(axis="y", linestyle="--", alpha=0.6)        
 
         plt.tight_layout()
         
         self.canvas2 = tkplot.FigureCanvasTkAgg(self.fig2, master=self.rightChart)
         self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    
 
 
     def getPlots(self) -> None:

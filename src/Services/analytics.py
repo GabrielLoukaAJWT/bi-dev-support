@@ -152,7 +152,5 @@ class AnalyticsManager:
         counts = [hour_counts.get(h, 0) for h in all_hours]
         res = (all_hours, counts)
 
-        print(res)
-
         return res
 
