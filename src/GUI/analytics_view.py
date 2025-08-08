@@ -33,7 +33,7 @@ class AnalyticsView:
         self.getPlots()
         self.fillQueriesTabTree()
         
-        self.slowQueryLabel.bind("<Button-1>", self.selectQueryFromTreeView)
+        self.slowQueryLabel.bind("<Button-1>", self.selectSlowestQueryFromTree)
         self.root.protocol("WM_DELETE_WINDOW", self.onDestroy)
 
         print(F"ANALYTICS WINDOW CREATED")
@@ -104,12 +104,42 @@ class AnalyticsView:
             selectmode="browse"
         )
 
-        self.listOfQueriesViewTree.heading("ID", text="ID")
-        self.listOfQueriesViewTree.heading("Query", text="Query")
-        self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s)")
-        self.listOfQueriesViewTree.heading("User", text="Ran by")
-        self.listOfQueriesViewTree.heading("Timestamp", text="Executed On")
-        self.listOfQueriesViewTree.heading("Number of rows", text="Rows")
+        self.listOfQueriesViewTree.heading("ID", text="ID ↕", 
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "ID",
+                                                                                     False
+                                                                                )
+                                                                        )
+        self.listOfQueriesViewTree.heading("Query", text="Query ↕",
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "Query",
+                                                                                     False
+                                                                                )
+                                                                        )
+        self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s) ↕", 
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "Exec Time",
+                                                                                     False
+                                                                                )
+                                                                        )
+        self.listOfQueriesViewTree.heading("User", text="Ran by ↕",
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "User",
+                                                                                     False
+                                                                                )
+                                                                        )
+        self.listOfQueriesViewTree.heading("Timestamp", text="Executed On ↕",
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "Timestamp",
+                                                                                     False
+                                                                                )
+                                                                        )
+        self.listOfQueriesViewTree.heading("Number of rows", text="Rows ↕", 
+                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
+                                                                                     "Number of rows",
+                                                                                     False
+                                                                                )
+                                                                        )
 
         self.listOfQueriesViewTree.column("ID", anchor="center", width=120)
         self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
@@ -171,7 +201,7 @@ class AnalyticsView:
             return "None"
 
 
-    def selectQueryFromTreeView(self, event=None) -> None:
+    def selectSlowestQueryFromTree(self, event=None) -> None:
         slowestId = self.analyticsManager.getQueryWithLongestExecTime()["id"] 
 
         for item_id in self.listOfQueriesViewTree.get_children():
@@ -295,3 +325,16 @@ class AnalyticsView:
         
         thread2 = threading.Thread(target=self.threadQueriesPerHour)
         thread2.start() 
+
+
+    def treeview_sort_column(self, tv, col, reverse) -> None:
+        l = [(tv.set(k, col), k) for k in tv.get_children('')]
+        l.sort(reverse=reverse)
+
+        # rearrange items in sorted positions
+        for index, (val, k) in enumerate(l):
+            tv.move(k, '', index)
+
+        # reverse sort next time
+        tv.heading(col, command=lambda: \
+                self.treeview_sort_column(tv, col, not reverse))
