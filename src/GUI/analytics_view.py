@@ -156,7 +156,7 @@ class AnalyticsView:
         self.menuPopup.add_command(label="View full SQL query")
         self.menuPopup.add_command(label="Export to CSV")
         self.menuPopup.add_separator()
-        self.menuPopup.add_command(label="Delete query from DB")
+        self.menuPopup.add_command(label="Delete query from DB", command=self.deleteByID)
         
         self.listOfQueriesViewTree.bind("<Button-3>", self.query_selection_popup)
 
@@ -349,7 +349,7 @@ class AnalyticsView:
                 self.treeview_sort_column(tv, col, not reverse))
         
 
-    def query_selection_popup(self, event):
+    def query_selection_popup(self, event) -> None:
         item = self.listOfQueriesViewTree.identify_row(event.y)
         item_id = self.listOfQueriesViewTree.identify_row(event.y)
 
@@ -363,7 +363,7 @@ class AnalyticsView:
             self.menuPopup.grab_release()
 
 
-    def editNamePopup(self):
+    def editNamePopup(self) -> None:
         selectedQuery = self.listOfQueriesViewTree.focus()
 
         if selectedQuery:
@@ -371,12 +371,12 @@ class AnalyticsView:
             currentQueryID = self.listOfQueriesViewTree.item(selectedQuery, "values")[0]
 
             newName = simpledialog.askstring(
-                "Set a new name for the query",
-                "New name",
+                "",
+                "New name (max 40 chars)",
                 initialvalue=currentQueryName
             )
 
-            if newName and newName.strip():
+            if newName and len(newName) <= 40 and newName.strip():
                 self.databaseManager.editQueryName(currentQueryID, newName)
                 self.listOfQueriesViewTree.set(selectedQuery, 
                                                column=self.listOfQueriesViewTree["columns"][1], 
@@ -384,5 +384,20 @@ class AnalyticsView:
                                             )
             else:
                 messagebox.showinfo("No change", "Query name was not changed.")
+        else:
+            return
+        
+
+
+    def deleteByID(self) -> None:
+        selectedQuery = self.listOfQueriesViewTree.focus()
+
+        if selectedQuery:
+            currentQueryID = self.listOfQueriesViewTree.item(selectedQuery, "values")[0]
+            if self.databaseManager.deleteQueryByID(currentQueryID):
+                self.listOfQueriesViewTree.delete(selectedQuery)
+                self.refreshAnalytics()
+            else:
+                messagebox.showinfo("No change", "Failed to delete query.")        
         else:
             return

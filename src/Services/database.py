@@ -41,6 +41,10 @@ class DatabaseManager:
     def editQueryName(self, id: int, newName: str) -> None:
         self.queriesLocalDB.updateById(id, {"name": newName})
 
+    
+    def deleteQueryByID(self, id: int) -> None:
+        return self.queriesLocalDB.deleteById(id)
+
 
     def createDataframe(self, query: models.Query) -> pd.DataFrame:
         if query:
