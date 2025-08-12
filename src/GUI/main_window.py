@@ -52,7 +52,7 @@ class MainWindow:
         self.connectionStatusLabel = tk.Label(self.mainFrame, text="", font=("Arial", 10), bg="#f7f7f7")
         self.connectionStatusLabel.pack(pady=10)
 
-        self.checkboxVar = tk.IntVar(value=self.settingsManager.checkboxVarSettings)
+        self.checkboxVar = tk.IntVar(value=(1 if self.settingsManager.checkboxVarSettings else 0))
 
         self.checkbox = tk.Checkbutton(self.mainFrame, 
                                        text="Save credentials", 
@@ -119,10 +119,11 @@ class MainWindow:
             username = self.usernameEntry.get()
             connectionString = self.connectionStringEntry.get()
             password = self.pswEntry.get()
+            signInFlag = True
 
-            self.settingsManager.editSettings(username, connectionString, password, self.checkboxVar.get())
+            self.settingsManager.editSignInSettings(username, connectionString, password, signInFlag)
         else:
-            self.settingsManager.editSettings("", "", "", 0)
+            self.settingsManager.editSignInSettings("", "", "", False)
 
 
     def loadSavedCredentialsToUI(self) -> None:

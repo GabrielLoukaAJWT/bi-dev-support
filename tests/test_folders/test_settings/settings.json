@@ -1,1 +1,1 @@
-{"checkbox var": 1, "credentials": {"username": "bla", "connectionString": "dsn222"}}
+{"staySignedIn": 1, "credentials": {"username": "bla", "connectionString": "dsn222"}}

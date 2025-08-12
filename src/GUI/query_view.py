@@ -10,6 +10,7 @@ import pandastable as pdt
 import src.Services.db_connection as cnx
 import src.Services.logging as log
 import src.Services.database as db
+import src.Services.settings as settings
 import src.GUI.analytics_view as analytics_view
 import constants as cta
 
@@ -22,6 +23,7 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager(cta.LOGS_FILE)   
         self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
+        self.settingsManager = settings.SettingsManager("./settings/settings.json")
         
         self.query_result_queue = queue.Queue()
 
@@ -131,7 +133,7 @@ class QueryView:
         toggle_frame = ttk.Frame(self.logsWrapper)
         toggle_frame.pack(fill="x", pady=(0, 4))
 
-        self.areLogsShown = False
+        self.areLogsShown = self.settingsManager.logsFlagSettings
         self.toggleLogsBtn = ttk.Button(
             toggle_frame,
             text="🧾 Show Logs",
@@ -152,8 +154,9 @@ class QueryView:
 
         # Logs container (start hidden)
         self.logsContainer = ttk.Frame(self.logsWrapper)
-        self.logsContainer.pack(fill="both", expand=True)
+        self.logsContainer.pack()
         self.logsContainer.pack_forget()
+        # self.initialLogsToggleStartup()
 
         self.logsBox = scrolledtext.ScrolledText(
             self.logsContainer,
@@ -168,6 +171,7 @@ class QueryView:
         # Configure weights so rightCard expands
         self.rightCard.rowconfigure(1, weight=1)
         self.rightCard.columnconfigure(0, weight=1)
+        
 
 
 
@@ -230,8 +234,18 @@ class QueryView:
         else:
             self.logsContainer.pack()
             self.toggleLogsBtn.config(text="🧾 Hide Logs")
-        self.areLogsShown = not self.areLogsShown
 
+        self.areLogsShown = not self.areLogsShown
+        self.settingsManager.editLogsFlagSettings(self.areLogsShown)
+
+
+    def initialLogsToggleStartup(self) -> None:
+        if self.areLogsShown:
+            self.logsContainer.pack()
+            self.toggleLogsBtn.config(text="🧾 Hide Logs")
+        else:
+            self.logsContainer.pack_forget()
+            self.toggleLogsBtn.config(text="🧾 Show Logs")
 
 
     def displayLogsText(self) -> None:
