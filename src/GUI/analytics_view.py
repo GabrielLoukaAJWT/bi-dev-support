@@ -154,7 +154,6 @@ class AnalyticsView:
         self.menuPopup = tk.Menu(self.root, tearoff=0)
         self.menuPopup.add_command(label="Edit query name", command=self.editNamePopup)
         self.menuPopup.add_command(label="View full SQL query")
-        self.menuPopup.add_command(label="Export to CSV")
         self.menuPopup.add_separator()
         self.menuPopup.add_command(label="Delete query from DB", command=self.deleteByID)
         
@@ -401,3 +400,4 @@ class AnalyticsView:
                 messagebox.showinfo("No change", "Failed to delete query.")        
         else:
             return
+        

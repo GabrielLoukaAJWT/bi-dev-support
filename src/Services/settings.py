@@ -44,7 +44,7 @@ class SettingsManager:
                 "areLogsShown": currLogsFlagValue
             }
             
-            json.dump(newSettings, f)
+            json.dump(newSettings, f, indent=4)
 
         f.close()
 
@@ -60,7 +60,7 @@ class SettingsManager:
                 "areLogsShown": newFlag
             }
             
-            json.dump(newSettings, f)
+            json.dump(newSettings, f, indent=4)
 
         f.close()
 

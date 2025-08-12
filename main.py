@@ -49,7 +49,7 @@ def createFoldersIfNotExist() -> None:
     if foldersCreatedSuccess:
         try:
             with open(f"{dbPath}/queries.json", "x") as f:
-                json.dump({"data": []}, f)
+                json.dump({"data": []}, f, indent=4)
                 print("DB created.")
 
         except FileExistsError:
@@ -69,8 +69,10 @@ def createFoldersIfNotExist() -> None:
                         "staySignedIn": False, 
                         "areLogsShown": False, 
                         "credentials": {"username": "", "connectionString": ""}
-                    }
-                ,f)
+                    },
+                    f, 
+                    indent=4
+                )
                 print("Settings created.")
 
         except FileExistsError:

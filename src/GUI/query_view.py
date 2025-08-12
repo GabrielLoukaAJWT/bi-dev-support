@@ -12,6 +12,7 @@ import src.Services.logging as log
 import src.Services.database as db
 import src.Services.settings as settings
 import src.GUI.analytics_view as analytics_view
+import src.GUI.options_view as opt_view
 import constants as cta
 
 
@@ -29,6 +30,7 @@ class QueryView:
 
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
+        self.enableOptionsBtnAfterClosure()
         self.displayLogsText()
         
 
@@ -62,14 +64,33 @@ class QueryView:
         style.map("Action.TButton",
                 background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
                 foreground=[("!disabled", "white")])
+        style.configure("Options.TButton", font=("Segoe UI", 11, "bold"))
+        style.map("Options.TButton",
+                background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
+                foreground=[("!disabled", "white")])
+        
+        # === 1) HEADER (top, full width, thin) ======================================
+        self.header = ttk.Frame(self.frame)
+        self.header.pack(fill="x")
+        self.header.configure(height=40)
+        self.header.pack_propagate(False)
 
-        mainPanel = ttk.PanedWindow(self.frame, orient="horizontal")
-        mainPanel.pack(fill="both", expand=True)
+        # right-aligned Options button
+        self.accessOptionsViewBtn = ttk.Button(self.header, 
+                   text="🛠 Options", 
+                   style="Options.TButton", 
+                   cursor="hand2",
+                   command=self.accessOptions
+                )
+        self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
+
+        self.mainPanel = ttk.PanedWindow(self.frame, orient="horizontal")
+        self.mainPanel.pack(fill="both", expand=True)
 
         # Left card: query input
-        leftCard = ttk.Frame(mainPanel, style="LeftCard.TFrame", padding=16, width=50)
+        leftCard = ttk.Frame(self.mainPanel, style="LeftCard.TFrame", padding=16, width=50)
         leftCard.pack(side="left", fill="y") 
-        mainPanel.add(leftCard, weight=1)
+        self.mainPanel.add(leftCard, weight=1)
 
         ttk.Label(leftCard, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
@@ -96,7 +117,8 @@ class QueryView:
         actionFrame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
         self.runQueryButton = ttk.Button(actionFrame, text="▶ Run Query", style="Action.TButton", cursor="hand2", command=self.runQuery)
         self.runQueryButton.pack(side="left")
-        self.accessAnalyticsButton = ttk.Button(actionFrame, text="📈 Access Analytics", style="Action.TButton", cursor="hand2", command=self.openAnalyticsWindow)
+        self.accessAnalyticsButton = ttk.Button(actionFrame, text="📈 Access Analytics", 
+                                                style="Action.TButton", cursor="hand2", command=self.openAnalyticsWindow)
         self.accessAnalyticsButton.pack(side="left", padx=(8, 0))
 
         # Footer: status + exec time
@@ -112,8 +134,8 @@ class QueryView:
         leftCard.columnconfigure(0, weight=1)
 
         # Right card: output + logs
-        self.rightCard = ttk.PanedWindow(mainPanel, orient="vertical", style="RightCard.TFrame")
-        mainPanel.add(self.rightCard, weight=2)
+        self.rightCard = ttk.PanedWindow(self.mainPanel, orient="vertical", style="RightCard.TFrame")
+        self.mainPanel.add(self.rightCard, weight=2)
 
         ttk.Label(self.rightCard, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
 
@@ -133,7 +155,8 @@ class QueryView:
         toggle_frame = ttk.Frame(self.logsWrapper)
         toggle_frame.pack(fill="x", pady=(0, 4))
 
-        self.areLogsShown = self.settingsManager.logsFlagSettings
+        self.areLogsShown = True
+        print(f"ARE LOGS SHOWS FROM SETTINGS : {self.areLogsShown}")
         self.toggleLogsBtn = ttk.Button(
             toggle_frame,
             text="🧾 Show Logs",
@@ -156,7 +179,7 @@ class QueryView:
         self.logsContainer = ttk.Frame(self.logsWrapper)
         self.logsContainer.pack()
         self.logsContainer.pack_forget()
-        # self.initialLogsToggleStartup()
+        self.showLogsTabInitially()
 
         self.logsBox = scrolledtext.ScrolledText(
             self.logsContainer,
@@ -236,10 +259,9 @@ class QueryView:
             self.toggleLogsBtn.config(text="🧾 Hide Logs")
 
         self.areLogsShown = not self.areLogsShown
-        self.settingsManager.editLogsFlagSettings(self.areLogsShown)
 
 
-    def initialLogsToggleStartup(self) -> None:
+    def showLogsTabInitially(self) -> None:
         if self.areLogsShown:
             self.logsContainer.pack()
             self.toggleLogsBtn.config(text="🧾 Hide Logs")
@@ -296,6 +318,12 @@ class QueryView:
 
 
 
+    def accessOptions(self) -> None:
+        self.accessOptionsViewBtn.config(state="disable")
+        self.optionsView = opt_view.OptionsWindow(self.enableOptionsBtnAfterClosure)
 
+
+    def enableOptionsBtnAfterClosure(self):
+        self.accessOptionsViewBtn.config(state="normal")
 
     
