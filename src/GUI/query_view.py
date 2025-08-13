@@ -50,7 +50,7 @@ class QueryView:
             self.frame.pack(fill="both", expand=True)
 
         style = ttk.Style(self.root)
-        style.theme_use("default")
+        style.theme_use("clam")
         style.configure("LeftCard.TFrame", background="#f7f7f7", relief="flat")
         style.configure("RightCard.TFrame", background="#f7f7f7", relief="flat")
         style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), background="#f7f7f7", foreground="#222")
