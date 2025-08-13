@@ -5,34 +5,51 @@ from cryptography.fernet import Fernet
 import os
 
 class SettingsManager:
-    def __init__(self, file: str):
-        self.file = file
+    def __init__(self, credentialsSettingsFile: str):
+        self.credentialsSettingsFile = credentialsSettingsFile
         
-        if os.path.exists(self.file):    
-            self.checkboxVarSettings = self.getSettings()[0]
-            self.logsFlagSettings = self.getSettings()[1]
-            self.credentialsSettings = self.getSettings()[2]
+        if os.path.exists(self.credentialsSettingsFile):    
+            self.checkboxVarSettings = self.getSignInFlag()
+            self.logsFlagSettings = self.getLogsShownFlag()
+            self.credentialsSettings = self.getCredentialsSettings()
         else:
             messagebox.showinfo("File not found", "There are missing files.")
 
 
-
     
-    def getSettings(self) -> tuple[int, dict]:
-        with open(self.file, 'r') as f:
+    def getSignInFlag(self) -> bool:
+        with open(self.credentialsSettingsFile, 'r') as f:
             settings = json.load(f)
             signInFlag = settings["staySignedIn"]
-            logsFlag = settings["areLogsShown"]
+            
+            f.close()
+            return signInFlag
+        
+
+    def getCredentialsSettings(self) -> dict:
+        with open(self.credentialsSettingsFile, 'r') as f:
+            settings = json.load(f)
+
             credentials = settings["credentials"]
 
             f.close()
-            return signInFlag, logsFlag, credentials
+            return credentials
+        
+
+    def getLogsShownFlag(self) -> bool:
+        with open(self.credentialsSettingsFile, 'r') as f:
+            settings = json.load(f)
+
+            areLogsShownFlag = settings["areLogsShown"]
+
+            f.close()
+            return areLogsShownFlag
         
 
     def editSignInSettings(self, username: str, dsn: str, pwd: str, signInFlag: bool) -> None:
         currLogsFlagValue = self.logsFlagSettings
 
-        with open(self.file, 'w+') as f:
+        with open(self.credentialsSettingsFile, 'w+') as f:
             newSettings = {
                 "staySignedIn": signInFlag,
                 "credentials": {
@@ -50,19 +67,20 @@ class SettingsManager:
 
 
     def editLogsFlagSettings(self, newFlag: bool) -> None:
-        currLogsFlagValue = self.logsFlagSettings
-        currSignIn = self.credentialsSettings
+        currStatSignedInValue = self.checkboxVarSettings
+        currCredentials = self.credentialsSettings
 
-        with open(self.file, 'w+') as f:
+        with open(self.credentialsSettingsFile, 'w+') as f:
             newSettings = {
-                "staySignedIn": currLogsFlagValue,
-                "credentials": currSignIn,
+                "staySignedIn": currStatSignedInValue,
+                "credentials": currCredentials,
                 "areLogsShown": newFlag
             }
             
             json.dump(newSettings, f, indent=4)
 
         f.close()
+
 
 
     # def hashPwd(self, pwd: str) -> str:

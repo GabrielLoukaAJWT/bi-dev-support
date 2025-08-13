@@ -1,0 +1,76 @@
+import sys, os, getpass
+import json
+
+import constants as cta
+
+
+def resource_path(relative_path) -> bool:
+    if hasattr(sys, '_MEIPASS'):
+        full = os.path.join(sys._MEIPASS, relative_path)
+    else:
+        full = os.path.join(os.path.abspath("."), relative_path)
+
+    return os.path.exists(full)
+
+
+
+def checkIfAllFilesExist() -> bool:
+    allFilesExit = [
+                resource_path(cta.ICON),
+                resource_path(cta.LIB_DIR_AJWT),
+                resource_path(cta.DIR_LOCAL_DB),
+                resource_path(cta.DIR_LOGS),
+                resource_path(cta.DIR_SETTINGS_GENERAL),
+            ]
+    
+    return all(allFilesExit)
+
+
+def createFoldersIfNotExist() -> None:
+    foldersCreatedSuccess = False
+
+    dbPath = "local_DB"
+    logsPath = "logs"
+    settingsPath = "settings"
+
+    try:
+        os.makedirs(dbPath, exist_ok=True)
+        os.makedirs(logsPath, exist_ok=True)
+        os.makedirs(settingsPath, exist_ok=True)
+
+        foldersCreatedSuccess = True
+
+    finally:
+        pass
+
+    if foldersCreatedSuccess:
+        try:
+            with open(f"{dbPath}/queries.json", "x") as f:
+                json.dump({"data": []}, f, indent=4)
+                print("DB created.")
+
+        except FileExistsError:
+            print("File already exists.")
+        
+        try:
+            with open(f"{logsPath}/queries.log", "x") as f:
+                print("Logs created.")
+
+        except FileExistsError:
+            print("File already exists.")
+        
+        try:
+            with open(f"{settingsPath}/credentials.json", "x") as f:
+                json.dump(
+                    {
+                        "staySignedIn": False, 
+                        "areLogsShown": False, 
+                        "credentials": {"username": "", "connectionString": ""}
+                    },
+                    f, 
+                    indent=4
+                )
+                print("Settings created.")
+
+        except FileExistsError:
+            print("File already exists.")

@@ -17,11 +17,11 @@ VALID_ORACLE_INSTANT_CLIENT = "Initialized Oracle Instant Client"
 INVALID_ORACLE_INSTANT_CLIENT = "Error connecting:  oracledb.init_oracle_client() ==> missing instant client files"
 LOST_CONNECTION = "Connection lost"
 
-# Logging 
-LOGS_FILE = "./logs/queries.log"
-
 # assets
 ICON = "assets\images\icon.ico"
 DIR_LOCAL_DB = "local_DB\queries.json"
 DIR_LOGS = "logs\queries.log"
-DIR_SETTINGS = "settings\settings.json"
+DIR_SETTINGS_GENERAL = "settings\credentials.json"
+DIR_SETTINGS_ACCOUNT = r"settings\account.json"
+DIR_SETTINGS_GENERAL = "settings\credentials.json"
+DIR_SETTINGS_GENERAL = "settings\credentials.json"

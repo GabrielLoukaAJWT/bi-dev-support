@@ -22,7 +22,7 @@
 /SQL-Analytics-v1.3.0.spec
 
 # settings
-/settings/settings.json
+/settings
 
 # env
 /.env

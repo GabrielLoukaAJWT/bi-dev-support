@@ -22,9 +22,9 @@ class QueryView:
         self.analyticsPage = None
 
         self.oracleConnector = oracleConnector
-        self.queryLoggerManager = log.QueryLoggerManager(cta.LOGS_FILE)   
-        self.databaseManager = db.DatabaseManager("./local_DB/queries.json")
-        self.settingsManager = settings.SettingsManager("./settings/settings.json")
+        self.queryLoggerManager = log.QueryLoggerManager(cta.DIR_LOGS)   
+        self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
+        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL)
         
         self.query_result_queue = queue.Queue()
 
@@ -72,15 +72,15 @@ class QueryView:
         # === 1) HEADER (top, full width, thin) ======================================
         self.header = ttk.Frame(self.frame)
         self.header.pack(fill="x")
-        self.header.configure(height=40)
+        self.header.configure(height=50)
         self.header.pack_propagate(False)
 
         # right-aligned Options button
         self.accessOptionsViewBtn = ttk.Button(self.header, 
                    text="🛠 Options", 
                    style="Options.TButton", 
-                   cursor="hand2"
-                #    command=self.accessOptions
+                   cursor="hand2",
+                   command=self.accessOptions
                 )
         self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
 
@@ -156,7 +156,7 @@ class QueryView:
         toggle_frame.pack(fill="x", pady=(0, 4))
 
         # Logs container (start hidden)
-        self.areLogsShown = True
+        self.areLogsShown = self.settingsManager.logsFlagSettings
         self.logsContainer = ttk.Frame(self.logsWrapper)
         self.logsContainer.pack(fill="both", expand=True)
         self.logsContainer.pack_forget()
@@ -259,6 +259,8 @@ class QueryView:
             self.toggleLogsBtn.config(text="🧾 Hide Logs")
 
         self.areLogsShown = not self.areLogsShown
+        self.settingsManager.editLogsFlagSettings(self.areLogsShown)
+        
 
 
     def showLogsTabInitially(self) -> None:
