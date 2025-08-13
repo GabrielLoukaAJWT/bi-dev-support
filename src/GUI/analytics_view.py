@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as tkplot
 import numpy as np
 import mplcursors as mpl
+import pyperclip
 
 import src.Services.analytics as analytics
 import src.Services.database as db
@@ -153,7 +154,7 @@ class AnalyticsView:
 
         self.menuPopup = tk.Menu(self.root, tearoff=0)
         self.menuPopup.add_command(label="Edit query name", command=self.editNamePopup)
-        self.menuPopup.add_command(label="View full SQL query")
+        self.menuPopup.add_command(label="Copy code to clipboard", command=self.copyCodeToClipboard)
         self.menuPopup.add_separator()
         self.menuPopup.add_command(label="Delete query from DB", command=self.deleteByID)
         
@@ -401,3 +402,14 @@ class AnalyticsView:
         else:
             return
         
+
+    def copyCodeToClipboard(self) -> None:
+        selectedQuery = self.listOfQueriesViewTree.focus()
+
+        if selectedQuery:
+            currentQueryID = self.listOfQueriesViewTree.item(selectedQuery, "values")[0]
+            code = self.databaseManager.getQueryById(currentQueryID)["code"]
+            pyperclip.copy(code)
+                   
+        else:
+            return

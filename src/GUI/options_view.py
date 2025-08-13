@@ -6,7 +6,7 @@ from tkinter import ttk
 class OptionsWindow:
     def __init__(self, onCloseCallback=None):
         self.root = tk.Tk()
-        self.root.title("General options")
+        self.root.title("Options")
         self.root.geometry("500x300")
 
         self.onCloseCallback = onCloseCallback

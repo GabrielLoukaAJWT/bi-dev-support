@@ -79,8 +79,8 @@ class QueryView:
         self.accessOptionsViewBtn = ttk.Button(self.header, 
                    text="🛠 Options", 
                    style="Options.TButton", 
-                   cursor="hand2",
-                   command=self.accessOptions
+                   cursor="hand2"
+                #    command=self.accessOptions
                 )
         self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
 
@@ -155,8 +155,24 @@ class QueryView:
         toggle_frame = ttk.Frame(self.logsWrapper)
         toggle_frame.pack(fill="x", pady=(0, 4))
 
+        # Logs container (start hidden)
         self.areLogsShown = True
-        print(f"ARE LOGS SHOWS FROM SETTINGS : {self.areLogsShown}")
+        self.logsContainer = ttk.Frame(self.logsWrapper)
+        self.logsContainer.pack(fill="both", expand=True)
+        self.logsContainer.pack_forget()
+        self.showLogsTabInitially()
+
+        self.logsBox = scrolledtext.ScrolledText(
+            self.logsContainer,
+            font=("Courier New", 10),
+            wrap="word",
+            state="disabled",
+            relief="solid",
+            bd=1
+        )
+        self.logsBox.pack(fill="both", expand=True)
+
+        
         self.toggleLogsBtn = ttk.Button(
             toggle_frame,
             text="🧾 Show Logs",
@@ -174,22 +190,6 @@ class QueryView:
             command=self.clearLogsClick
         )
         self.clearLogsBtn.pack(side="right")
-
-        # Logs container (start hidden)
-        self.logsContainer = ttk.Frame(self.logsWrapper)
-        self.logsContainer.pack()
-        self.logsContainer.pack_forget()
-        self.showLogsTabInitially()
-
-        self.logsBox = scrolledtext.ScrolledText(
-            self.logsContainer,
-            font=("Courier New", 10),
-            wrap="word",
-            state="disabled",
-            relief="solid",
-            bd=1
-        )
-        self.logsBox.pack(fill="both", expand=True)
 
         # Configure weights so rightCard expands
         self.rightCard.rowconfigure(1, weight=1)
@@ -255,7 +255,7 @@ class QueryView:
             self.logsContainer.pack_forget()
             self.toggleLogsBtn.config(text="🧾 Show Logs")
         else:
-            self.logsContainer.pack()
+            self.logsContainer.pack(fill="both", expand=True)
             self.toggleLogsBtn.config(text="🧾 Hide Logs")
 
         self.areLogsShown = not self.areLogsShown
@@ -263,11 +263,10 @@ class QueryView:
 
     def showLogsTabInitially(self) -> None:
         if self.areLogsShown:
-            self.logsContainer.pack()
-            self.toggleLogsBtn.config(text="🧾 Hide Logs")
+            self.logsContainer.pack(fill="both", expand=True)
         else:
             self.logsContainer.pack_forget()
-            self.toggleLogsBtn.config(text="🧾 Show Logs")
+
 
 
     def displayLogsText(self) -> None:
