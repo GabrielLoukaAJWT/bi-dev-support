@@ -42,7 +42,7 @@ but the current Oracle account was created with 10G.
 Run 'pip install -r requirements.txt' in a virtual environment (create one by running 'pip -m venv myenv')
 
 ### 4. How to build
-To build the project, run 'pyinstaller main.py --icon=assets/images/icon.ico --noconsole --onedir --add-data "C:\Users\Gabriel.Louka\AppData\Local\Programs\Python\Python311\Lib\site-packages\customtkinter;customtkinter\" --name SQL-Analytics-vX.Y.Z'
+To build the project, run 'pyinstaller main.py --icon=assets/images/icon.ico --noconsole --onedir --name SQL-Analytics-vX.Y.Z'
 
 ### 5. Tests and coverage
 To test, run 'python -m unittest discover -v' in root.
