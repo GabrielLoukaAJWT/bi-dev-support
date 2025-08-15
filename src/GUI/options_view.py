@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+import sv_ttk
 
+import src.Services.settings as settings
+import constants as cta
 
 
 class OptionsWindow:
@@ -9,20 +12,23 @@ class OptionsWindow:
         self.root.title("Options")
         self.root.geometry("500x300")
 
-        self.onCloseCallback = onCloseCallback
+        # self.onCloseCallback = onCloseCallback
+
+        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
 
         self.root.protocol("WM_DELETE_WINDOW", self.onDestroy)
 
         self.setupUI()
 
 
-    def onDestroy(self) -> None:
-        if self.onCloseCallback:
-            self.onCloseCallback()
-        self.root.destroy()
+    # def onDestroy(self) -> None:
+    #     if self.onCloseCallback:
+    #         self.onCloseCallback()
+    #     self.root.destroy()
 
 
-    def setupUI(self) -> None:
+
+    def setupUI(self) -> None:        
         self.style = ttk.Style(self.root)
         self.style.theme_use("default")
         self.style.configure("MainFrame.TFrame", background="#cccccc", relief="flat")
@@ -51,46 +57,42 @@ class OptionsWindow:
 
     
     def setupGeneraTabUI(self) -> None:
-        container = ttk.Frame(self.generalTab, padding=16)
-        container.pack(fill="both", expand=True)
+        self.generalSettingsTabContainer = ttk.Frame(self.generalTab, padding=16)
+        self.generalSettingsTabContainer.pack(fill="both", expand=True)
 
         ttk.Label(
-            container,
+            self.generalSettingsTabContainer,
             text="Appearance",
             font=("Segoe UI", 10, "bold")
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
-        ttk.Label(container, text="Theme:").grid(row=1, column=0, sticky="w")
+        ttk.Label(self.generalSettingsTabContainer, text="Theme:").grid(row=1, column=0, sticky="w")
         self.theme_var = tk.StringVar(value="System")
-        theme_box = ttk.Combobox(
-            container,
+        self.theme_box = ttk.Combobox(
+            self.generalSettingsTabContainer,
             textvariable=self.theme_var,
             values=["System", "Light", "Dark"],
             state="readonly",
             width=14
         )
-        theme_box.grid(row=1, column=1, sticky="ew", padx=(8, 0))
-        theme_box.configure(font=("Segoe UI", 9))
+        
 
-        container.rowconfigure(2, minsize=12)
-
-        ttk.Label(
-            container,
-            text="Behavior",
-            font=("Segoe UI", 10, "bold")
-        ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(0, 8))
-
-        self.show_logs_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(
-            container,
-            text="Show logs by default",
-            variable=self.show_logs_var
-        ).grid(row=4, column=0, columnspan=2, sticky="w", pady=(0, 4))
-
-        container.columnconfigure(0, weight=1)
-        container.columnconfigure(1, weight=2)
+        ttk.Button(self.generalSettingsTabContainer, text="Apply", command=self.applyTheme).grid(row=20, column=5, sticky="w")
 
 
+        self.theme_box.grid(row=1, column=1, sticky="ew", padx=(8, 0))
+        self.theme_box.configure(font=("Segoe UI", 9))
+
+        self.generalSettingsTabContainer.rowconfigure(2, minsize=12)
+
+        self.generalSettingsTabContainer.columnconfigure(0, weight=1)
+        self.generalSettingsTabContainer.columnconfigure(1, weight=2)
+
+
+    def applyTheme(self) -> None:
+        selectedTheme = self.theme_box.get()
+        self.settingsManager.editDarkTheme(selectedTheme)
+        sv_ttk.set_theme("dark") if selectedTheme == "Dark" else sv_ttk.set_theme("light")
 
 
 

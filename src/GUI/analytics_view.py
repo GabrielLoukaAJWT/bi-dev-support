@@ -9,10 +9,12 @@ import matplotlib.backends.backend_tkagg as tkplot
 import numpy as np
 import mplcursors as mpl
 import pyperclip
+import sv_ttk
 
 import src.Services.analytics as analytics
 import src.Services.database as db
 import src.Services.logging as log
+import src.Services.settings as settings
 import constants as cta
 
 
@@ -27,6 +29,7 @@ class AnalyticsView:
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager, cta.DIR_LOCAL_DB)
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
+        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
 
         self.plotsQueue = queue.Queue()
 
@@ -51,7 +54,8 @@ class AnalyticsView:
         
     def setupUI(self) -> None:
         print(f"SETING UP THE MAIN UI")
-        self.root.configure(bg="#f7f7f7")
+        # isDark = self.settingsManager.getBgTheme()
+        # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
 
         self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
         self.mainFrame.pack(fill="both", expand=True)

@@ -1,21 +1,26 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 
+import sv_ttk
+
 import src.Services.db_connection as cnx
-import src. Services.settings as settings
-import src. GUI.query_view as qryview
+import src.Services.settings as settings
+import src.Services.style as style_cust
+import src.GUI.query_view as qryview
 import constants as cta
 
 
 class MainWindow:
     def __init__(self):
         self.oracleConnector = cnx.OracleConnector()
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL)
+        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
 
         self.root = tk.Tk()
         self.root.title(cta.APP_TITLE)
         self.root.geometry("800x700")
         
+        self.style = style_cust.setMainViewStyle(self.root)
         self.setupMainUI()
 
         self.loadSavedCredentialsToUI()
@@ -26,21 +31,26 @@ class MainWindow:
 
 
     def setupMainUI(self) -> None:
-        self.mainFrame = tk.Frame(self.root, padx=60, pady=30, bg="#f7f7f7", width=1000)
+        # isDark = self.settingsManager.getBgTheme()
+        # if isDark : sv_ttk.set_theme("dark") 
+
+        # self.root.configure(bg="#F0F0F0")
+
+        self.mainFrame = ttk.Frame(self.root, padding=(60, 30), style="Main.TFrame")
         self.mainFrame.pack(expand=True)
 
-        titleLabel = tk.Label(self.mainFrame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#f7f7f7")
+        titleLabel = tk.Label(self.mainFrame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#ffffff")
         titleLabel.pack(pady=(0, 20))
 
-        tk.Label(self.mainFrame, text="Username:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
+        tk.Label(self.mainFrame, text="Username:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
         self.usernameEntry = tk.Entry(self.mainFrame, font=("Arial", 12), width=30, relief="solid", bd=1)
         self.usernameEntry.pack(pady=5, ipady=4)
         
-        tk.Label(self.mainFrame, text="Connection string:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
+        tk.Label(self.mainFrame, text="Connection string:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
         self.connectionStringEntry = tk.Entry(self.mainFrame, font=("Arial", 12), width=30, relief="solid", bd=1)
         self.connectionStringEntry.pack(pady=5, ipady=4)
 
-        tk.Label(self.mainFrame, text="Password:", font=("Arial", 12), bg="#f7f7f7").pack(pady=(0, 5))
+        tk.Label(self.mainFrame, text="Password:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
 
         self.pswEntry = tk.Entry(self.mainFrame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
         self.pswEntry.pack(pady=5, ipady=4)
@@ -49,7 +59,7 @@ class MainWindow:
                                 activebackground="#45A049", padx=10, pady=5, command=self.handleConnection)
         connectBtn.pack(pady=20)        
         
-        self.connectionStatusLabel = tk.Label(self.mainFrame, text="", font=("Arial", 10), bg="#f7f7f7")
+        self.connectionStatusLabel = tk.Label(self.mainFrame, text="", font=("Arial", 10), bg="#ffffff")
         self.connectionStatusLabel.pack(pady=10)
 
         self.checkboxVar = tk.IntVar(value=(1 if self.settingsManager.checkboxVarSettings else 0))
@@ -65,7 +75,7 @@ class MainWindow:
                    relief="raised", padx=10, pady=5)
         self.checkbox.pack(padx=40, pady=40)
 
-        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.0", anchor="e", bg="#f7f7f7")
+        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.0", anchor="e", bg="#ffffff")
         self.version_label.pack(side="bottom", fill="x")
 
         self.menubar = tk.Menu(self.root)

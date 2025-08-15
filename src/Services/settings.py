@@ -5,16 +5,35 @@ from cryptography.fernet import Fernet
 import os
 
 class SettingsManager:
-    def __init__(self, credentialsSettingsFile: str):
+    def __init__(self, genSettingsFiles: str, credentialsSettingsFile: str):
+        self.generalSettingsFile = genSettingsFiles
         self.credentialsSettingsFile = credentialsSettingsFile
         
-        if os.path.exists(self.credentialsSettingsFile):    
-            self.checkboxVarSettings = self.getSignInFlag()
-            self.logsFlagSettings = self.getLogsShownFlag()
-            self.credentialsSettings = self.getCredentialsSettings()
-        else:
-            messagebox.showinfo("File not found", "There are missing files.")
+        self.logsFlagSettings = self.getLogsShownFlag()
+        self.isDarkMode = self.getBgTheme()
+        
+        self.checkboxVarSettings = self.getSignInFlag()
+        self.credentialsSettings = self.getCredentialsSettings()
 
+
+    def getLogsShownFlag(self) -> bool:
+        with open(self.generalSettingsFile, 'r') as f:
+            settings = json.load(f)
+
+            areLogsShownFlag = settings["areLogsShown"]
+
+            f.close()
+            return areLogsShownFlag
+        
+
+    def getBgTheme(self) -> bool:
+        with open(self.generalSettingsFile, 'r') as f:
+            settings = json.load(f)
+
+            isDark = settings["isDarkMode"]
+
+            f.close()
+            return isDark
 
     
     def getSignInFlag(self) -> bool:
@@ -35,20 +54,9 @@ class SettingsManager:
             f.close()
             return credentials
         
-
-    def getLogsShownFlag(self) -> bool:
-        with open(self.credentialsSettingsFile, 'r') as f:
-            settings = json.load(f)
-
-            areLogsShownFlag = settings["areLogsShown"]
-
-            f.close()
-            return areLogsShownFlag
         
 
     def editSignInSettings(self, username: str, dsn: str, pwd: str, signInFlag: bool) -> None:
-        currLogsFlagValue = self.logsFlagSettings
-
         with open(self.credentialsSettingsFile, 'w+') as f:
             newSettings = {
                 "staySignedIn": signInFlag,
@@ -58,7 +66,6 @@ class SettingsManager:
                             # "pwd" : self.hashPwd(pwd)
                             # "pwdEncr" : self.encryptPlainPwd(pwd)
                         },
-                "areLogsShown": currLogsFlagValue
             }
             
             json.dump(newSettings, f, indent=4)
@@ -67,19 +74,33 @@ class SettingsManager:
 
 
     def editLogsFlagSettings(self, newFlag: bool) -> None:
-        currStatSignedInValue = self.checkboxVarSettings
-        currCredentials = self.credentialsSettings
+        currIsDarkTheme = self.isDarkMode
 
-        with open(self.credentialsSettingsFile, 'w+') as f:
+        with open(self.generalSettingsFile, 'w+') as f:
             newSettings = {
-                "staySignedIn": currStatSignedInValue,
-                "credentials": currCredentials,
-                "areLogsShown": newFlag
+                "areLogsShown": newFlag,
+                "isDarkMode": currIsDarkTheme
             }
             
             json.dump(newSettings, f, indent=4)
 
         f.close()
+
+
+    def editDarkTheme(self, newTheme: str):
+        currAreLogsShown = self.logsFlagSettings
+        
+        with open(self.generalSettingsFile, 'w+') as f:
+            newSettings = {
+                "areLogsShown": currAreLogsShown,
+                "isDarkMode": (True if newTheme == 'Dark' else False)
+            }
+            
+            json.dump(newSettings, f, indent=4)
+
+        f.close()
+
+        
 
 
 

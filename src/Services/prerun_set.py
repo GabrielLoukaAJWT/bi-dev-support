@@ -4,28 +4,6 @@ import json
 import constants as cta
 
 
-def resource_path(relative_path) -> bool:
-    if hasattr(sys, '_MEIPASS'):
-        full = os.path.join(sys._MEIPASS, relative_path)
-    else:
-        full = os.path.join(os.path.abspath("."), relative_path)
-
-    return os.path.exists(full)
-
-
-
-def checkIfAllFilesExist() -> bool:
-    allFilesExit = [
-                resource_path(cta.ICON),
-                resource_path(cta.LIB_DIR_AJWT),
-                resource_path(cta.DIR_LOCAL_DB),
-                resource_path(cta.DIR_LOGS),
-                resource_path(cta.DIR_SETTINGS_GENERAL),
-            ]
-    
-    return all(allFilesExit)
-
-
 def createFoldersIfNotExist() -> None:
     foldersCreatedSuccess = False
 
@@ -50,27 +28,76 @@ def createFoldersIfNotExist() -> None:
                 print("DB created.")
 
         except FileExistsError:
-            print("File already exists.")
+            print("DB already exists.")
         
         try:
             with open(f"{logsPath}/queries.log", "x") as f:
                 print("Logs created.")
 
         except FileExistsError:
-            print("File already exists.")
+            print("Logs file already exists.")
+
+
+        try:
+            with open(f"{settingsPath}/general.json", "x") as f:
+                json.dump(
+                    {
+                        "areLogsShown": False,
+                        "isDarkMode" : False
+                    },
+                    f, 
+                    indent=4
+                )
+                print("General settings created.")
+
+        except FileExistsError:
+            print("General settings file already exists.")
+
         
         try:
-            with open(f"{settingsPath}/credentials.json", "x") as f:
+            with open(f"{settingsPath}/account.json", "x") as f:
                 json.dump(
                     {
                         "staySignedIn": False, 
-                        "areLogsShown": False, 
                         "credentials": {"username": "", "connectionString": ""}
                     },
                     f, 
                     indent=4
                 )
-                print("Settings created.")
+                print("Account settings created.")
 
         except FileExistsError:
-            print("File already exists.")
+            print("Account settings file already exists.")
+        
+        
+        try:
+            with open(f"{settingsPath}/set_queries.json", "x") as f:
+                json.dump(
+                    {
+                        
+                    },
+                    f, 
+                    indent=4
+                )
+                print("Queries settings file created.")
+
+        except FileExistsError:
+            print("Queries settings file already exists.")
+        
+        
+        try:
+            with open(f"{settingsPath}/analytics.json", "x") as f:
+                json.dump(
+                    {
+                        
+                    },
+                    f, 
+                    indent=4
+                )
+                print("Analytics settings file created.")
+
+        except FileExistsError:
+            print("Analytics settings file already exists.")
+
+
+        

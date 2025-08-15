@@ -6,6 +6,7 @@ from tkinter import scrolledtext
 from tkinter import messagebox
 import queue
 import pandastable as pdt
+import sv_ttk
 
 import src.Services.db_connection as cnx
 import src.Services.logging as log
@@ -13,6 +14,7 @@ import src.Services.database as db
 import src.Services.settings as settings
 import src.GUI.analytics_view as analytics_view
 import src.GUI.options_view as opt_view
+import src.Services.style as style_cust
 import constants as cta
 
 
@@ -24,13 +26,15 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager(cta.DIR_LOGS)   
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL)
+        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+
+        self.style = style_cust.setQueryViewStyle(self.root)
         
         self.query_result_queue = queue.Queue()
 
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
-        self.enableOptionsBtnAfterClosure()
+        # self.enableOptionsBtnAfterClosure()
         self.displayLogsText()
         
 
@@ -40,51 +44,29 @@ class QueryView:
 
     def setupUI(self) -> None:
         self.root.title("SQL Analytics")
-        self.root.configure(bg="#f7f7f7")
 
-        if not hasattr(self, "frame"):
-            self.frame = ttk.Frame(self.root, padding=16)
-            self.frame.pack(fill="both", expand=True)
-        else:
-            self.frame.configure(padding=16)
-            self.frame.pack(fill="both", expand=True)
+        # isDark = self.settingsManager.getBgTheme()
+        # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
 
-        style = ttk.Style(self.root)
-        style.theme_use("clam")
-        style.configure("LeftCard.TFrame", background="#f7f7f7", relief="flat")
-        style.configure("RightCard.TFrame", background="#f7f7f7", relief="flat")
-        style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), background="#f7f7f7", foreground="#222")
-        style.configure("Label.TLabel", font=("Segoe UI", 11), background="#f7f7f7", foreground="#444")
-        style.configure("Status.TLabel", font=("Segoe UI", 10), background="#f7f7f7", foreground="red")
-        style.configure("Clear.TButton", font=("Segoe UI", 11, "bold"))
-        style.map("Clear.TButton",
-                background=[("active", "#FF1414"), ("!disabled", "#FF3B3B")],
-                foreground=[("active", "white")])
-        style.configure("Action.TButton", font=("Segoe UI", 11, "bold"))
-        style.map("Action.TButton",
-                background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
-                foreground=[("!disabled", "white")])
-        style.configure("Options.TButton", font=("Segoe UI", 11, "bold"))
-        style.map("Options.TButton",
-                background=[("active", "#1976D2"), ("!disabled", "#2196F3")],
-                foreground=[("!disabled", "white")])
+        self.frame = ttk.Frame(self.root, padding=16, style="MainFrame.TFrame")        
+        self.frame.pack(fill="both", expand=True)
         
-        # === 1) HEADER (top, full width, thin) ======================================
-        self.header = ttk.Frame(self.frame)
-        self.header.pack(fill="x")
-        self.header.configure(height=50)
-        self.header.pack_propagate(False)
+        # # === 1) HEADER (top, full width, thin) ======================================
+        # self.header = ttk.Frame(self.frame, style="Header.TFrame")
+        # self.header.pack(fill="x")
+        # self.header.configure(height=50)
+        # self.header.pack_propagate(False)
 
         # right-aligned Options button
-        self.accessOptionsViewBtn = ttk.Button(self.header, 
-                   text="🛠 Options", 
-                   style="Options.TButton", 
-                   cursor="hand2",
-                   command=self.accessOptions
-                )
-        self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
+        # self.accessOptionsViewBtn = ttk.Button(self.header, 
+        #            text="🛠 Options", 
+        #            style="Options.TButton", 
+        #            cursor="hand2",
+        #            command=self.accessOptions
+        #         )
+        # self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
 
-        self.mainPanel = ttk.PanedWindow(self.frame, orient="horizontal")
+        self.mainPanel = ttk.PanedWindow(self.frame, orient="horizontal", style="MainPanel.TPanedwindow")
         self.mainPanel.pack(fill="both", expand=True)
 
         # Left card: query input
@@ -113,7 +95,7 @@ class QueryView:
         q_scroll_x.grid(row=5, column=0, sticky="ew", pady=(2, 0))
 
         # Action bar (Run + Analytics)
-        actionFrame = ttk.Frame(leftCard)
+        actionFrame = ttk.Frame(leftCard, style="ActionFrame.TFrame")
         actionFrame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
         self.runQueryButton = ttk.Button(actionFrame, text="▶ Run Query", style="Action.TButton", cursor="hand2", command=self.runQuery)
         self.runQueryButton.pack(side="left")
@@ -122,7 +104,7 @@ class QueryView:
         self.accessAnalyticsButton.pack(side="left", padx=(8, 0))
 
         # Footer: status + exec time
-        footer = ttk.Frame(leftCard)
+        footer = ttk.Frame(leftCard, style="Footer.TFrame")
         footer.grid(row=7, column=0, sticky="ew", pady=(12, 0))
         self.statusLabel = ttk.Label(footer, text="", style="Status.TLabel")
         self.statusLabel.pack(side="left", fill="x", expand=True)
@@ -286,7 +268,9 @@ class QueryView:
 
     def openAnalyticsWindow(self) -> None:
         self.accessAnalyticsButton.config(state="disabled")
-        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed)
+        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager
+                                                          , onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed
+                                                        )
 
 
     def enableButtonAfterAnalyticsWindowClosed(self) -> None:
@@ -319,12 +303,12 @@ class QueryView:
 
 
 
-    def accessOptions(self) -> None:
-        self.accessOptionsViewBtn.config(state="disable")
-        self.optionsView = opt_view.OptionsWindow(self.enableOptionsBtnAfterClosure)
+    # def accessOptions(self) -> None:
+    #     self.accessOptionsViewBtn.config(state="disable")
+    #     self.optionsView = opt_view.OptionsWindow(self.enableOptionsBtnAfterClosure)
 
 
-    def enableOptionsBtnAfterClosure(self):
-        self.accessOptionsViewBtn.config(state="normal")
+    # def enableOptionsBtnAfterClosure(self):
+    #     self.accessOptionsViewBtn.config(state="normal")
 
     
