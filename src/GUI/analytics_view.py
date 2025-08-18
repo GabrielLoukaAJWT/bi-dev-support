@@ -15,6 +15,7 @@ import src.Services.analytics as analytics
 import src.Services.database as db
 import src.Services.logging as log
 import src.Services.settings as settings
+import src.Services.style as style_cust
 import constants as cta
 
 
@@ -25,6 +26,8 @@ class AnalyticsView:
         self.root.state('zoomed')
         
         self.onCloseCallback = onCloseCallback
+
+        self.style = style_cust.setAnalyticsViewStyle(self.root)
 
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager, cta.DIR_LOCAL_DB)
@@ -56,36 +59,29 @@ class AnalyticsView:
         print(f"SETING UP THE MAIN UI")
         # isDark = self.settingsManager.getBgTheme()
         # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
-
-        self.mainFrame = tk.Frame(self.root, padx=20, pady=20, bg="#f7f7f7")        
+        self.mainFrame = ttk.Frame(self.root, style="AVMainFrame.TFrame", padding=(20, 20))        
         self.mainFrame.pack(fill="both", expand=True)
 
-        title = tk.Label(
-            self.mainFrame,
-            text="📊 Query Performance Analytics",
-            font=("Arial", 20, "bold"),
-            fg="#333333",
-            bg="#f7f7f7"
-        )
+        title = ttk.Label(self.mainFrame, text="📊 Query Performance Analytics", style="AVTitle.TLabel")
         title.pack(pady=(0, 20))
 
-        self.summaryFrame = tk.Frame(self.mainFrame, bg="#ffffff", relief="ridge", bd=2)
+        self.summaryFrame = ttk.Frame(self.mainFrame, style="AVSummaryFrame.TFrame")
         self.summaryFrame.pack(fill="x", padx=10, pady=10)
 
-        self.totalQueriesLabel = tk.Label(self.summaryFrame, text=f"🧮 Total Queries: {self.analyticsManager.computeTotalQueries()}",font = ("Arial", 11))
+        self.totalQueriesLabel = ttk.Label(self.summaryFrame, text=f"🧮 Total Queries: {self.analyticsManager.computeTotalQueries()}", style="AVTotLabel.TLabel")
         self.totalQueriesLabel.pack(side="left", padx=30, pady=10)
 
-        self.avgTimeLabel = tk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec", font = ("Arial", 11))
+        self.avgTimeLabel = ttk.Label(self.summaryFrame, text=f"⏱ Avg Exec Time: {self.analyticsManager.computeAvgExecTime()} sec", style="AVExecLabel.TLabel")
         self.avgTimeLabel.pack(side="left", padx=30, pady=10)
 
-        self.slowQueryLabel = tk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}" , bg="#fff56e", font = ("Arial", 11))
+        self.slowQueryLabel = ttk.Label(self.summaryFrame, text=f"🐢 Slowest Query: {self.getSlowestQuery()}", style="AVSlowestLabel.TLabel")
         self.slowQueryLabel.pack(side="left", padx=30, pady=10)
         self.slowQueryLabel.config(cursor="hand2")
 
-        self.mostCommonErrorLabel = tk.Label(self.summaryFrame, text=f"⚠️ Most Common Error: {self.analyticsManager.getMostCommonErrorLog()}" , bg="#ffa962", font = ("Arial", 11))
+        self.mostCommonErrorLabel = ttk.Label(self.summaryFrame, text=f"⚠️ Most Common Error: {self.analyticsManager.getMostCommonErrorLog()}", style="AVErrLabel.TLabel")
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
-        frame_style = {"bg": "#ffffff", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
+        frame_style = {"bg": "#D3EEFF", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
 
         self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General Stats", height=500, **frame_style)
         self.chartFrame.pack(fill=tk.BOTH, expand=True, pady=(10, 10))
@@ -96,18 +92,15 @@ class AnalyticsView:
         self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour Today", **frame_style)
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
-        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", bg="#ffffff", padx=10, pady=10, font=("Arial", 11, "bold"), height=100)
+        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", **frame_style , height=100)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
-
-        style = ttk.Style()
-        style.configure("Treeview.Heading", font=("Arial", 11, "bold"), background="#eaeaea")
-        style.configure("Treeview", font=("Courier New", 10), rowheight=25)
 
         self.listOfQueriesViewTree = ttk.Treeview(
             self.tableFrame,
             columns=("ID ↕", "Query ↕", "Exec Time ↕", "User ↕", "Timestamp ↕", "Number of rows ↕"),
             show="headings",
             selectmode="browse"
+            # style="AVTreeview.Heading"
         )
 
         for col in self.listOfQueriesViewTree["columns"]:
@@ -140,7 +133,7 @@ class AnalyticsView:
         self.refreshButton = ttk.Button(
             self.mainFrame,
             text="🔄 Refresh Analytics",
-            style="Action.TButton",
+            style="AVAction.TButton",
             cursor="hand2",
             command=self.refreshAnalytics
         )
@@ -150,7 +143,7 @@ class AnalyticsView:
             self.mainFrame, 
             text="🗑️ Delete local DB",
             cursor="hand2",
-            style="Clear.TButton",                                        
+            style="AVClear.TButton",                                        
             command=self.deleteDB
         )
         self.deleteDbButton.pack(pady=(10, 0), anchor="e")

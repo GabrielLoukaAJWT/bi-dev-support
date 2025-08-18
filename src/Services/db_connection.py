@@ -29,8 +29,8 @@ class OracleConnector:
             
             return self.isOracleClientValid
         
-        except exc.InvalidOIC as error:
-            raise exc.InvalidOIC
+        except Exception as error:
+            print(error)
 
 
 
@@ -49,7 +49,7 @@ class OracleConnector:
 
                     return True
                 
-                except exc.OracleConnectionFailure as error:
+                except Exception as error:
                     self.connection = None
                     print(error)
                     return False

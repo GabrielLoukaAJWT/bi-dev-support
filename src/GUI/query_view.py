@@ -34,7 +34,7 @@ class QueryView:
 
         self.setupUI()
         self.enableButtonAfterAnalyticsWindowClosed()
-        # self.enableOptionsBtnAfterClosure()
+        self.enableOptionsBtnAfterClosure()
         self.displayLogsText()
         
 
@@ -48,36 +48,36 @@ class QueryView:
         # isDark = self.settingsManager.getBgTheme()
         # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
 
-        self.frame = ttk.Frame(self.root, padding=16, style="MainFrame.TFrame")        
+        self.frame = ttk.Frame(self.root, padding=16, style="QVMainFrame.TFrame")        
         self.frame.pack(fill="both", expand=True)
         
-        # # === 1) HEADER (top, full width, thin) ======================================
-        # self.header = ttk.Frame(self.frame, style="Header.TFrame")
-        # self.header.pack(fill="x")
-        # self.header.configure(height=50)
-        # self.header.pack_propagate(False)
+        # === 1) HEADER (top, full width, thin) ======================================
+        self.header = ttk.Frame(self.frame, style="QVHeader.TFrame")
+        self.header.pack(fill="x")
+        self.header.configure(height=50)
+        self.header.pack_propagate(False)
 
         # right-aligned Options button
-        # self.accessOptionsViewBtn = ttk.Button(self.header, 
-        #            text="🛠 Options", 
-        #            style="Options.TButton", 
-        #            cursor="hand2",
-        #            command=self.accessOptions
-        #         )
-        # self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
+        self.accessOptionsViewBtn = ttk.Button(self.header, 
+                   text="🛠 Options", 
+                   style="QVOptions.TButton", 
+                   cursor="hand2",
+                   command=self.accessOptions
+                )
+        self.accessOptionsViewBtn.pack(side="right", padx=8, pady=6)
 
-        self.mainPanel = ttk.PanedWindow(self.frame, orient="horizontal", style="MainPanel.TPanedwindow")
+        self.mainPanel = ttk.PanedWindow(self.frame, orient="horizontal", style="QVMainPanel.TPanedwindow")
         self.mainPanel.pack(fill="both", expand=True)
 
         # Left card: query input
-        leftCard = ttk.Frame(self.mainPanel, style="LeftCard.TFrame", padding=16, width=50)
+        leftCard = ttk.Frame(self.mainPanel, style="QVLeftCard.TFrame", padding=16, width=50)
         leftCard.pack(side="left", fill="y") 
         self.mainPanel.add(leftCard, weight=1)
 
-        ttk.Label(leftCard, text="Enter SQL Query", style="Header.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Label(leftCard, text="Enter SQL Query", style="QVLeftCardHeader.TLabel").grid(row=0, column=0, sticky="w")
 
         # Query name
-        ttk.Label(leftCard, text="Query Name", style="Label.TLabel").grid(row=1, column=0, sticky="w", pady=(12, 2))
+        ttk.Label(leftCard, text="Query Name", style="QVLabel.TLabel").grid(row=1, column=0, sticky="w", pady=(12, 2))
         self.queryNameEntry = ttk.Entry(leftCard, font=("Courier New", 11))
         vcmd = (self.root.register(self.validateQueryNameForEntry), "%P")
         self.queryNameEntry.configure(validate="key", validatecommand=vcmd)
@@ -85,7 +85,7 @@ class QueryView:
         self.queryNameEntry.insert(0, "Ex: Here is my amazing query name")
 
         # SQL text
-        ttk.Label(leftCard, text="SQL Query", style="Label.TLabel").grid(row=3, column=0, sticky="w", pady=(12, 2))
+        ttk.Label(leftCard, text="SQL Query", style="QVLabel.TLabel").grid(row=3, column=0, sticky="w", pady=(12, 2))
         self.queryText = tk.Text(leftCard, height=10, font=("Courier New", 11), relief="solid", bd=1, wrap="none")
         q_scroll_y = ttk.Scrollbar(leftCard, orient="vertical", command=self.queryText.yview)
         q_scroll_x = ttk.Scrollbar(leftCard, orient="horizontal", command=self.queryText.xview)
@@ -95,20 +95,25 @@ class QueryView:
         q_scroll_x.grid(row=5, column=0, sticky="ew", pady=(2, 0))
 
         # Action bar (Run + Analytics)
-        actionFrame = ttk.Frame(leftCard, style="ActionFrame.TFrame")
+        actionFrame = ttk.Frame(leftCard, style="QVActionFrame.TFrame")
         actionFrame.grid(row=6, column=0, sticky="ew", pady=(12, 0))
-        self.runQueryButton = ttk.Button(actionFrame, text="▶ Run Query", style="Action.TButton", cursor="hand2", command=self.runQuery)
+        self.runQueryButton = ttk.Button(actionFrame, 
+                                         text="▶ Run Query", 
+                                         style="QVAction.TButton", 
+                                         cursor="hand2",
+                                         command=self.runQuery
+                                    )
         self.runQueryButton.pack(side="left")
         self.accessAnalyticsButton = ttk.Button(actionFrame, text="📈 Access Analytics", 
-                                                style="Action.TButton", cursor="hand2", command=self.openAnalyticsWindow)
-        self.accessAnalyticsButton.pack(side="left", padx=(8, 0))
+                                                style="QVAction.TButton", cursor="hand2", command=self.openAnalyticsWindow)
+        self.accessAnalyticsButton.pack(side="right", padx=(8, 0))
 
         # Footer: status + exec time
-        footer = ttk.Frame(leftCard, style="Footer.TFrame")
+        footer = ttk.Frame(leftCard, style="QVFooter.TFrame")
         footer.grid(row=7, column=0, sticky="ew", pady=(12, 0))
-        self.statusLabel = ttk.Label(footer, text="", style="Status.TLabel")
+        self.statusLabel = ttk.Label(footer, text="", style="QVStatus.TLabel")
         self.statusLabel.pack(side="left", fill="x", expand=True)
-        self.execTimeLabel = ttk.Label(footer, text="", font=("Segoe UI", 14), foreground="#666")
+        self.execTimeLabel = ttk.Label(footer, text="", style="QVExecLabel.TLabel")
         self.execTimeLabel.pack(side="right")
 
         # Configure expansion
@@ -116,25 +121,25 @@ class QueryView:
         leftCard.columnconfigure(0, weight=1)
 
         # Right card: output + logs
-        self.rightCard = ttk.PanedWindow(self.mainPanel, orient="vertical", style="RightCard.TFrame")
+        self.rightCard = ttk.PanedWindow(self.mainPanel, orient="vertical", style="QVRightCard.TFrame")
         self.mainPanel.add(self.rightCard, weight=2)
 
-        ttk.Label(self.rightCard, text="Query Output / Logs", style="Header.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Label(self.rightCard, text="Query Output / Logs", style="QVRightCardHeader.TLabel").grid(row=0, column=0, sticky="w")
 
         # Logs toggle
-        self.rightSplitter = ttk.Panedwindow(self.rightCard, orient="vertical")
+        self.rightSplitter = ttk.Panedwindow(self.rightCard, orient="vertical", style="QVRightPanel.TPanedwindow")
         self.rightSplitter.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
 
         # Output pane
-        self.outputPane = ttk.Frame(self.rightSplitter)
+        self.outputPane = ttk.Frame(self.rightSplitter, style="QVOutputFrame.TFrame")
         self.rightSplitter.add(self.outputPane, weight=3)
 
         # Logs pane (wrapper for toggle + logs)
-        self.logsWrapper = ttk.Frame(self.rightSplitter)
+        self.logsWrapper = ttk.Frame(self.rightSplitter, style="QVLogsFrame.TFrame")
         self.rightSplitter.add(self.logsWrapper, weight=1)
 
         # Toggle bar above logs
-        toggle_frame = ttk.Frame(self.logsWrapper)
+        toggle_frame = ttk.Frame(self.logsWrapper, style="QVToggleLogsFrame.TFrame")
         toggle_frame.pack(fill="x", pady=(0, 4))
 
         # Logs container (start hidden)
@@ -159,7 +164,7 @@ class QueryView:
             toggle_frame,
             text="🧾 Show Logs",
             cursor="hand2",
-            style="Action.TButton",
+            style="QVAction.TButton",
             command=self.toggleLogs
         )
         self.toggleLogsBtn.pack(side="left")
@@ -168,7 +173,7 @@ class QueryView:
             toggle_frame,
             text="🗑️ Clear all logs",
             cursor="hand2",
-            style="Clear.TButton",
+            style="QVClear.TButton",
             command=self.clearLogsClick
         )
         self.clearLogsBtn.pack(side="right")
@@ -268,8 +273,8 @@ class QueryView:
 
     def openAnalyticsWindow(self) -> None:
         self.accessAnalyticsButton.config(state="disabled")
-        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager
-                                                          , onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed
+        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, 
+                                                          onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed
                                                         )
 
 
@@ -303,12 +308,12 @@ class QueryView:
 
 
 
-    # def accessOptions(self) -> None:
-    #     self.accessOptionsViewBtn.config(state="disable")
-    #     self.optionsView = opt_view.OptionsWindow(self.enableOptionsBtnAfterClosure)
+    def accessOptions(self) -> None:
+        self.accessOptionsViewBtn.config(state="disable")
+        self.optionsView = opt_view.OptionsWindow(self.root, self.enableOptionsBtnAfterClosure)
 
 
-    # def enableOptionsBtnAfterClosure(self):
-    #     self.accessOptionsViewBtn.config(state="normal")
+    def enableOptionsBtnAfterClosure(self):
+        self.accessOptionsViewBtn.config(state="normal")
 
     

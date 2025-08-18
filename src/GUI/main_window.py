@@ -34,33 +34,32 @@ class MainWindow:
         # isDark = self.settingsManager.getBgTheme()
         # if isDark : sv_ttk.set_theme("dark") 
 
-        # self.root.configure(bg="#F0F0F0")
+        self.root.configure(bg="#78B0D3")
 
-        self.mainFrame = ttk.Frame(self.root, padding=(60, 30), style="Main.TFrame")
+        self.mainFrame = ttk.Frame(self.root, padding=(60, 30), style="MainLogin.TFrame")
         self.mainFrame.pack(expand=True)
 
-        titleLabel = tk.Label(self.mainFrame, text="Oracle DB Login", font=("Arial", 16, "bold"), bg="#ffffff")
+        titleLabel = ttk.Label(self.mainFrame, text="Oracle DB Login", style="MainTitle.TLabel")
         titleLabel.pack(pady=(0, 20))
 
-        tk.Label(self.mainFrame, text="Username:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
+        ttk.Label(self.mainFrame, text="Username:", style="MainLabel.TLabel").pack(pady=(0, 5))
         self.usernameEntry = tk.Entry(self.mainFrame, font=("Arial", 12), width=30, relief="solid", bd=1)
         self.usernameEntry.pack(pady=5, ipady=4)
         
-        tk.Label(self.mainFrame, text="Connection string:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
+        ttk.Label(self.mainFrame, text="Connection string:", style="MainLabel.TLabel").pack(pady=(0, 5))
         self.connectionStringEntry = tk.Entry(self.mainFrame, font=("Arial", 12), width=30, relief="solid", bd=1)
         self.connectionStringEntry.pack(pady=5, ipady=4)
 
-        tk.Label(self.mainFrame, text="Password:", font=("Arial", 12), bg="#ffffff").pack(pady=(0, 5))
+        ttk.Label(self.mainFrame, text="Password:", style="MainLabel.TLabel").pack(pady=(0, 5))
 
         self.pswEntry = tk.Entry(self.mainFrame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
         self.pswEntry.pack(pady=5, ipady=4)
 
-        connectBtn = tk.Button(self.mainFrame, text="Connect", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", cursor="hand2",
-                                activebackground="#45A049", padx=10, pady=5, command=self.handleConnection)
-        connectBtn.pack(pady=20)        
-        
-        self.connectionStatusLabel = tk.Label(self.mainFrame, text="", font=("Arial", 10), bg="#ffffff")
-        self.connectionStatusLabel.pack(pady=10)
+        connectBtn = ttk.Button(self.mainFrame, text="Connect", cursor="hand2", style="MainConnect.TButton", command=self.handleConnection)
+        connectBtn.pack(pady=20)  
+
+        self.connectionStatusLabel = ttk.Label(self.mainFrame, text="", style="MainConectionLabel.TLabel")  
+        self.connectionStatusLabel.pack(pady=10)            
 
         self.checkboxVar = tk.IntVar(value=(1 if self.settingsManager.checkboxVarSettings else 0))
 
@@ -75,7 +74,7 @@ class MainWindow:
                    relief="raised", padx=10, pady=5)
         self.checkbox.pack(padx=40, pady=40)
 
-        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.2", anchor="e", bg="#ffffff")
+        self.version_label = ttk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.2", anchor="e", style="MainVersionLabel.TLabel")
         self.version_label.pack(side="bottom", fill="x")
 
         self.menubar = tk.Menu(self.root)
@@ -91,6 +90,7 @@ class MainWindow:
         password = self.pswEntry.get()
 
         isSuccessful = self.oracleConnector.connectToOracle(username, connectionString, password)
+        print(isSuccessful)
 
         print(self.oracleConnector.connection)
         print(self.oracleConnector.cursor)
@@ -106,10 +106,12 @@ class MainWindow:
         
 
     def showStatus(self, success: bool) -> None:
+        self.connectionStatusLabel.pack(pady=10)   
+         
         if success:
-            self.connectionStatusLabel.config(text=cta.DB_CONNECTION_SUCCESS, fg="green")  
+            self.connectionStatusLabel.configure(text=cta.DB_CONNECTION_SUCCESS, style="MainConectionLabelSuccess.TLabel")
         else:
-            self.connectionStatusLabel.config(text=cta.DB_CONNECTION_ERROR, fg="red")  
+            self.connectionStatusLabel.configure(text=cta.DB_CONNECTION_ERROR, style="MainConectionLabelFail.TLabel")
 
         self.connectionStatusLabel.update()
 

@@ -7,12 +7,12 @@ import constants as cta
 
 
 class OptionsWindow:
-    def __init__(self, onCloseCallback=None):
-        self.root = tk.Tk()
+    def __init__(self, root: tk.Tk, onCloseCallback=None):
+        self.root = tk.Toplevel(root)
         self.root.title("Options")
         self.root.geometry("500x300")
 
-        # self.onCloseCallback = onCloseCallback
+        self.onCloseCallback = onCloseCallback
 
         self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
 
@@ -21,18 +21,14 @@ class OptionsWindow:
         self.setupUI()
 
 
-    # def onDestroy(self) -> None:
-    #     if self.onCloseCallback:
-    #         self.onCloseCallback()
-    #     self.root.destroy()
+    def onDestroy(self) -> None:
+        if self.onCloseCallback:
+            self.onCloseCallback()
+        self.root.destroy()
 
 
 
     def setupUI(self) -> None:        
-        self.style = ttk.Style(self.root)
-        self.style.theme_use("default")
-        self.style.configure("MainFrame.TFrame", background="#cccccc", relief="flat")
-
         self.mainFrame = ttk.Frame(self.root, padding=16, style="MainFrame.TFrame")
         self.mainFrame.pack(fill="both", expand=True)
 
@@ -77,7 +73,8 @@ class OptionsWindow:
         )
         
 
-        ttk.Button(self.generalSettingsTabContainer, text="Apply", command=self.applyTheme).grid(row=20, column=5, sticky="w")
+        ttk.Button(self.generalSettingsTabContainer, text="Apply", 
+                   command=self.applyTheme).grid(row=20, column=5, sticky="w")
 
 
         self.theme_box.grid(row=1, column=1, sticky="ew", padx=(8, 0))
