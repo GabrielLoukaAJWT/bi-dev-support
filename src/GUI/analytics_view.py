@@ -105,54 +105,26 @@ class AnalyticsView:
 
         self.listOfQueriesViewTree = ttk.Treeview(
             self.tableFrame,
-            columns=("ID", "Query", "Exec Time", "User", "Timestamp", "Number of rows"),
+            columns=("ID ↕", "Query ↕", "Exec Time ↕", "User ↕", "Timestamp ↕", "Number of rows ↕"),
             show="headings",
             selectmode="browse"
         )
 
-        self.listOfQueriesViewTree.heading("ID", text="ID ↕", 
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "ID",
-                                                                                     False
-                                                                                )
-                                                                        )
-        self.listOfQueriesViewTree.heading("Query", text="Query Name ↕",
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "Query",
-                                                                                     False
-                                                                                )
-                                                                        )
-        self.listOfQueriesViewTree.heading("Exec Time", text="Exec Time (s) ↕", 
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "Exec Time",
-                                                                                     False
-                                                                                )
-                                                                        )
-        self.listOfQueriesViewTree.heading("User", text="Ran By ↕",
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "User",
-                                                                                     False
-                                                                                )
-                                                                        )
-        self.listOfQueriesViewTree.heading("Timestamp", text="Execution Date ↕",
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "Timestamp",
-                                                                                     False
-                                                                                )
-                                                                        )
-        self.listOfQueriesViewTree.heading("Number of rows", text="Rows ↕", 
-                                           command=lambda : self.treeview_sort_column(self.listOfQueriesViewTree, 
-                                                                                     "Number of rows",
-                                                                                     False
-                                                                                )
-                                                                        )
+        for col in self.listOfQueriesViewTree["columns"]:
+            self.listOfQueriesViewTree.heading(
+                col, 
+                text=col, 
+                command=lambda _col=col: self.treeview_sort_column(self.listOfQueriesViewTree, _col, False)
+            )
 
-        self.listOfQueriesViewTree.column("ID", anchor="center", width=120)
-        self.listOfQueriesViewTree.column("Query", anchor="w", width=400)
-        self.listOfQueriesViewTree.column("Exec Time", anchor="center", width=120)
-        self.listOfQueriesViewTree.column("User", anchor="center", width=120)
-        self.listOfQueriesViewTree.column("Timestamp", anchor="center", width=180)
-        self.listOfQueriesViewTree.column("Number of rows", anchor="center", width=140)
+
+
+        self.listOfQueriesViewTree.column("ID ↕", anchor="center", width=120)
+        self.listOfQueriesViewTree.column("Query ↕", anchor="w", width=400)
+        self.listOfQueriesViewTree.column("Exec Time ↕", anchor="center", width=120)
+        self.listOfQueriesViewTree.column("User ↕", anchor="center", width=120)
+        self.listOfQueriesViewTree.column("Timestamp ↕", anchor="center", width=180)
+        self.listOfQueriesViewTree.column("Number of rows ↕", anchor="center", width=140)
 
         self.listOfQueriesViewTree.pack(fill="both", expand=True)
 
@@ -342,15 +314,21 @@ class AnalyticsView:
         thread2.start() 
 
 
-    def treeview_sort_column(self, tv, col, reverse) -> None:
-        l = [(tv.set(k, col), k) for k in tv.get_children('')]
-        l.sort(reverse=reverse)
+    def treeview_sort_column(self, tv: ttk.Treeview, col:str, reverse:bool) -> None:
+        def try_num(val: str):
+            try:
+                return float(val)
+            except ValueError:
+                return val.lower() if isinstance(val, str) else val
 
-        for index, (val, k) in enumerate(l):
+        sortedList = [(try_num(tv.set(k, col)), k) for k in tv.get_children('')]
+        sortedList.sort(reverse=reverse)
+
+        for index, (val, k) in enumerate(sortedList):
             tv.move(k, '', index)
 
-        tv.heading(col, command=lambda: \
-                self.treeview_sort_column(tv, col, not reverse))
+        tv.heading(col, command=lambda: self.treeview_sort_column(tv, col, not reverse))
+
         
 
     def query_selection_popup(self, event) -> None:

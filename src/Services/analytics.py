@@ -21,7 +21,7 @@ class AnalyticsManager:
         return len(self.databaseManager.getQueriesFromDB())
     
 
-    def getRowsForTree(self) -> list:
+    def getRowsForTree(self) -> list[tuple]:
         data = self.databaseManager.getQueriesFromDB()
         rows = []
 
