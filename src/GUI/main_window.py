@@ -75,7 +75,7 @@ class MainWindow:
                    relief="raised", padx=10, pady=5)
         self.checkbox.pack(padx=40, pady=40)
 
-        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.1", anchor="e", bg="#ffffff")
+        self.version_label = tk.Label(self.mainFrame, text=f"{cta.APP_TITLE} v1.3.2", anchor="e", bg="#ffffff")
         self.version_label.pack(side="bottom", fill="x")
 
         self.menubar = tk.Menu(self.root)
@@ -148,7 +148,7 @@ class MainWindow:
 
     def show_about_dialog(self) -> None:
         about_text = (
-            "SQL Companion v1.3.1\n\n"
+            "SQL Companion v1.3.2\n\n"
             "Built by Gabriel Louka\n"
             "This software helps you connect to Oracle DBs,\n"
             "run queries, view stats, and analyze performance.\n\n"
