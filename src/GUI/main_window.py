@@ -55,8 +55,8 @@ class MainWindow:
         self.pswEntry = tk.Entry(self.mainFrame, show="*", font=("Arial", 12), width=30, relief="solid", bd=1)
         self.pswEntry.pack(pady=5, ipady=4)
 
-        connectBtn = ttk.Button(self.mainFrame, text="Connect", cursor="hand2", style="MainConnect.TButton", command=self.handleConnection)
-        connectBtn.pack(pady=20)  
+        self.connectBtn = ttk.Button(self.mainFrame, text="Connect", cursor="hand2", style="MainConnect.TButton", command=self.handleConnection)
+        self.connectBtn.pack(pady=20)  
 
         self.connectionStatusLabel = ttk.Label(self.mainFrame, text="", style="MainConectionLabel.TLabel")  
         self.connectionStatusLabel.pack(pady=10)            
@@ -85,6 +85,8 @@ class MainWindow:
 
         
     def handleConnection(self) -> None:
+        self.connectBtn.config(state="disabled")
+
         username = self.usernameEntry.get()
         connectionString = self.connectionStringEntry.get()
         password = self.pswEntry.get()
@@ -102,6 +104,8 @@ class MainWindow:
             self.root.update_idletasks()
             self.root.after(1000, self.clearRoot())   
             self.accessQueryView()
+        else:
+            self.connectBtn.config(state="normal")
 
         
 
