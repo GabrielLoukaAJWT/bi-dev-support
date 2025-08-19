@@ -134,12 +134,11 @@ class MainWindow:
         if self.checkboxVar.get() == 1:
             username = self.usernameEntry.get()
             connectionString = self.connectionStringEntry.get()
-            password = self.pswEntry.get()
             signInFlag = True
 
-            self.settingsManager.editSignInSettings(username, connectionString, password, signInFlag)
+            self.settingsManager.editSignInSettings(username, connectionString, signInFlag)
         else:
-            self.settingsManager.editSignInSettings("", "", "", False)
+            self.settingsManager.editSignInSettings("", "", False)
 
 
     def loadSavedCredentialsToUI(self) -> None:
@@ -147,9 +146,8 @@ class MainWindow:
         credentials = self.settingsManager.credentialsSettings
 
         if value == 1:
-            self.usernameEntry.insert(0, credentials["username"])
+            self.usernameEntry.insert(0, credentials["oracleUsername"])
             self.connectionStringEntry.insert(0, credentials["connectionString"])
-            # self.pswEntry.insert(0, credentials["pwd"])
 
 
     def show_about_dialog(self) -> None:
@@ -158,7 +156,6 @@ class MainWindow:
             "Built by Gabriel Louka\n"
             "This software helps you connect to Oracle DBs,\n"
             "run queries, view stats, and analyze performance.\n\n"
-            # "© 2025 Gabriel Louka. All rights reserved."
         )
         messagebox.showinfo("About SQL Companion", about_text)
 

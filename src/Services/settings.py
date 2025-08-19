@@ -5,15 +5,16 @@ from cryptography.fernet import Fernet
 import os
 
 class SettingsManager:
-    def __init__(self, genSettingsFiles: str, credentialsSettingsFile: str):
+    def __init__(self, genSettingsFiles: str, accountSettingsFile: str):
         self.generalSettingsFile = genSettingsFiles
-        self.credentialsSettingsFile = credentialsSettingsFile
+        self.accountSettingsFile = accountSettingsFile
         
         self.logsFlagSettings = self.getLogsShownFlag()
         self.isDarkMode = self.getBgTheme()
         
         self.checkboxVarSettings = self.getSignInFlag()
         self.credentialsSettings = self.getCredentialsSettings()
+        self.accUsername = self.getAccUsername()
 
 
     def getLogsShownFlag(self) -> bool:
@@ -37,7 +38,7 @@ class SettingsManager:
 
     
     def getSignInFlag(self) -> bool:
-        with open(self.credentialsSettingsFile, 'r') as f:
+        with open(self.accountSettingsFile, 'r') as f:
             settings = json.load(f)
             signInFlag = settings["staySignedIn"]
             
@@ -46,7 +47,7 @@ class SettingsManager:
         
 
     def getCredentialsSettings(self) -> dict:
-        with open(self.credentialsSettingsFile, 'r') as f:
+        with open(self.accountSettingsFile, 'r') as f:
             settings = json.load(f)
 
             credentials = settings["credentials"]
@@ -54,23 +55,52 @@ class SettingsManager:
             f.close()
             return credentials
         
+
+    def getAccUsername(self) -> str:
+        with open(self.accountSettingsFile, 'r') as f:
+            settings = json.load(f)
+
+            username = settings["accUsername"]
+
+            f.close()
+            return username
+        
         
 
-    def editSignInSettings(self, username: str, dsn: str, pwd: str, signInFlag: bool) -> None:
-        with open(self.credentialsSettingsFile, 'w+') as f:
+    def editSignInSettings(self, username: str, dsn: str, signInFlag: bool) -> None:
+        currUsername = self.getAccUsername()
+
+        with open(self.accountSettingsFile, 'w+') as f:
             newSettings = {
                 "staySignedIn": signInFlag,
                 "credentials": {
-                            "username" : username,
+                            "oracleUsername" : username,
                             "connectionString" : dsn
-                            # "pwd" : self.hashPwd(pwd)
-                            # "pwdEncr" : self.encryptPlainPwd(pwd)
                         },
+                "accUsername": currUsername
             }
             
             json.dump(newSettings, f, indent=4)
 
         f.close()
+
+    
+    def editUsername(self, newUsername: str) -> None:
+        currSignInFlag = self.getSignInFlag()
+        currCredentials = self.getCredentialsSettings()
+
+        with open(self.accountSettingsFile, 'w+') as f:
+            newSettings = {
+                "staySignedIn": currSignInFlag,
+                "credentials": currCredentials,
+                "accUsername": newUsername
+            }
+            
+            json.dump(newSettings, f, indent=4)
+
+        f.close()
+
+        
 
 
     def editLogsFlagSettings(self, newFlag: bool) -> None:
@@ -101,29 +131,6 @@ class SettingsManager:
         f.close()
 
         
-
-
-
-    # def hashPwd(self, pwd: str) -> str:
-    #     salt = bcrypt.gensalt()
-    #     hashedPwd = bcrypt.hashpw(pwd, salt)
-
-    #     return hashedPwd
-    
-
-    # def validatePasswordHash(self, rawPwd: str) -> bool:
-    #     storedHash = self.credentialsSettings["pwd"]
-    #     return bcrypt.checkpw(rawPwd, storedHash)
-    
-
-    # def encryptPlainPwd(self, plainPwd: str) -> str:
-    #     key = Fernet.generate_key()
-    #     cipherSuite = Fernet(key)
-    #     encodedPwd = json.dumps(cipherSuite.encrypt(plainPwd.encode(encoding="utf-8")))
-
-    #     return encodedPwd
-
-    
 
         
 

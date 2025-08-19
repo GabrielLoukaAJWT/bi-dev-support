@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import sv_ttk
+from tkinter import messagebox
 
 import src.Services.settings as settings
 import src.Services.style as style_cust
@@ -65,7 +65,7 @@ class OptionsWindow:
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
         ttk.Label(self.generalSettingsTabContainer, text="Theme:").grid(row=1, column=0, sticky="w")
-        
+
         themeVarString = "Dark" if self.settingsManager.getBgTheme() else "Light"
         self.theme_var = tk.StringVar(value=themeVarString)
         self.theme_box = ttk.Combobox(
@@ -90,6 +90,38 @@ class OptionsWindow:
         self.generalSettingsTabContainer.columnconfigure(1, weight=2)
 
 
+    def setupAccountTabUI(self) -> None:
+        self.accountSettingsTabContainer = ttk.Frame(self.accTab, padding=16)
+        self.accountSettingsTabContainer.pack(fill="both", expand=True)
+
+        ttk.Label(
+            self.accountSettingsTabContainer,
+            text="Account information",
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        ttk.Label(self.accountSettingsTabContainer, text="Username:").grid(row=1, column=0, sticky="w")
+
+        currentUsername = self.settingsManager.getAccUsername()
+        self.usernameEntry = ttk.Entry(self.accountSettingsTabContainer)
+        self.usernameEntry.grid(row=1, column=2, sticky="w")
+        self.usernameEntry.insert(0, currentUsername)
+
+        ttk.Button(self.accountSettingsTabContainer, text="Apply", 
+                   command=self.applyNewUsername).grid(row=20, column=5, sticky="w")
+        
+    
+    
+    def setupQueriesTabUI(self) -> None:
+        pass
+    
+    
+    def setupAnalyticsTabUI(self) -> None:
+        pass
+
+
+
+
     def applyTheme(self) -> None:
         selectedTheme = self.theme_box.get()
         self.settingsManager.editDarkTheme(selectedTheme)
@@ -103,14 +135,15 @@ class OptionsWindow:
 
 
 
+    def applyNewUsername(self) -> None:
+        usernameEntryValue = self.usernameEntry.get()
 
-    def setupAccountTabUI(self) -> None:
-        pass
-    
-    
-    def setupQueriesTabUI(self) -> None:
-        pass
-    
-    
-    def setupAnalyticsTabUI(self) -> None:
-        pass
+        if len(usernameEntryValue) >= 1 and len(usernameEntryValue) <= 30:
+            self.settingsManager.editUsername(usernameEntryValue)
+        else:
+            messagebox.showinfo("Invalid username", "Username must be between 1 and 30 characters")
+
+        self.usernameEntry.delete(0, tk.END)
+        self.usernameEntry.insert(0, usernameEntryValue)    
+
+

@@ -59,7 +59,8 @@ def createFoldersIfNotExist() -> None:
                 json.dump(
                     {
                         "staySignedIn": False, 
-                        "credentials": {"username": "", "connectionString": ""}
+                        "credentials": {"oracleUsername": "", "connectionString": ""},
+                        "accUsername": getpass.getuser()
                     },
                     f, 
                     indent=4

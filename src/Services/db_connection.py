@@ -77,7 +77,7 @@ class OracleConnector:
 
                 self.currentQuery.endTime = datetime.datetime.today()
                 self.currentQuery.execTime = self.currentQuery.endTime - self.currentQuery.initTime
-                self.currentQuery.ranBy = getpass.getuser()
+                self.currentQuery.ranBy = self.settingsManager.getAccUsername()
                 self.currentQuery.code = sqlQuery
                 self.currentQuery.name = queryName
                 self.currentQuery.columns = [row[0] for row in self.cursor.description]  
