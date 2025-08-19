@@ -28,8 +28,6 @@ class QueryView:
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
         self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
 
-        self.style = style_cust.setQueryViewStyle(self.root)
-        
         self.query_result_queue = queue.Queue()
 
         self.setupUI()
@@ -45,8 +43,11 @@ class QueryView:
     def setupUI(self) -> None:
         self.root.title("SQL Analytics")
 
-        # isDark = self.settingsManager.getBgTheme()
-        # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
+        isDark = self.settingsManager.getBgTheme()
+        if isDark : 
+            self.style = style_cust.setQueryViewStyleDark(self.root) 
+        else : 
+            self.style = style_cust.setQueryViewStyle(self.root)
 
         self.frame = ttk.Frame(self.root, padding=16, style="QVMainFrame.TFrame")        
         self.frame.pack(fill="both", expand=True)

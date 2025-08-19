@@ -3,11 +3,13 @@ from tkinter import ttk
 import sv_ttk
 
 import src.Services.settings as settings
+import src.Services.style as style_cust
 import constants as cta
 
 
 class OptionsWindow:
     def __init__(self, root: tk.Tk, onCloseCallback=None):
+        self.parent = root
         self.root = tk.Toplevel(root)
         self.root.title("Options")
         self.root.geometry("500x300")
@@ -89,7 +91,14 @@ class OptionsWindow:
     def applyTheme(self) -> None:
         selectedTheme = self.theme_box.get()
         self.settingsManager.editDarkTheme(selectedTheme)
-        sv_ttk.set_theme("dark") if selectedTheme == "Dark" else sv_ttk.set_theme("light")
+        
+        if selectedTheme == "Dark":
+            style_cust.setQueryViewStyleDark(self.parent)
+            # style_cust.setAnalyticsViewStyleDark(self.parent.analyticsPage)
+        else:
+            style_cust.setQueryViewStyle(self.parent)
+            # style_cust.setAnalyticsViewStyle(self.parent.analyticsPage)
+
 
 
 

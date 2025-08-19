@@ -27,8 +27,6 @@ class AnalyticsView:
         
         self.onCloseCallback = onCloseCallback
 
-        self.style = style_cust.setAnalyticsViewStyle(self.root)
-
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager, cta.DIR_LOCAL_DB)
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
@@ -57,8 +55,13 @@ class AnalyticsView:
         
     def setupUI(self) -> None:
         print(f"SETING UP THE MAIN UI")
-        # isDark = self.settingsManager.getBgTheme()
-        # sv_ttk.set_theme("dark") if isDark else sv_ttk.set_theme("light")
+
+        isDark = self.settingsManager.getBgTheme()
+        if isDark : 
+            self.style = style_cust.setAnalyticsViewStyleDark(self.root) 
+        else : 
+            self.style = style_cust.setAnalyticsViewStyle(self.root)
+
         self.mainFrame = ttk.Frame(self.root, style="AVMainFrame.TFrame", padding=(20, 20))        
         self.mainFrame.pack(fill="both", expand=True)
 
@@ -81,18 +84,16 @@ class AnalyticsView:
         self.mostCommonErrorLabel = ttk.Label(self.summaryFrame, text=f"⚠️ Most Common Error: {self.analyticsManager.getMostCommonErrorLog()}", style="AVErrLabel.TLabel")
         self.mostCommonErrorLabel.pack(side="left", padx=30, pady=10)
 
-        frame_style = {"bg": "#D3EEFF", "padx": 10, "pady": 10, "font": ("Arial", 11, "bold"), "fg": "#444"}
-
-        self.chartFrame = tk.LabelFrame(self.mainFrame, text="📈 General Stats", height=500, **frame_style)
+        self.chartFrame = ttk.LabelFrame(self.mainFrame, text="📈 General Stats", height=500, style="AVChartsFrame.TLabelframe")
         self.chartFrame.pack(fill=tk.BOTH, expand=True, pady=(10, 10))
 
-        self.leftChart = tk.LabelFrame(self.chartFrame, text="Correlation Between Number of Rows and Execution Time", **frame_style)
+        self.leftChart = ttk.LabelFrame(self.chartFrame, text="Correlation Between Number of Rows and Execution Time", style="AVLeftChartFrame.TLabelframe")
         self.leftChart.pack(side="left", fill="both", expand=True, padx=(0, 10))
 
-        self.rightChart = tk.LabelFrame(self.chartFrame, text="Query Frequency by Hour Today", **frame_style)
+        self.rightChart = ttk.LabelFrame(self.chartFrame, text="Query Frequency by Hour Today", style="AVRightChartFrame.TLabelframe")
         self.rightChart.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
-        self.tableFrame = tk.LabelFrame(self.mainFrame, text="🗂 Queries", **frame_style , height=100)
+        self.tableFrame = ttk.LabelFrame(self.mainFrame, text="🗂 Queries", style="AVTreeFrame.TLabelframe" , height=100)
         self.tableFrame.pack(fill="both", expand=True, pady=10)
 
         self.listOfQueriesViewTree = ttk.Treeview(

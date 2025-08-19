@@ -20,7 +20,6 @@ class MainWindow:
         self.root.title(cta.APP_TITLE)
         self.root.geometry("800x700")
         
-        self.style = style_cust.setMainViewStyle(self.root)
         self.setupMainUI()
 
         self.loadSavedCredentialsToUI()
@@ -31,10 +30,11 @@ class MainWindow:
 
 
     def setupMainUI(self) -> None:
-        # isDark = self.settingsManager.getBgTheme()
-        # if isDark : sv_ttk.set_theme("dark") 
-
-        self.root.configure(bg="#78B0D3")
+        isDark = self.settingsManager.getBgTheme()
+        if isDark : 
+            self.style = style_cust.setMainViewStyleDark(self.root) 
+        else : 
+            self.style = style_cust.setMainViewStyle(self.root)
 
         self.mainFrame = ttk.Frame(self.root, padding=(60, 30), style="MainLogin.TFrame")
         self.mainFrame.pack(expand=True)
