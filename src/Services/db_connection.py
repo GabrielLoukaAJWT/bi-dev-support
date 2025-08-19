@@ -4,7 +4,6 @@ import datetime
 
 import constants as cta
 import Models.Query as qry
-import Models.Exceptions as exc
 import src.Services.settings as settings
 
 

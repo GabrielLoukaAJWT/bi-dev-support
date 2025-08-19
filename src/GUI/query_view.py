@@ -194,7 +194,7 @@ class QueryView:
             if err:              
                 print(f"ERRROR BAD QUERY {err}")
 
-                self.statusLabel.config(text=err, foreground="red")  
+                self.statusLabel.config(text=err, style="QVStatus.TLabel")  
                 self.execTimeLabel.config(text="")
                 self.queryLoggerManager.addLog("error", self.oracleConnector.currentQuery, err)
             else:
@@ -231,7 +231,7 @@ class QueryView:
             self.execTimeLabel.config(text="")
             return
 
-        self.statusLabel.config(text="⌛️ Running query...", foreground="blue")
+        self.statusLabel.config(text="⌛️ Running query...", style="QVRunning.TLabel")
         self.execTimeLabel.config(text="")
 
         thread = threading.Thread(target=self.runQueryThread, args=(sql, queryName))
@@ -274,7 +274,9 @@ class QueryView:
 
     def openAnalyticsWindow(self) -> None:
         self.accessAnalyticsButton.config(state="disabled")
-        self.analyticsPage = analytics_view.AnalyticsView(self.root, self.queryLoggerManager, 
+        self.analyticsPage = analytics_view.AnalyticsView(
+                                                          self,
+                                                          self.queryLoggerManager, 
                                                           onCloseCallback=self.enableButtonAfterAnalyticsWindowClosed
                                                         )
 
@@ -311,7 +313,7 @@ class QueryView:
 
     def accessOptions(self) -> None:
         self.accessOptionsViewBtn.config(state="disable")
-        self.optionsView = opt_view.OptionsWindow(self.root, self.enableOptionsBtnAfterClosure)
+        self.optionsView = opt_view.OptionsWindow(self, self.enableOptionsBtnAfterClosure)
 
 
     def enableOptionsBtnAfterClosure(self):

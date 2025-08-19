@@ -16,8 +16,8 @@ def setMainViewStyle(root: tk.Tk) -> ttk.Style:
     style.configure("MainTitle.TLabel", font=("Arial", 16, "bold"), background="#D3EEFF", foreground="#000000")
     style.configure("MainLabel.TLabel", font=("Arial", 12), background="#D3EEFF", foreground="#000000")
     style.configure("MainConectionLabel.TLabel", background="#D3EEFF")
-    style.configure("MainConectionLabelSuccess.TLabel", font=("Arial", 10), background="#D3EEFF", foreground="green")
-    style.configure("MainConectionLabelFail.TLabel", font=("Arial", 10), background="#D3EEFF", foreground="red")
+    style.configure("MainConectionLabelSuccess.TLabel", font=("Arial", 10), background="#D3EEFF", foreground="#009619")
+    style.configure("MainConectionLabelFail.TLabel", font=("Arial", 10), background="#D3EEFF", foreground="#D42A2A")
     style.configure("MainVersionLabel.TLabel", background="#D3EEFF", foreground="#000000")
 
     style.configure("TEntry", padding=(6, 4))
@@ -43,8 +43,8 @@ def setMainViewStyleDark(root: tk.Tk) -> ttk.Style:
     style.configure("MainTitle.TLabel", font=("Arial", 16, "bold"), background="#353535", foreground="#FFFFFF")
     style.configure("MainLabel.TLabel", font=("Arial", 12), background="#353535", foreground="#FFFFFF")
     style.configure("MainConectionLabel.TLabel", background="#353535", foreground="#FFFFFF")
-    style.configure("MainConectionLabelSuccess.TLabel", font=("Arial", 10),  background="#353535", foreground="green")
-    style.configure("MainConectionLabelFail.TLabel", font=("Arial", 10),  background="#353535", foreground="red")
+    style.configure("MainConectionLabelSuccess.TLabel", font=("Arial", 10),  background="#353535", foreground="#18CF00")
+    style.configure("MainConectionLabelFail.TLabel", font=("Arial", 10),  background="#353535", foreground="#FF0000")
     style.configure("MainVersionLabel.TLabel", background="#353535", foreground="#FFFFFF")
 
     style.configure("TEntry", padding=(6, 4))
@@ -75,11 +75,12 @@ def setQueryViewStyle(root: tk.Tk) -> ttk.Style:
     style.configure("QVLogsFrame.TFrame", background="#D3EEFF", relief="flat")
     style.configure("QVToggleLogsFrame.TFrame", background="#D3EEFF", relief="flat")
 
-    style.configure("QVLeftCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#D3EEFF", foreground="#222")
-    style.configure("QVRightCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#D3EEFF", foreground="#222")
+    style.configure("QVLeftCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#D3EEFF", foreground="#000000")
+    style.configure("QVRightCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#D3EEFF", foreground="#000000")
     style.configure("QVLabel.TLabel", font=("Segoe UI", 11), background="#D3EEFF", foreground="#444")
-    style.configure("QVStatus.TLabel", font=("Segoe UI", 10), background="#D3EEFF", foreground="red")
-    style.configure("QVExecLabel.TLabel", font=("Segoe UI", 14), background="#D3EEFF", foreground="#666")
+    style.configure("QVStatus.TLabel", font=("Segoe UI", 10), background="#D3EEFF", foreground="#D42A2A")
+    style.configure("QVRunning.TLabel", font=("Segoe UI", 10), background="#D3EEFF", foreground="#006EFF")
+    style.configure("QVExecLabel.TLabel", font=("Segoe UI", 14), background="#D3EEFF", foreground="#000000")
     
     style.configure("QVClear.TButton", font=("Segoe UI", 11, "bold"))
     style.map("QVClear.TButton",
@@ -117,7 +118,8 @@ def setQueryViewStyleDark(root: tk.Tk) -> ttk.Style:
     style.configure("QVLeftCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#353535", foreground="#FFFFFF")
     style.configure("QVRightCardHeader.TLabel", font=("Segoe UI", 14, "bold"), background="#353535", foreground="#FFFFFF")
     style.configure("QVLabel.TLabel", font=("Segoe UI", 11), background="#353535", foreground="#FFFFFF")
-    style.configure("QVStatus.TLabel", font=("Segoe UI", 10), background="#353535", foreground="red")
+    style.configure("QVStatus.TLabel", font=("Segoe UI", 10), background="#353535", foreground="#FF0000")
+    style.configure("QVRunning.TLabel", font=("Segoe UI", 10), background="#353535", foreground="#308AFF")
     style.configure("QVExecLabel.TLabel", font=("Segoe UI", 14), background="#353535", foreground="#FFFFFF")
     
     style.configure("QVClear.TButton", font=("Segoe UI", 11, "bold"))
@@ -154,7 +156,7 @@ def setAnalyticsViewStyle(root: tk.Tk) -> ttk.Style:
                      background="#D3EEFF", bordercolor="#000000", borderwidth=3)
      style.configure("AVTreeFrame.TLabelframe.Label", background="#D3EEFF", foreground="#0A0A0A", font=("Segoe UI", 12))
      
-     style.configure("AVTitle.TLabel", font=("Arial", 20, "bold"), background="#78B0D3")
+     style.configure("AVTitle.TLabel", font=("Arial", 20, "bold"), background="#78B0D3", foreground="#0A0A0A")
      style.configure("AVTotLabel.TLabel", font = ("Arial", 11))
      style.configure("AVExecLabel.TLabel", font = ("Arial", 11))
      style.configure("AVSlowestLabel.TLabel", font = ("Arial", 11), background="#fff56e")

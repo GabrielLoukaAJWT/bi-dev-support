@@ -8,9 +8,9 @@ import constants as cta
 
 
 class OptionsWindow:
-    def __init__(self, root: tk.Tk, onCloseCallback=None):
-        self.parent = root
-        self.root = tk.Toplevel(root)
+    def __init__(self, queryViewRef, onCloseCallback=None):
+        self.queryViewRef = queryViewRef
+        self.root = tk.Toplevel(self.queryViewRef.root)
         self.root.title("Options")
         self.root.geometry("500x300")
 
@@ -65,11 +65,13 @@ class OptionsWindow:
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
         ttk.Label(self.generalSettingsTabContainer, text="Theme:").grid(row=1, column=0, sticky="w")
-        self.theme_var = tk.StringVar(value="System")
+        
+        themeVarString = "Dark" if self.settingsManager.getBgTheme() else "Light"
+        self.theme_var = tk.StringVar(value=themeVarString)
         self.theme_box = ttk.Combobox(
             self.generalSettingsTabContainer,
             textvariable=self.theme_var,
-            values=["System", "Light", "Dark"],
+            values=["Light", "Dark"],
             state="readonly",
             width=14
         )
@@ -93,11 +95,11 @@ class OptionsWindow:
         self.settingsManager.editDarkTheme(selectedTheme)
         
         if selectedTheme == "Dark":
-            style_cust.setQueryViewStyleDark(self.parent)
-            # style_cust.setAnalyticsViewStyleDark(self.parent.analyticsPage)
+            style_cust.setQueryViewStyleDark(self.queryViewRef.root)
+            style_cust.setAnalyticsViewStyleDark(self.queryViewRef.analyticsPage)
         else:
-            style_cust.setQueryViewStyle(self.parent)
-            # style_cust.setAnalyticsViewStyle(self.parent.analyticsPage)
+            style_cust.setQueryViewStyle(self.queryViewRef.root)
+            style_cust.setAnalyticsViewStyle(self.queryViewRef.analyticsPage)
 
 
 

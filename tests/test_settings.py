@@ -6,7 +6,6 @@ import pandas as pd
 import datetime
 
 import constants as cta
-import Models.Exceptions as exc
 import Models.Query as query
 import src.Services.settings as set
 

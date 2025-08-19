@@ -20,8 +20,9 @@ import constants as cta
 
 
 class AnalyticsView:
-    def __init__(self, root: tk.Tk, loggingManager: log.QueryLoggerManager, onCloseCallback=None):
-        self.root = tk.Toplevel(root)        
+    def __init__(self, queryViewRef, loggingManager: log.QueryLoggerManager, onCloseCallback=None):
+        self.queryViewRef = queryViewRef
+        self.root = tk.Toplevel(self.queryViewRef.root)        
         self.root.title("SQL Analytics")
         self.root.state('zoomed')
         
