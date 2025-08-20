@@ -12,7 +12,7 @@ class OptionsWindow:
         self.queryViewRef = queryViewRef
         self.root = tk.Toplevel(self.queryViewRef.root)
         self.root.title("Options")
-        self.root.geometry("500x300")
+        self.root.geometry("600x300")
 
         self.onCloseCallback = onCloseCallback
 
@@ -105,14 +105,25 @@ class OptionsWindow:
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
         ttk.Label(self.accountSettingsTabContainer, text="Username:").grid(row=1, column=0, sticky="w")
+        ttk.Label(self.accountSettingsTabContainer, text="Oracle username:").grid(row=2, column=0, sticky="w")
+        ttk.Label(self.accountSettingsTabContainer, text="Oracle connection string:").grid(row=3, column=0, sticky="w")
 
         currentUsername = self.settingsManager.getAccUsername()
-        self.usernameEntry = ttk.Entry(self.accountSettingsTabContainer)
+        self.usernameEntry = ttk.Entry(self.accountSettingsTabContainer, width=40)
         self.usernameEntry.grid(row=1, column=2, sticky="w")
         self.usernameEntry.insert(0, currentUsername)
 
+        currentOracleCredentials = self.settingsManager.getCredentialsSettings()
+        self.oracleUserEntry = ttk.Entry(self.accountSettingsTabContainer, width=40)
+        self.oracleUserEntry.grid(row=2, column=2, sticky="w")
+        self.oracleUserEntry.insert(0, currentOracleCredentials["oracleUsername"])
+        
+        self.oracleDSNEntry = ttk.Entry(self.accountSettingsTabContainer, width=40)
+        self.oracleDSNEntry.grid(row=3, column=2, sticky="w")
+        self.oracleDSNEntry.insert(0, currentOracleCredentials["connectionString"])
+
         ttk.Button(self.accountSettingsTabContainer, text="Apply", 
-                   command=self.applyNewUsername).grid(row=20, column=5, sticky="w")
+                   command=self.applyNewUsername).grid(row=40, column=4, sticky="w")
         
     
     
@@ -140,7 +151,7 @@ class OptionsWindow:
         
 
         ttk.Button(self.queriesSettingsTabContainer, text="Apply", 
-                   command=self.applyLogsShownMode).grid(row=20, column=5, sticky="w")
+                   command=self.applyLogsShownMode).grid(row=20, column=6, sticky="w")
 
 
         self.themeBoxLogs.grid(row=1, column=1, sticky="ew", padx=(8, 0))
