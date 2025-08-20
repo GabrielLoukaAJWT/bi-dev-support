@@ -17,7 +17,11 @@ class OracleConnector:
 
         self.currentQuery = qry.Query()
 
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+        self.settingsManager = settings.SettingsManager(
+                                cta.DIR_SETTINGS_GENERAL, 
+                                cta.DIR_SETTINGS_ACCOUNT,
+                                cta.DIR_SETTINGS_QUERIES
+                            )
 
 
     def validateOracleInstantClientFiles(self, file: str) -> bool:

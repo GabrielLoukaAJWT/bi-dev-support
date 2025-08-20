@@ -5,9 +5,10 @@ from cryptography.fernet import Fernet
 import os
 
 class SettingsManager:
-    def __init__(self, genSettingsFiles: str, accountSettingsFile: str):
-        self.generalSettingsFile = genSettingsFiles
-        self.accountSettingsFile = accountSettingsFile
+    def __init__(self, genSettingsFilesPath: str, accountSettingsFilePath: str, queriesSettingsFilePath: str):
+        self.generalSettingsFilePath = genSettingsFilesPath
+        self.accountSettingsFilePath = accountSettingsFilePath
+        self.queriesSettingsFilePath = queriesSettingsFilePath
         
         self.logsFlagSettings = self.getLogsShownFlag()
         self.isDarkMode = self.getBgTheme()
@@ -17,8 +18,10 @@ class SettingsManager:
         self.accUsername = self.getAccUsername()
 
 
+    ###### general.json ######
+
     def getLogsShownFlag(self) -> bool:
-        with open(self.generalSettingsFile, 'r') as f:
+        with open(self.generalSettingsFilePath, 'r') as f:
             settings = json.load(f)
 
             areLogsShownFlag = settings["areLogsShown"]
@@ -28,17 +31,49 @@ class SettingsManager:
         
 
     def getBgTheme(self) -> bool:
-        with open(self.generalSettingsFile, 'r') as f:
+        with open(self.generalSettingsFilePath, 'r') as f:
             settings = json.load(f)
 
             isDark = settings["isDarkMode"]
 
             f.close()
             return isDark
+        
 
     
+
+    def editLogsFlagSettings(self, newFlag: bool) -> None:
+        currIsDarkTheme = self.isDarkMode
+
+        with open(self.generalSettingsFilePath, 'w+') as f:
+            newSettings = {
+                "areLogsShown": newFlag,
+                "isDarkMode": currIsDarkTheme
+            }
+            
+            json.dump(newSettings, f, indent=4)
+
+        f.close()
+
+
+    def editDarkTheme(self, newTheme: str):
+        currAreLogsShown = self.logsFlagSettings
+        
+        with open(self.generalSettingsFilePath, 'w+') as f:
+            newSettings = {
+                "areLogsShown": currAreLogsShown,
+                "isDarkMode": (True if newTheme == 'Dark' else False)
+            }
+            
+            json.dump(newSettings, f, indent=4)
+
+        f.close()
+
+
+    ##### account.json #####
+    
     def getSignInFlag(self) -> bool:
-        with open(self.accountSettingsFile, 'r') as f:
+        with open(self.accountSettingsFilePath, 'r') as f:
             settings = json.load(f)
             signInFlag = settings["staySignedIn"]
             
@@ -47,7 +82,7 @@ class SettingsManager:
         
 
     def getCredentialsSettings(self) -> dict:
-        with open(self.accountSettingsFile, 'r') as f:
+        with open(self.accountSettingsFilePath, 'r') as f:
             settings = json.load(f)
 
             credentials = settings["credentials"]
@@ -57,7 +92,7 @@ class SettingsManager:
         
 
     def getAccUsername(self) -> str:
-        with open(self.accountSettingsFile, 'r') as f:
+        with open(self.accountSettingsFilePath, 'r') as f:
             settings = json.load(f)
 
             username = settings["accUsername"]
@@ -70,7 +105,7 @@ class SettingsManager:
     def editSignInSettings(self, username: str, dsn: str, signInFlag: bool) -> None:
         currUsername = self.getAccUsername()
 
-        with open(self.accountSettingsFile, 'w+') as f:
+        with open(self.accountSettingsFilePath, 'w+') as f:
             newSettings = {
                 "staySignedIn": signInFlag,
                 "credentials": {
@@ -85,11 +120,17 @@ class SettingsManager:
         f.close()
 
     
+    
+    def editCredentials(self):
+        pass
+    
+    
+    
     def editUsername(self, newUsername: str) -> None:
         currSignInFlag = self.getSignInFlag()
         currCredentials = self.getCredentialsSettings()
 
-        with open(self.accountSettingsFile, 'w+') as f:
+        with open(self.accountSettingsFilePath, 'w+') as f:
             newSettings = {
                 "staySignedIn": currSignInFlag,
                 "credentials": currCredentials,
@@ -100,36 +141,40 @@ class SettingsManager:
 
         f.close()
 
+
+    ##### set_queries.json #####
+
+    def getLogsShownMode(self) -> str:
+        with open(self.queriesSettingsFilePath, 'r') as f:
+            settings = json.load(f)
+
+            logsShownMode = settings["showLogsMode"]
+
+            f.close()
+            
+            return logsShownMode
         
 
+    def editLogsShownMode(self, newMode: str) -> bool:
+        editSuccessful = False
 
-    def editLogsFlagSettings(self, newFlag: bool) -> None:
-        currIsDarkTheme = self.isDarkMode
-
-        with open(self.generalSettingsFile, 'w+') as f:
+        with open(self.queriesSettingsFilePath, 'w+') as f:
             newSettings = {
-                "areLogsShown": newFlag,
-                "isDarkMode": currIsDarkTheme
+                "showLogsMode": newMode
             }
             
             json.dump(newSettings, f, indent=4)
 
+            editSuccessful = True
+
         f.close()
 
+        return editSuccessful
 
-    def editDarkTheme(self, newTheme: str):
-        currAreLogsShown = self.logsFlagSettings
         
-        with open(self.generalSettingsFile, 'w+') as f:
-            newSettings = {
-                "areLogsShown": currAreLogsShown,
-                "isDarkMode": (True if newTheme == 'Dark' else False)
-            }
-            
-            json.dump(newSettings, f, indent=4)
 
-        f.close()
 
+    
         
 
         

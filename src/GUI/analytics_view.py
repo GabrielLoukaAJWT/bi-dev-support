@@ -31,7 +31,11 @@ class AnalyticsView:
         self.loggerManager = loggingManager
         self.analyticsManager = analytics.AnalyticsManager(self.loggerManager, cta.DIR_LOCAL_DB)
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+        self.settingsManager = settings.SettingsManager(
+                                cta.DIR_SETTINGS_GENERAL, 
+                                cta.DIR_SETTINGS_ACCOUNT,
+                                cta.DIR_SETTINGS_QUERIES
+                            )
 
         self.plotsQueue = queue.Queue()
 

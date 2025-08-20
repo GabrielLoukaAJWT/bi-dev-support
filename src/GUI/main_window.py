@@ -14,7 +14,11 @@ import constants as cta
 class MainWindow:
     def __init__(self):
         self.oracleConnector = cnx.OracleConnector()
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+        self.settingsManager = settings.SettingsManager(
+                                cta.DIR_SETTINGS_GENERAL, 
+                                cta.DIR_SETTINGS_ACCOUNT,
+                                cta.DIR_SETTINGS_QUERIES
+                            )
 
         self.root = tk.Tk()
         self.root.title(cta.APP_TITLE)

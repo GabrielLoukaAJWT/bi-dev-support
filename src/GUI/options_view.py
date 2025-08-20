@@ -16,7 +16,11 @@ class OptionsWindow:
 
         self.onCloseCallback = onCloseCallback
 
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+        self.settingsManager = settings.SettingsManager(
+                                cta.DIR_SETTINGS_GENERAL, 
+                                cta.DIR_SETTINGS_ACCOUNT,
+                                cta.DIR_SETTINGS_QUERIES
+                            )
 
         self.root.protocol("WM_DELETE_WINDOW", self.onDestroy)
 
@@ -49,7 +53,7 @@ class OptionsWindow:
 
         self.notebook.add(self.generalTab, text="General")
         self.notebook.add(self.accTab, text="Account")
-        self.notebook.add(self.queriesTab, text="Queries")
+        self.notebook.add(self.queriesTab, text="Queries/Logs")
         self.notebook.add(self.analyticsTab, text="Analytics")
 
 
@@ -113,7 +117,39 @@ class OptionsWindow:
     
     
     def setupQueriesTabUI(self) -> None:
-        pass
+        self.queriesSettingsTabContainer = ttk.Frame(self.queriesTab, padding=16)
+        self.queriesSettingsTabContainer.pack(fill="both", expand=True)
+
+        ttk.Label(
+            self.queriesSettingsTabContainer,
+            text="Queries & Logs",
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        ttk.Label(self.queriesSettingsTabContainer, text="Show logs:").grid(row=1, column=0, sticky="w")
+
+        themeVarString = self.settingsManager.getLogsShownMode()
+        self.theme_var = tk.StringVar(value=themeVarString)
+        self.themeBoxLogs = ttk.Combobox(
+            self.queriesSettingsTabContainer,
+            textvariable=self.theme_var,
+            values=["Daily", "All-time"],
+            state="readonly",
+            width=14
+        )
+        
+
+        ttk.Button(self.queriesSettingsTabContainer, text="Apply", 
+                   command=self.applyLogsShownMode).grid(row=20, column=5, sticky="w")
+
+
+        self.themeBoxLogs.grid(row=1, column=1, sticky="ew", padx=(8, 0))
+        self.themeBoxLogs.configure(font=("Segoe UI", 9))
+
+        self.queriesSettingsTabContainer.rowconfigure(2, minsize=12)
+
+        self.queriesSettingsTabContainer.columnconfigure(0, weight=1)
+        self.queriesSettingsTabContainer.columnconfigure(1, weight=2)
     
     
     def setupAnalyticsTabUI(self) -> None:
@@ -144,6 +180,15 @@ class OptionsWindow:
             messagebox.showinfo("Invalid username", "Username must be between 1 and 30 characters")
 
         self.usernameEntry.delete(0, tk.END)
-        self.usernameEntry.insert(0, usernameEntryValue)    
+        self.usernameEntry.insert(0, usernameEntryValue) 
+
+
+    def applyLogsShownMode(self) -> None :
+        selectedLogsMode = self.themeBoxLogs.get()
+
+        self.settingsManager.editLogsShownMode(selectedLogsMode)
+
+        self.queryViewRef.displayLogsText()
+
 
 

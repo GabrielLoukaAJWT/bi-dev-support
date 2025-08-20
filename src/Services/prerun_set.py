@@ -75,7 +75,7 @@ def createFoldersIfNotExist() -> None:
             with open(f"{settingsPath}/set_queries.json", "x") as f:
                 json.dump(
                     {
-                        
+                        "showLogsMode": "All-time"
                     },
                     f, 
                     indent=4

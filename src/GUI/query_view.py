@@ -26,7 +26,11 @@ class QueryView:
         self.oracleConnector = oracleConnector
         self.queryLoggerManager = log.QueryLoggerManager(cta.DIR_LOGS)   
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
-        self.settingsManager = settings.SettingsManager(cta.DIR_SETTINGS_GENERAL, cta.DIR_SETTINGS_ACCOUNT)
+        self.settingsManager = settings.SettingsManager(
+                                cta.DIR_SETTINGS_GENERAL, 
+                                cta.DIR_SETTINGS_ACCOUNT,
+                                cta.DIR_SETTINGS_QUERIES
+                            )
 
         self.query_result_queue = queue.Queue()
 
@@ -260,7 +264,13 @@ class QueryView:
 
 
     def displayLogsText(self) -> None:
-        logs = self.queryLoggerManager.getDailyLogs()
+        logs = []
+
+        selectedLogsMode = self.settingsManager.getLogsShownMode()
+        if selectedLogsMode == "Daily":
+            logs = self.queryLoggerManager.getDailyLogs()
+        else:
+            logs = self.queryLoggerManager.getLogsFromFile(cta.DIR_LOGS)
 
         self.logsBox.config(state="normal")
         self.logsBox.delete("1.0", "end")
