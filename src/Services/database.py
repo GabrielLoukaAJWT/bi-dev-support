@@ -36,6 +36,8 @@ class DatabaseManager:
     def clearDB(self) -> None:
         if len(self.getQueriesFromDB()) > 0:
             self.queriesLocalDB.deleteAll()
+        else:
+            pass
 
 
     def editQueryName(self, id: int, newName: str) -> None:
