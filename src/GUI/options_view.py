@@ -71,19 +71,18 @@ class OptionsWindow:
         ttk.Label(self.generalSettingsTabContainer, text="Theme:").grid(row=1, column=0, sticky="w")
 
         themeVarString = "Dark" if self.settingsManager.getBgTheme() else "Light"
-        self.theme_var = tk.StringVar(value=themeVarString)
+        self.theme_varTheme = tk.StringVar(value=themeVarString)
+
         self.theme_box = ttk.Combobox(
             self.generalSettingsTabContainer,
-            textvariable=self.theme_var,
+            textvariable=self.theme_varTheme,
             values=["Light", "Dark"],
             state="readonly",
             width=14
         )
         
-
         ttk.Button(self.generalSettingsTabContainer, text="Apply", 
                    command=self.applyTheme).grid(row=20, column=5, sticky="w")
-
 
         self.theme_box.grid(row=1, column=1, sticky="ew", padx=(8, 0))
         self.theme_box.configure(font=("Segoe UI", 9))
@@ -140,10 +139,10 @@ class OptionsWindow:
         ttk.Label(self.queriesSettingsTabContainer, text="Show logs:").grid(row=1, column=0, sticky="w")
 
         themeVarString = self.settingsManager.getLogsShownMode()
-        self.theme_var = tk.StringVar(value=themeVarString)
+        self.theme_varLogs = tk.StringVar(value=themeVarString)
         self.themeBoxLogs = ttk.Combobox(
             self.queriesSettingsTabContainer,
-            textvariable=self.theme_var,
+            textvariable=self.theme_varLogs,
             values=["Daily", "All-time"],
             state="readonly",
             width=14
