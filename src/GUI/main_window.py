@@ -65,7 +65,7 @@ class MainWindow:
         self.connectionStatusLabel = ttk.Label(self.mainFrame, text="", style="MainConectionLabel.TLabel")  
         self.connectionStatusLabel.pack(pady=10)            
 
-        self.checkboxVar = tk.IntVar(value=(1 if self.settingsManager.checkboxVarSettings else 0))
+        self.checkboxVar = tk.IntVar(value=(1 if self.settingsManager.getSignInFlag() else 0))
 
         self.checkbox = tk.Checkbutton(self.mainFrame, 
                                        text="Save credentials", 
@@ -146,10 +146,10 @@ class MainWindow:
 
 
     def loadSavedCredentialsToUI(self) -> None:
-        value = self.settingsManager.checkboxVarSettings
-        credentials = self.settingsManager.credentialsSettings
+        value = self.settingsManager.getSignInFlag()
+        credentials = self.settingsManager.getCredentialsSettings()
 
-        if value == 1:
+        if value:
             self.usernameEntry.insert(0, credentials["oracleUsername"])
             self.connectionStringEntry.insert(0, credentials["connectionString"])
 

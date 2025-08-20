@@ -148,7 +148,7 @@ class QueryView:
         toggle_frame.pack(fill="x", pady=(0, 4))
 
         # Logs container (start hidden)
-        self.areLogsShown = self.settingsManager.logsFlagSettings
+        self.areLogsShown = self.settingsManager.getLogsShownFlag()
         self.logsContainer = ttk.Frame(self.logsWrapper)
         self.logsContainer.pack(fill="both", expand=True)
         self.logsContainer.pack_forget()

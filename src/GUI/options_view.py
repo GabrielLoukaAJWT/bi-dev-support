@@ -54,7 +54,7 @@ class OptionsWindow:
         self.notebook.add(self.generalTab, text="General")
         self.notebook.add(self.accTab, text="Account")
         self.notebook.add(self.queriesTab, text="Queries/Logs")
-        self.notebook.add(self.analyticsTab, text="Analytics")
+        # self.notebook.add(self.analyticsTab, text="Analytics")
 
 
     
@@ -191,6 +191,20 @@ class OptionsWindow:
 
         self.usernameEntry.delete(0, tk.END)
         self.usernameEntry.insert(0, usernameEntryValue) 
+
+        oracleUserEntryValue = self.oracleUserEntry.get()
+        oracleDSNEntryValue = self.oracleDSNEntry.get()
+
+        if len(oracleUserEntryValue) >= 1 and len(oracleDSNEntryValue) >= 1:
+            self.settingsManager.editCredentialsOptions(oracleUserEntryValue, oracleDSNEntryValue)
+        else:
+            messagebox.showinfo("Invalid username(s)", "Username(s) must be above 1 character.")
+
+        self.oracleUserEntry.delete(0, tk.END)
+        self.oracleUserEntry.insert(0, oracleUserEntryValue)
+        self.oracleDSNEntry.delete(0, tk.END)
+        self.oracleDSNEntry.insert(0, oracleDSNEntryValue)
+
 
 
     def applyLogsShownMode(self) -> None :

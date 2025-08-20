@@ -10,13 +10,6 @@ class SettingsManager:
         self.accountSettingsFilePath = accountSettingsFilePath
         self.queriesSettingsFilePath = queriesSettingsFilePath
         
-        self.logsFlagSettings = self.getLogsShownFlag()
-        self.isDarkMode = self.getBgTheme()
-        
-        self.checkboxVarSettings = self.getSignInFlag()
-        self.credentialsSettings = self.getCredentialsSettings()
-        self.accUsername = self.getAccUsername()
-
 
     ###### general.json ######
 
@@ -43,7 +36,7 @@ class SettingsManager:
     
 
     def editLogsFlagSettings(self, newFlag: bool) -> None:
-        currIsDarkTheme = self.isDarkMode
+        currIsDarkTheme = self.getBgTheme()
 
         with open(self.generalSettingsFilePath, 'w+') as f:
             newSettings = {
@@ -57,7 +50,7 @@ class SettingsManager:
 
 
     def editDarkTheme(self, newTheme: str):
-        currAreLogsShown = self.logsFlagSettings
+        currAreLogsShown = self.getLogsShownFlag()
         
         with open(self.generalSettingsFilePath, 'w+') as f:
             newSettings = {
@@ -121,8 +114,23 @@ class SettingsManager:
 
     
     
-    def editCredentials(self):
-        pass
+    def editCredentialsOptions(self, newOracleUser: str, newOracleDSN: str) -> None:
+        currSignInFlag = self.getSignInFlag()
+        currUsername = self.getAccUsername()
+
+        with open(self.accountSettingsFilePath, 'w+') as f:
+            newSettings = {
+                "staySignedIn": currSignInFlag,
+                "credentials": {
+                            "oracleUsername" : newOracleUser,
+                            "connectionString" : newOracleDSN
+                        },
+                "accUsername": currUsername
+            }
+            
+            json.dump(newSettings, f, indent=4)
+
+        f.close()
     
     
     
