@@ -6,12 +6,12 @@ import Models.Query as models
 import constants as cta
 
 class QueryLoggerManager:
-    def __init__(self, file: str):
-        self.logger = logging.getLogger('sql logger')
+    def __init__(self, logFile: str, loggerName: str):
+        self.logger = logging.getLogger(loggerName)
         self.logger.setLevel(logging.INFO)
-        self.file = file
+        self.logFile = logFile
 
-        self.fh = self.setFileHandler(self.file)
+        self.fh = self.setFileHandler(self.logFile)
         # ch = logging.StreamHandler()        
 
         self.formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
@@ -22,7 +22,7 @@ class QueryLoggerManager:
         self.logger.addHandler(self.fh)
         # self.logger.addHandler(ch)
 
-        self.logs = self.getLogsFromFile(self.file)
+        self.logs = self.getLogsFromFile(self.logFile)
 
         self.listHandler = ListHandler(self.logs)
         self.listHandler.setFormatter(self.formatter)
@@ -30,8 +30,8 @@ class QueryLoggerManager:
         self.logger.addHandler(self.listHandler)
 
 
-    def setFileHandler(self, file: str):
-        return logging.FileHandler(file)
+    def setFileHandler(self, logFile: str):
+        return logging.FileHandler(logFile)
 
 
     def addLog(self, type: str, query: models.Query, msg: str) -> None:
@@ -49,7 +49,7 @@ class QueryLoggerManager:
 
 
     def clearLogsFile(self) -> None:
-        log_file = open(self.file, "r+")
+        log_file = open(self.logFile, "r+")
         log_file.truncate(0)
         log_file.close()
 
@@ -64,7 +64,7 @@ class QueryLoggerManager:
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 for line in f:
-                    # if a line from the file starts with a date (regex), then it's a singular log as wanted
+                    # if a line from the logFile starts with a date (regex), then it's a singular log as wanted
                     if new_entry_pattern.match(line):
                         if current_entry:
                             log_entries.append(current_entry.strip())
@@ -75,13 +75,13 @@ class QueryLoggerManager:
                     log_entries.append(current_entry.strip())
 
         except FileNotFoundError:
-            print(f"Log file not found: {filepath}")
+            print(f"Log logFile not found: {filepath}")
 
         return log_entries
     
 
     def getDailyLogs(self) -> list[str]:
-        logs = self.getLogsFromFile(self.file)
+        logs = self.getLogsFromFile(self.logFile)
 
         if not logs:
             return []

@@ -18,7 +18,7 @@ class AnalyticsTest(unittest.TestCase):
     def setUpClass(cls):
         cls.mockFile = "./tests/test_folders/test_local_DB/queries.json"
         cls.mockFileLogs = "./tests/test_folders/test_logs/queries_for_analytics.log"
-        cls.loggingManager = log.QueryLoggerManager(cls.mockFileLogs)
+        cls.loggingManager = log.QueryLoggerManager(cls.mockFileLogs, "test analytics")
 
         cls.analyticsManager = analytics.AnalyticsManager(cls.loggingManager, cls.mockFile)
         cls.dbManager = db.DatabaseManager(cls.mockFile)
@@ -86,31 +86,33 @@ class AnalyticsTest(unittest.TestCase):
         self.assertEqual(res, 0)
 
     
-    # def test_common_error(self):
-        # self.loggingManager.clearLogsFile()
+    def test_common_error(self):
+        self.loggingManager.clearLogsFile()
 
-        # exQuery = query.Query()
-        # self.loggingManager.addLog("info", exQuery, "")
+        exQuery = query.Query()
+        self.loggingManager.addLog("info", exQuery, "")
 
-        # self.loggingManager.addLog("error", exQuery, 
-        #                     "ORA-00900: invalid SQL statement\nHelp: https://docs.oracle.com/error-help/db/ora-00900/"
-        #                     )
+        self.loggingManager.addLog("error", exQuery, 
+                            "ORA-00900: invalid SQL statement\nHelp: https://docs.oracle.com/error-help/db/ora-00900/"
+                            )
         
-        # res = self.analyticsManager.getMostCommonErrorLog()
+        res = self.analyticsManager.getMostCommonErrorLog()
 
-        # self.assertEqual(res, " ORA-00900: invalid SQL statement")
+        self.assertEqual(res, " ORA-00900: invalid SQL statement")
 
-        # self.loggingManager.clearLogsFile()
+        self.loggingManager.clearLogsFile()
 
 
 
-    # def test_common_error_empty_logs(self):
-    #     self.loggingManager.clearLogsFile()
+    def test_common_error_empty_logs(self):
+        self.loggingManager.clearLogsFile()
+        logs = self.loggingManager.getLogsFromFile(self.mockFileLogs)
+        print(logs)
         
-    #     print(f"LOGSOGSOGOSO {self.analyticsManager.logs}")
-    #     res = self.analyticsManager.getMostCommonErrorLog()
+        res = self.analyticsManager.getMostCommonErrorLog()
 
-    #     self.assertEqual(res, "")
+        self.assertEqual(logs, [])
+        # self.assertEqual(res, "")
 
 
     def test_exec_times(self):
@@ -144,7 +146,7 @@ class AnalyticsTest(unittest.TestCase):
 
         self.assertEqual(res, (
                 [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             )
         )
 

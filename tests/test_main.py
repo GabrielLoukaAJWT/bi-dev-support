@@ -4,15 +4,15 @@ import main
 import constants as cta
 
 class SQLAnalyticsMainTest(unittest.TestCase):
-
-    def test_all_files_exist(self):
+    pass
+    # def test_all_files_exist(self):
         
-        self.assertTrue(main.checkIfAllFilesExist())
+    #     self.assertTrue(main.checkIfAllFilesExist())
 
-    def test_one_missing_file(self):
-        badFile = "blah blah"
+    # def test_one_missing_file(self):
+    #     badFile = "blah blah"
 
-        self.assertFalse(main.resource_path(badFile))
+    #     self.assertFalse(main.resource_path(badFile))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -7,7 +7,7 @@ class PrerunTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.mockFile = ".tests/prerun_test_folders/test_local_DB/queries.json"
+        cls.mockFile = "tests/prerun_test_folders/test_local_DB/queries.json"
         cls.dbManager = db.DatabaseManager(cls.mockFile)
     
 

@@ -11,7 +11,7 @@ class LoggingTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.mockFile = "./tests/test_folders/test_logs/queries_for_logs.log"
-        cls.loggingManager = log.QueryLoggerManager(cls.mockFile)
+        cls.loggingManager = log.QueryLoggerManager(cls.mockFile, "test logging")
 
     
     def test_init(self):

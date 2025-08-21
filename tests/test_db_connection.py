@@ -4,7 +4,6 @@ from unittest.mock import patch, MagicMock
 
 import src.Services.db_connection as oracle_cnx
 import constants as cta
-import Models.Exceptions as exc
 
 class DBConnectionTest(unittest.TestCase):
     mock_connection = MagicMock()

@@ -24,7 +24,7 @@ class QueryView:
         self.analyticsPage = None
 
         self.oracleConnector = oracleConnector
-        self.queryLoggerManager = log.QueryLoggerManager(cta.DIR_LOGS)   
+        self.queryLoggerManager = log.QueryLoggerManager(cta.DIR_LOGS, "SQL Analytics")   
         self.databaseManager = db.DatabaseManager(cta.DIR_LOCAL_DB)
         self.settingsManager = settings.SettingsManager(
                                 cta.DIR_SETTINGS_GENERAL, 
