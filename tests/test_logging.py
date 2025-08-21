@@ -3,7 +3,6 @@ from unittest import mock
 from unittest.mock import patch, MagicMock
 
 import constants as cta
-import Models.Exceptions as exc
 import Models.Query as query
 import src.Services.logging as log
 

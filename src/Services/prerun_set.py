@@ -4,12 +4,16 @@ import json
 import constants as cta
 
 
-def createFoldersIfNotExist() -> None:
+def createFoldersIfNotExist(
+                            dbPath: str, 
+                            logsPath: str,
+                            settingsPath: str
+                    ) -> None:
     foldersCreatedSuccess = False
 
-    dbPath = "local_DB"
-    logsPath = "logs"
-    settingsPath = "settings"
+    dbPath = dbPath
+    logsPath = logsPath
+    settingsPath = settingsPath
 
     try:
         os.makedirs(dbPath, exist_ok=True)

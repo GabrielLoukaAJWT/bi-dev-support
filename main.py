@@ -9,7 +9,11 @@ import src.Services.prerun_set as prerun_set
 
 
 def main():
-    prerun_set.createFoldersIfNotExist()    
+    prerun_set.createFoldersIfNotExist(
+        "local_DB",
+        "logs",
+        "settings"
+    )    
     app = main_window.MainWindow()
 
     print(f"RUNNING APP : {app}")
