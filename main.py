@@ -15,6 +15,7 @@ def main():
         "settings"
     )    
     app = main_window.MainWindow()
+    app.root.mainloop()
 
     print(f"RUNNING APP : {app}")
     print(f"USERNAME WINDOWS {getpass.getuser()}")

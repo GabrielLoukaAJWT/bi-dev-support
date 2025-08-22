@@ -7,22 +7,22 @@ class PrerunTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
+        prerun.createFoldersIfNotExist(
+          "tests/prerun_test_folders/test_local_DB",
+          "tests/prerun_test_folders/test_logs",
+          "tests/prerun_test_folders/test_settings"
+        )
         cls.mockFile = "tests/prerun_test_folders/test_local_DB/queries.json"
         cls.dbManager = db.DatabaseManager(cls.mockFile)
     
 
-    def test_folders_creation(self):
+    def test_folders_creation_exception(self):
         prerun.createFoldersIfNotExist(
           "tests/prerun_test_folders/test_local_DB",
           "tests/prerun_test_folders/test_logs",
           "tests/prerun_test_folders/test_settings"
         )  
 
-        # with self.assertRaises(Exception) as context:
-        #     prerun.createFoldersIfNotExist(
-        #       "tests/prerun_test_folders/test_local_DB",
-        #       "tests/prerun_test_folders/test_logs",
-        #       "tests/prerun_test_folders/test_settings"
-        #     ) 
+        
     
     

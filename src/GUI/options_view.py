@@ -174,10 +174,10 @@ class OptionsWindow:
         
         if selectedTheme == "Dark":
             style_cust.setQueryViewStyleDark(self.queryViewRef.root)
-            style_cust.setAnalyticsViewStyleDark(self.queryViewRef.analyticsPage)
+            style_cust.setAnalyticsViewStyleDark(self.queryViewRef.analyticsPage.root)
         else:
             style_cust.setQueryViewStyle(self.queryViewRef.root)
-            style_cust.setAnalyticsViewStyle(self.queryViewRef.analyticsPage)
+            style_cust.setAnalyticsViewStyle(self.queryViewRef.analyticsPage.root)
 
 
 

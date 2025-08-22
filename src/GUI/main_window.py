@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
-import sv_ttk
-
 import src.Services.db_connection as cnx
 import src.Services.settings as settings
 import src.Services.style as style_cust
@@ -30,7 +28,7 @@ class MainWindow:
 
         print(f"MAIN WINDOW CREATED\n")
 
-        self.root.mainloop()
+        # self.root.mainloop()
 
 
     def setupMainUI(self) -> None:
@@ -95,15 +93,14 @@ class MainWindow:
         connectionString = self.connectionStringEntry.get()
         password = self.pswEntry.get()
 
-        isSuccessful = self.oracleConnector.connectToOracle(username, connectionString, password)
-        print(isSuccessful)
+        self.isSuccessful = self.oracleConnector.connectToOracle(username, connectionString, password)
 
         print(self.oracleConnector.connection)
         print(self.oracleConnector.cursor)
 
-        self.showStatus(isSuccessful)
+        self.showStatus(self.isSuccessful)
 
-        if isSuccessful:            
+        if self.isSuccessful:            
             self.handleSaveSettingsCheckbox()
             self.root.update_idletasks()
             self.root.after(1000, self.clearRoot())   

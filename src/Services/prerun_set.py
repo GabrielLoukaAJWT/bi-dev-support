@@ -104,5 +104,8 @@ def createFoldersIfNotExist(
         except FileExistsError:
             print("Analytics settings file already exists.")
 
+    else:
+        pass
+
 
         

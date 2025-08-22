@@ -49,7 +49,7 @@ class AnalyticsView:
 
         print(F"ANALYTICS WINDOW CREATED")
 
-        self.root.mainloop()
+        # self.root.mainloop()
 
 
     def onDestroy(self) -> None:

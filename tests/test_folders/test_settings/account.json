@@ -1,8 +1,8 @@
 {
     "staySignedIn": true,
     "credentials": {
-        "oracleUsername": "AJWTQPRODREADONLYDEV",
-        "connectionString": "AW-CA1A-QTM-P01:1521/cctl"
+        "oracleUsername": "anotha",
+        "connectionString": "dsn 222"
     },
-    "accUsername": "gab"
+    "accUsername": "gazo"
 }
